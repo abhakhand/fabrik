@@ -1,0 +1,12 @@
+name: feature
+description: Generates a full-feature scaffold with model, entity, data source, repository, use cases, and BLoC.
+
+version: 0.1.0+1
+
+environment:
+  mason: ^0.1.1
+
+vars:
+  name:
+    type: string
+    description: The name of the feature (e.g. user_profile)
