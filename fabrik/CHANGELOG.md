@@ -54,3 +54,14 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
 
 - Replaced path-based brick loading with `.bundle` loading using `MasonBundle.fromUniversalBundle`.
 - Feature scaffolding brick is now precompiled and loaded from:
+
+## [0.1.5] - 2025-04-15
+
+### 🧹 Internal Cleanup
+
+- Removed outdated check for `bricks/feature` directory, since the CLI now uses a `.bundle` file for brick generation.
+- Simplified generator loading by fully relying on:
+
+  ```dart
+  MasonBundle.fromUniversalBundle
+  ```

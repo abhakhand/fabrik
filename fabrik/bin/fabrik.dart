@@ -42,13 +42,6 @@ Future<void> main(List<String> args) async {
     final featureName = rest[1];
     final outputDir = command['output-dir'] ?? featureName;
 
-    final brickPath = Directory('bricks/feature');
-
-    if (!brickPath.existsSync()) {
-      _logger.err('❌ Feature brick not found at ${brickPath.path}');
-      exit(1);
-    }
-
     final generator = await loadFeatureGenerator();
 
     final target = DirectoryGeneratorTarget(
