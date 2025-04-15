@@ -7,12 +7,12 @@ final _logger = Logger();
 Future<void> main(List<String> args) async {
   final parser = ArgParser()..addFlag('help', abbr: 'h', help: 'Print usage');
 
-  final generateCmd =
-      ArgParser()..addOption(
-        'output-dir',
-        abbr: 'o',
-        help: 'Directory where the generated code should be placed.',
-      );
+  final generateCmd = ArgParser()
+    ..addOption(
+      'output-dir',
+      abbr: 'o',
+      help: 'Directory where the generated code should be placed.',
+    );
 
   parser.addCommand('generate', generateCmd);
 
