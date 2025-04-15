@@ -11,7 +11,7 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 executables:
-  fabrik: bin/fabrik.dart
+  fabrik:
 
 dependencies:
   args: ^2.7.0
