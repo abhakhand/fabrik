@@ -11,7 +11,6 @@ Built with developer experience in mind — **generate complete feature folders 
 - ✅ Clean architecture structure (Model → Entity → DataSource → Repository → UseCase → BLoC)
 - ✅ Barrel files auto-generated
 - ✅ Supports `--output-dir` or `-o` to customize output
-- ✅ Works great with `flutter_core` (optional)
 - 🛠️ Optional flags like `--with-bloc`, `--minimal` coming soon
 
 ---
@@ -22,7 +21,16 @@ Built with developer experience in mind — **generate complete feature folders 
 dart pub global activate fabrik
 ```
 
-Make sure your Dart global bin is in PATH:
+### ⚙️ Set Up PATH (if needed)
+
+After activating the CLI, make sure Dart’s global bin directory is in your system PATH.
+
+#### macOS/Linux
+
+```bash
+# Add this to your shell config file (~/.zshrc, ~/.bashrc, etc.)
+export PATH="$PATH":"$HOME/.pub-cache/bin"
+```
 
 ```bash
 # Add this to your shell config (~/.zshrc or ~/.bashrc)
@@ -87,6 +95,53 @@ lib/features/auth/
 ```
 
 All classes are stubbed with clean and minimal code — ready to be implemented.
+
+---
+
+## 📚 Recommended Utility Packages
+
+Fabrik scaffolds rely on some essential packages for clean architecture, error handling, and code generation.
+
+To get started, add the following to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  # Core utility package containing Failure & Status classes
+  flutter_core:
+    git:
+      url: https://github.com/abhakhand/flutter_core.git
+      ref: main
+
+  # Functional programming support (Either, Option, etc.)
+  dartz:
+
+  # State management with BLoC
+  bloc:
+  flutter_bloc:
+  equatable:
+
+  # Code generation support
+  json_annotation:
+  freezed_annotation:
+
+  # Dependency injection
+  get_it: ^7.6.4
+  injectable: ^2.3.2
+
+dev_dependencies:
+  build_runner:
+  freezed:
+  injectable_generator:
+  json_serializable:
+  very_good_analysis:
+```
+
+### ⚙️ Don’t forget to run
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ---
 

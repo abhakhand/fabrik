@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../../entities/entities.dart';
 
 part '{{name.snakeCase()}}_model.g.dart';
 

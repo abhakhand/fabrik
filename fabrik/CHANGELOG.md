@@ -32,8 +32,6 @@ Achieved a perfect **160/160** pub score on [pub.dev](https://pub.dev/packages/f
 - Moved `feature` brick inside the `fabrik_cli` package.
 - Ensured it gets published and recognized by `pub.dev`.
 
----
-
 Now you can run `fabrik generate feature auth` globally — no more path errors!
 
 ## [0.1.3] - 2025-04-15
@@ -43,8 +41,6 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
 - Ensured `bricks/feature` is included in the published package using the `include:` key in `pubspec.yaml`.
 - Fixed issue where the CLI couldn’t find the brick (`Feature brick not found at bricks/feature`) when installed globally from pub.dev.
 - Removed unused `assets:` key since this is a pure Dart CLI, not a Flutter package.
-
----
 
 🧱 You can now install Fabrik globally and use it from anywhere without missing bricks.
 
@@ -80,3 +76,15 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
 ### Internal
 
 - Bundle file path is now resolved via the Dart package system (`package:fabrik/src/bricks/feature.bundle`) which implicitly maps to the `lib/` folder.
+
+## [0.1.7] - 2025-04-15
+
+### 📝 Documentation
+
+- Updated `README.md` with a complete **📚 Recommended Utility Packages** section.
+- Included essential packages for clean architecture: `dartz`, `bloc`, `flutter_bloc`, `equatable`, `json_serializable`, `json_annotation`, `freezed`, `injectable`, and `get_it`.
+- Improved cross-platform `PATH` setup instructions for both macOS/Linux and Windows users.
+
+### ✨ Features
+
+- Added a new **Injectable Module** brick to scaffold dependency injection setup using `get_it` and `injectable`.
