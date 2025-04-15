@@ -35,3 +35,15 @@ Achieved a perfect **160/160** pub score on [pub.dev](https://pub.dev/packages/f
 ---
 
 Now you can run `fabrik generate feature auth` globally — no more path errors!
+
+## [0.1.3] - 2025-04-15
+
+### 🛠 Packaging Fix
+
+- Ensured `bricks/feature` is included in the published package using the `include:` key in `pubspec.yaml`.
+- Fixed issue where the CLI couldn’t find the brick (`Feature brick not found at bricks/feature`) when installed globally from pub.dev.
+- Removed unused `assets:` key since this is a pure Dart CLI, not a Flutter package.
+
+---
+
+🧱 You can now install Fabrik globally and use it from anywhere without missing bricks.
