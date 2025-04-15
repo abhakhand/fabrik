@@ -25,3 +25,13 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Mason cache (used for local bricks)
+.mason/
+
+# Logs or generated diagnostics (optional)
+*.log
+
+# IDE/Editor settings (optional, depending on your team)
+.vscode/
+.idea/
