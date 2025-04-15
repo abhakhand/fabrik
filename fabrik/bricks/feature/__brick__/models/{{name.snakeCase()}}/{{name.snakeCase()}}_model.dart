@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../../entities/entities.dart';
 
-part '{{name.snakeCase()}}_model.g.dart';
+part '../../../../../../bricks/feature/__brick__/models/{{name.snakeCase()}}/{{name.snakeCase()}}_model.g.dart';
 
 @JsonSerializable()
 class {{name.pascalCase()}}Model {
