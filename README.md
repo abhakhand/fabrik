@@ -35,9 +35,3 @@ Coming soon: [https://fabriktool.com](https://fabriktool.com)
 ## 🙌 Contributing
 
 Want to help make Fabrik better? Check out the `CONTRIBUTING.md` (coming soon).
-
----
-
-## 📄 License
-
-[MIT](LICENSE)

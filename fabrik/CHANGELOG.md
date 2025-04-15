@@ -88,3 +88,12 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
 ### ✨ Features
 
 - Added a new **Injectable Module** brick to scaffold dependency injection setup using `get_it` and `injectable`.
+
+## [0.1.8] - 2025-04-15
+
+### Documentation
+
+- Added **detailed DartDoc comments** to the CLI entry file (`bin/fabrik.dart`)
+- Explained each CLI step: argument parsing, command execution, path normalization, and brick loading.
+- Made it easier for contributors and team members to understand and extend the CLI codebase.
+- Improved onboarding clarity for developers using the CLI internally or externally.

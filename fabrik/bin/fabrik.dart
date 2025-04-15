@@ -5,11 +5,21 @@ import 'package:mason/mason.dart';
 
 final _logger = Logger();
 
-/// Entry point for Fabrik CLI.
+/// 🧱 Entry point for Fabrik CLI.
 ///
-/// Run this using:
+/// This command-line interface is used to generate Flutter feature scaffolding
+/// using the DDD layered architecture.
+///
+/// ### Usage
+///
+/// Generate a feature:
 /// ```bash
-/// dart run bin/fabrik.dart generate feature <name>
+/// fabrik generate feature <name>
+/// ```
+///
+/// Specify a custom output directory:
+/// ```bash
+/// fabrik generate feature <name> --output-dir|-o <path>
 /// ```
 Future<void> main(List<String> args) async {
   final parser = ArgParser()..addFlag('help', abbr: 'h', help: 'Print usage');
@@ -32,6 +42,7 @@ Future<void> main(List<String> args) async {
 
   final command = results.command;
 
+  // 🧱 Handle "generate" command
   if (command?.name == 'generate') {
     final rest = command!.rest;
 
@@ -43,13 +54,17 @@ Future<void> main(List<String> args) async {
     final featureName = rest[1];
     final outputDir = command['output-dir'] ?? featureName;
 
+    // 🔄 Load the brick bundle (compiled template)
     final generator = await loadFeatureGenerator();
 
+    // 📁 Define target output directory
     final target = DirectoryGeneratorTarget(
       Directory(normalizePath(outputDir)),
     );
+
     final vars = <String, dynamic>{'name': featureName};
 
+    // 🛠️ Generate feature
     _logger.info('🔨 Generating feature: $featureName...\n');
     await generator.generate(target, vars: vars);
     _logger.success(
@@ -61,6 +76,7 @@ Future<void> main(List<String> args) async {
   }
 }
 
+/// Prints usage information for the CLI.
 void _printUsage(ArgParser parser) {
   _logger.info('🧱 Fabrik CLI - Generate Flutter feature scaffolding');
   _logger.info(
@@ -69,7 +85,11 @@ void _printUsage(ArgParser parser) {
   _logger.info(parser.usage);
 }
 
+/// Loads the pre-compiled Mason brick bundle for the feature generator.
+///
+/// Returns a [MasonGenerator] ready to generate the feature scaffold.
 Future<MasonGenerator> loadFeatureGenerator() async {
+  // 🧱 Resolve bundle path from package
   final resolvedUri = await Isolate.resolvePackageUri(
     Uri.parse('package:fabrik/src/bricks/feature.bundle'),
   );
@@ -84,12 +104,16 @@ Future<MasonGenerator> loadFeatureGenerator() async {
     throw Exception('❌ Brick bundle not found at ${bundleFile.path}');
   }
 
+  // 📦 Load the Mason bundle from binary
   final bytes = await bundleFile.readAsBytes();
   final bundle = await MasonBundle.fromUniversalBundle(bytes);
 
   return MasonGenerator.fromBundle(bundle);
 }
 
+/// Normalizes a directory path by prepending './' if it's a plain name.
+///
+/// Helps ensure correct relative path resolution for generated files.
 String normalizePath(String path) {
   if (path.startsWith('./') || path.startsWith('/')) return path;
   return './$path';

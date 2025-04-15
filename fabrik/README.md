@@ -32,9 +32,12 @@ After activating the CLI, make sure Dart’s global bin directory is in your sys
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 ```
 
+#### Windows
+
+Locale the dart global bin path and add it to system PATH
+
 ```bash
-# Add this to your shell config (~/.zshrc or ~/.bashrc)
-export PATH="$PATH":"$HOME/.pub-cache/bin"
+C:\Users\<YourUsername>\AppData\Local\Pub\Cache\bin
 ```
 
 ---
@@ -161,14 +164,9 @@ dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-## ❤️ Credits
+## Maintainers
 
-Crafted by [Ashish Bhakhand](https://github.com/abhakhand), inspired by real-world Flutter app architecture challenges.
+- [Ashish Bhakhand](https://github.com/abhakhand)
 
+Inspired by real-world Flutter app architecture challenges.
 Open source. Open to contributions. Built for the Flutter community.
-
----
-
-## 📄 License
-
-[MIT](../LICENSE)
