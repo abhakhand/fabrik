@@ -49,9 +49,7 @@ Future<void> main(List<String> args) async {
       exit(1);
     }
 
-    final generator = await MasonGenerator.fromBrick(
-      Brick.path(brickPath.path),
-    );
+    final generator = await loadFeatureGenerator();
 
     final target = DirectoryGeneratorTarget(
       Directory(normalizePath(outputDir)),
@@ -75,6 +73,19 @@ void _printUsage(ArgParser parser) {
     '\nUsage:\n  fabrik generate feature <name> [--output-dir|-o <path>]\n',
   );
   _logger.info(parser.usage);
+}
+
+Future<MasonGenerator> loadFeatureGenerator() async {
+  final bundleFile = File('lib/src/bricks/feature.bundle');
+
+  if (!await bundleFile.exists()) {
+    throw Exception('❌ Brick bundle not found: ${bundleFile.path}');
+  }
+
+  final bytes = await bundleFile.readAsBytes();
+  final bundle = await MasonBundle.fromUniversalBundle(bytes);
+
+  return MasonGenerator.fromBundle(bundle);
 }
 
 String normalizePath(String path) {

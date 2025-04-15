@@ -47,3 +47,10 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
 ---
 
 🧱 You can now install Fabrik globally and use it from anywhere without missing bricks.
+
+## [0.1.4] - 2025-04-15
+
+### 🧱 Brick Loading Refactor
+
+- Replaced path-based brick loading with `.bundle` loading using `MasonBundle.fromUniversalBundle`.
+- Feature scaffolding brick is now precompiled and loaded from:
