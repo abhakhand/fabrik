@@ -4,6 +4,12 @@ import 'package:mason/mason.dart';
 
 final _logger = Logger();
 
+/// Entry point for Fabrik CLI.
+///
+/// Run this using:
+/// ```bash
+/// dart run bin/fabrik.dart generate feature <name>
+/// ```
 Future<void> main(List<String> args) async {
   final parser = ArgParser()..addFlag('help', abbr: 'h', help: 'Print usage');
 
