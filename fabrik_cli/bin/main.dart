@@ -5,16 +5,16 @@ import 'package:mason/mason.dart';
 final _logger = Logger();
 
 Future<void> main(List<String> args) async {
-  final parser =
-      ArgParser()
-        ..addCommand('generate')
-        ..addFlag('help', abbr: 'h', help: 'Print usage')
-        ..addOption(
-          'output-dir',
-          abbr: 'o',
-          help: 'Directory where to output the generated code',
-          defaultsTo: '.',
-        );
+  final parser = ArgParser()..addFlag('help', abbr: 'h', help: 'Print usage');
+
+  final generateCmd =
+      ArgParser()..addOption(
+        'output-dir',
+        abbr: 'o',
+        help: 'Directory where the generated code should be placed.',
+      );
+
+  parser.addCommand('generate', generateCmd);
 
   final results = parser.parse(args);
 
@@ -34,7 +34,7 @@ Future<void> main(List<String> args) async {
     }
 
     final featureName = rest[1];
-    final outputDir = results['output-dir'] as String;
+    final outputDir = command['output-dir'] ?? featureName;
 
     final brickPath = Directory('../bricks/feature');
     if (!brickPath.existsSync()) {
