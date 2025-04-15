@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'package:args/args.dart';
 import 'package:mason/mason.dart';
 
@@ -69,10 +70,18 @@ void _printUsage(ArgParser parser) {
 }
 
 Future<MasonGenerator> loadFeatureGenerator() async {
-  final bundleFile = File('lib/src/bricks/feature.bundle');
+  final resolvedUri = await Isolate.resolvePackageUri(
+    Uri.parse('package:fabrik/src/bricks/feature.bundle'),
+  );
+
+  if (resolvedUri == null) {
+    throw Exception('❌ Failed to resolve feature.bundle from package.');
+  }
+
+  final bundleFile = File.fromUri(resolvedUri);
 
   if (!await bundleFile.exists()) {
-    throw Exception('❌ Brick bundle not found: ${bundleFile.path}');
+    throw Exception('❌ Brick bundle not found at ${bundleFile.path}');
   }
 
   final bytes = await bundleFile.readAsBytes();

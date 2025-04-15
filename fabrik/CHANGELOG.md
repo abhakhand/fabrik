@@ -65,3 +65,18 @@ Now you can run `fabrik generate feature auth` globally — no more path errors!
   ```dart
   MasonBundle.fromUniversalBundle
   ```
+
+## [0.1.6] - 2025-04-15
+
+### Bug Fixes
+
+- Fixed a critical issue where the CLI failed to locate the brick bundle (`feature.bundle`) when installed globally via pub, especially on **Windows systems**.
+- Replaced manual `File` path logic with Dart-native `Isolate.resolvePackageUri` to **resolve the bundle path correctly** in all environments.
+
+### Improvements
+
+- CLI is now **100% platform-independent** and works flawlessly on **macOS, Linux, and Windows** after global installation via `dart pub global activate fabrik`.
+
+### Internal
+
+- Bundle file path is now resolved via the Dart package system (`package:fabrik/src/bricks/feature.bundle`) which implicitly maps to the `lib/` folder.
