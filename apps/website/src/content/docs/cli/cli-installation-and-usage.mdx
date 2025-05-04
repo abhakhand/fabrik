@@ -1,0 +1,54 @@
+---
+title: Installation & Usage
+---
+
+Installing the Fabrik CLI is fast and straightforward — all you need is Dart installed on your system.
+
+## Installation
+
+You can install the CLI globally using the following command:
+
+```bash
+dart pub global activate fabrik
+```
+
+Once installed, you can verify it works by running:
+
+```bash
+fabrik --help
+```
+
+You should see a list of available commands like generate, and their supported options.
+
+## Usage
+
+To scaffold a new feature using the Fabrik CLI, run:
+
+```bash
+fabrik generate feature user_profile
+```
+
+This will create a new user_profile folder with the full DDD-inspired architecture, like this:
+
+```bash
+./user_profile/
+  |- blocs/
+    |- user_profile_bloc.dart
+    |- user_profile_event.dart
+    |- user_profile_state.dart
+  |- entities/
+    |- user_profile.dart
+  |- models/
+    |- user_profile_model.dart
+  |- usecases/
+    |- get_user_profile_usecase.dart
+  |- user_profile_repository.dart
+  |- user_profile_data_source.dart
+  |- user_profile.dart (barrel)
+```
+
+You can run this command multiple times for different features. Each feature is self-contained and follows the same clean structure.
+
+Tip: Use hyphenated feature names (like user-profile) if needed — Fabrik will automatically convert them to snake_case and PascalCase where required.
+
+You're now ready to start building features that scale with confidence.
