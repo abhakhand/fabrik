@@ -1,0 +1,66 @@
+---
+title: fabrik_snackbar
+description: A flexible, clean snackbar and toast UI component for Flutter.
+---
+
+> [![pub.dev](https://img.shields.io/pub/v/fabrik_snackbar.svg?label=pub)](https://pub.dev/packages/fabrik_snackbar)
+
+The **Fabrik Snackbar** package is a customizable, production-ready solution for showing snackbars and toasts in your Flutter app.
+It’s designed to be simple to use, highly configurable, and seamlessly integrated with your app’s theme.
+
+## Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  fabrik_snackbar: ^0.1.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+## Usage
+
+Import `fabrik_snackbar` in your Dart files:
+
+```dart
+import 'package:fabrik_snackbar/fabrik_snackbar.dart';
+```
+
+You're now ready to display your first snackbar or toast.
+
+### Show a Snackbar
+
+Use the prebuilt `FabrikSnackbar.success` method to display a success snackbar from anywhere in your app:
+
+```dart
+FabrikSnackbar.success(
+  context,
+  message: 'Profile updated!',
+);
+```
+
+More snackbar types are available to use.
+
+### Show a Toast
+
+Use the `FabrikToast.show` method to display a snackbar from anywhere in your app:
+
+```dart
+FabrikToast.show(
+  context,
+  message: 'Copied to Clipboard!',
+);
+```
+
+These come with built-in styles that you can override globally or per use.
+
+## Full API Reference
+
+For more advanced customization, theming, and configuration options, check out the github repository:
+
+[![View on GitHub](https://img.shields.io/badge/GitHub-View%20README-black?logo=github)](https://github.com/abhakhand/fabrik/blob/main/packages/fabrik_snackbar/README.md)

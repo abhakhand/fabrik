@@ -1,8 +1,6 @@
 # 🧱 Fabrik — Flutter Architecture Toolkit
 
-Fabrik is an open-source developer toolkit for Flutter projects.
-
-It helps teams generate clean, scalable, testable feature scaffolding using Domain-Driven Design principles.
+>**Fabrik is an open-source developer toolkit for Flutter projects.It helps teams generate clean, scalable, testable feature scaffolding using Domain-Driven Design principles.**
 
 ---
 

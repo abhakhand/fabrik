@@ -1,0 +1,48 @@
+/* Import JetBrains Mono from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
+:root {
+  /* Fabrik Blue Theme */
+  --sl-color-accent: #60a5fa;
+  --sl-color-accent-hover: #3b82f6;
+  --sl-color-text-accent: #60a5fa;
+  --sl-color-link: #60a5fa;
+
+  /* Font overrides */
+  --sl-font-family: "JetBrains Mono", monospace, "Inter", sans-serif;
+  --sl-font-heading: "JetBrains Mono", monospace, "Inter", sans-serif;
+}
+
+html.dark {
+  --sl-color-accent: #93c5fd;
+  --sl-color-accent-hover: #60a5fa;
+  --sl-color-text-accent: #93c5fd;
+  --sl-color-link: #93c5fd;
+}
+
+/* Enforce font globally */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+html,
+body,
+input,
+textarea,
+button,
+select {
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+code,
+pre,
+pre code {
+  font-family: "JetBrains Mono", monospace !important;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
