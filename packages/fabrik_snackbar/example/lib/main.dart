@@ -20,18 +20,124 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fabrik Snackbar')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            FabrikSnackbar.success(
-              context,
-              title: 'Registration Successfull!',
-              message:
-                  'You have been successfully registered to the Meditation Primer course.',
-            );
-          },
-          child: Text('Success'),
+      appBar: AppBar(title: const Text('Fabrik Snackbar & Toast')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Snackbars',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikSnackbar.success(
+                          context,
+                          title: 'Registration Successful!',
+                          message: 'You have been successfully registered.',
+                        ),
+                    child: const Text('Success'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikSnackbar.error(
+                          context,
+                          title: 'Error Occurred',
+                          message: 'Something went wrong, please try again.',
+                        ),
+                    child: const Text('Error'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikSnackbar.warning(
+                          context,
+                          title: 'Warning!',
+                          message: 'Your internet is unstable.',
+                        ),
+                    child: const Text('Warning'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikSnackbar.info(
+                          context,
+                          title: 'Heads Up!',
+                          message: 'New update is available.',
+                        ),
+                    child: const Text('Info'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikSnackbar.custom(
+                          context,
+                          config: FabrikSnackbarConfig(
+                            title: 'Custom Title',
+                            message: 'Custom background and style.',
+                            backgroundColor: Colors.purple,
+                            borderRadius: BorderRadius.circular(16),
+                            duration: const Duration(seconds: 2),
+                            actionButton: ElevatedButton(
+                              onPressed:
+                                  () => FabrikToast.show(
+                                    context,
+                                    message: 'Toast from Snackbar!',
+                                  ),
+                              child: const Text('Toast'),
+                            ),
+                          ),
+                        ),
+                    child: const Text('Custom'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Toasts',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikToast.show(
+                          context,
+                          message: 'Toast at Top!',
+                          position: FabrikToastPosition.top,
+                        ),
+                    child: const Text('Top'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikToast.show(
+                          context,
+                          message: 'Toast at Center!',
+                          position: FabrikToastPosition.center,
+                        ),
+                    child: const Text('Center'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        () => FabrikToast.show(
+                          context,
+                          message: 'Toast at Bottom!',
+                          position: FabrikToastPosition.bottom,
+                        ),
+                    child: const Text('Bottom'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

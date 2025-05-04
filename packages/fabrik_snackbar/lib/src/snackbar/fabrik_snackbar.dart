@@ -4,10 +4,14 @@ import 'fabrik_snackbar_config.dart';
 import 'fabrik_snackbar_helpers.dart';
 import 'fabrik_snackbar_defaults.dart';
 
+/// Provides a simple API to show custom, animated snackbars in your app.
+///
+/// Use [FabrikSnackbar.success], [FabrikSnackbar.error], etc. for prebuilt styles,
+/// or [FabrikSnackbar.custom] for full control with [FabrikSnackbarConfig].
 class FabrikSnackbar {
   FabrikSnackbar._();
 
-  /// Show a success snackbar
+  /// Show a green success snackbar.
   static Future<void> success(
     BuildContext context, {
     required String title,
@@ -51,7 +55,7 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show an error snackbar
+  /// Show a red error snackbar.
   static Future<void> error(
     BuildContext context, {
     required String title,
@@ -95,7 +99,7 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show an info snackbar
+  /// Show a blue informational snackbar.
   static Future<void> info(
     BuildContext context, {
     required String title,
@@ -139,7 +143,7 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show a warning snackbar
+  /// Show an orange warning snackbar.
   static Future<void> warning(
     BuildContext context, {
     required String title,
@@ -183,7 +187,7 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show a fully custom snackbar
+  /// Show a fully custom snackbar with full control.
   static Future<void> custom(
     BuildContext context, {
     required FabrikSnackbarConfig config,
@@ -191,6 +195,7 @@ class FabrikSnackbar {
     return _show(context, config: config);
   }
 
+  /// Internal method to build and insert the snackbar overlay.
   static Future<void> _show(
     BuildContext context, {
     required FabrikSnackbarConfig config,

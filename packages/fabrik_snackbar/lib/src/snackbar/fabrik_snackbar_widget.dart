@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:fabrik_snackbar/src/snackbar/fabrik_snackbar_defaults.dart';
-import 'package:fabrik_snackbar/src/snackbar/fabrik_snackbar_helpers.dart';
 import 'package:flutter/material.dart';
 import 'fabrik_snackbar_config.dart';
 
+/// Internal widget used by [FabrikSnackbar] to render the snackbar UI.
+///
+/// Handles animation, positioning, dismiss behavior, and styling.
 class FabrikSnackbarWidget extends StatefulWidget {
   const FabrikSnackbarWidget({
     super.key,
@@ -13,7 +15,10 @@ class FabrikSnackbarWidget extends StatefulWidget {
     required this.onDismissed,
   });
 
+  /// The configuration for how the snackbar should appear.
   final FabrikSnackbarConfig config;
+
+  /// Callback triggered when the snackbar is fully dismissed.
   final VoidCallback onDismissed;
 
   @override
@@ -26,6 +31,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
   late final Animation<Offset> _slideAnimation;
   Timer? _dismissTimer;
 
+  /// Determines the maxWidth based on config or screen width.
   double _resolveMaxWidth(BuildContext context) {
     return widget.config.maxWidth ??
         (MediaQuery.of(context).size.width > 600
@@ -39,28 +45,27 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
     );
 
     final beginOffset =
-        widget.config.position == FabrikSnackbarPosition.top
-            ? const Offset(0, -1)
-            : const Offset(0, 1);
+        widget.config.position.isTop ? const Offset(0, -1) : const Offset(0, 1);
 
     _slideAnimation = Tween<Offset>(
       begin: beginOffset,
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.ease));
 
     _controller.forward();
-
     _startAutoDismissTimer();
   }
 
+  /// Starts the timer for auto-dismissal.
   void _startAutoDismissTimer() {
     _dismissTimer = Timer(widget.config.duration, _dismiss);
   }
 
+  /// Dismisses the snackbar with animation.
   void _dismiss() {
     _controller.reverse().then((_) {
       widget.onDismissed();
@@ -81,6 +86,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
       child: FabrikSnackbarRow(config: widget.config),
     );
 
+    // If interaction is blocked, wrap content with blur/barrier.
     if (widget.config.blockBackgroundInteraction) {
       snackbarContent = Stack(
         children: [
@@ -98,15 +104,11 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
     }
 
     return SafeArea(
-      top:
-          widget.config.safeArea &&
-          widget.config.position == FabrikSnackbarPosition.top,
-      bottom:
-          widget.config.safeArea &&
-          widget.config.position == FabrikSnackbarPosition.bottom,
+      top: widget.config.safeArea && widget.config.position.isTop,
+      bottom: widget.config.safeArea && widget.config.position.isBottom,
       child: Align(
         alignment:
-            widget.config.position == FabrikSnackbarPosition.top
+            widget.config.position.isTop
                 ? Alignment.topCenter
                 : Alignment.bottomCenter,
         child: SlideTransition(
@@ -114,10 +116,9 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
           child: Dismissible(
             key: const Key('fabrik_snackbar_dismissible'),
             direction:
-                widget.config.dismissDirection ==
-                        FabrikSnackbarDismissDirection.horizontal
+                widget.config.dismissDirection.isHorizontal
                     ? DismissDirection.horizontal
-                    : widget.config.position == FabrikSnackbarPosition.top
+                    : widget.config.position.isTop
                     ? DismissDirection.up
                     : DismissDirection.down,
             onDismissed: (_) => _dismiss(),
@@ -126,7 +127,10 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                 constraints: BoxConstraints(
                   maxWidth: _resolveMaxWidth(context),
                 ),
-                margin: widget.config.margin,
+                margin:
+                    widget.config.style.isFloating
+                        ? widget.config.margin
+                        : EdgeInsets.zero,
                 padding: widget.config.padding,
                 decoration: BoxDecoration(
                   color:
@@ -135,7 +139,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                           : null,
                   gradient: widget.config.backgroundGradient,
                   borderRadius:
-                      widget.config.style == FabrikSnackbarStyle.floating
+                      widget.config.style.isFloating
                           ? widget.config.borderRadius
                           : BorderRadius.zero,
                 ),
@@ -149,6 +153,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
   }
 }
 
+/// Optional background blur used when blocking interactions.
 class FabrikSnackbarBackgroundBlur extends StatelessWidget {
   const FabrikSnackbarBackgroundBlur({
     super.key,
@@ -168,6 +173,7 @@ class FabrikSnackbarBackgroundBlur extends StatelessWidget {
   }
 }
 
+/// Makes the entire snackbar content tappable.
 class FabrikSnackbarContent extends StatelessWidget {
   const FabrikSnackbarContent({
     super.key,
@@ -184,6 +190,7 @@ class FabrikSnackbarContent extends StatelessWidget {
   }
 }
 
+/// Main layout row of the snackbar containing icon, content, and action.
 class FabrikSnackbarRow extends StatelessWidget {
   const FabrikSnackbarRow({super.key, required this.config});
 

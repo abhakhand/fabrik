@@ -1,39 +1,100 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# 🧱 fabrik_snackbar
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+A beautifully crafted, easy-to-use, and customizable Snackbar + Toast library for Flutter, built as part of the [Fabrik Toolkit](https://fabriktool.com).  
+It provides both **Snackbars** for rich feedback and **Toasts** for lightweight messages — all without boilerplate.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+---
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+## ✨ Features
 
-## Features
+- ✅ Modern, animated **Snackbars**
+- ✅ Minimal, centered **Toasts**
+- ✅ Custom icons, durations, and gradients
+- ✅ Prebuilt snackbar types: success, error, info, warning
+- ✅ Positioning support: top / bottom / center
+- ✅ Web and mobile compatibility
+- ✅ No extensions or init code needed
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+---
 
-## Getting started
+## 🚀 Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add to your `pubspec.yaml`:
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  fabrik_snackbar: ^0.1.0
 ```
 
-## Additional information
+---
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+## Example Usage
+
+### Prebuilt Snackbar
+
+```dart
+FabrikSnackbar.success(
+  context,
+  title: 'Success!',
+  message: 'You registered successfully.',
+);
+```
+
+Other types:  
+❌ `FabrikSnackbar.error`  
+ℹ️ `FabrikSnackbar.info`  
+⚠️ `FabrikSnackbar.warning`
+
+Customize if needed:
+
+```dart
+position: FabrikSnackbarPosition.top,
+maxWidth: 480,
+safeArea: false,
+barrierBlur: 4.0,
+```
+
+---
+
+### Custom Snackbar
+
+```dart
+FabrikSnackbar.custom(
+  context,
+  config: FabrikSnackbarConfig(
+    title: 'Custom Title',
+    message: 'You can customize everything.',
+    icon: Icon(Icons.star),
+    backgroundColor: Colors.purple,
+    borderRadius: BorderRadius.circular(16),
+    duration: Duration(seconds: 4),
+  ),
+);
+```
+
+---
+
+### Toast
+
+```dart
+FabrikToast.show(
+  context,
+  message: 'Copied to clipboard',
+);
+```
+
+Customize toast appearance:
+
+```dart
+position: FabrikToastPosition.top,
+backgroundColor: Colors.white,
+textColor: Colors.black,
+fontSize: 16,
+```
+
+---
+
+## 🔗 Contributing
+
+Want to contribute or report a bug?  
+Open an issue or PR — we’d love your help 💙

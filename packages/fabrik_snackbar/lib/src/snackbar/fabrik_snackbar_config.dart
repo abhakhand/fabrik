@@ -1,7 +1,11 @@
 import 'package:fabrik_snackbar/src/snackbar/fabrik_snackbar_helpers.dart';
 import 'package:flutter/material.dart';
 
-/// Defines the configuration for a [FabrikSnackbar].
+/// Configuration for displaying a [FabrikSnackbar].
+///
+/// This class allows you to customize the appearance, behavior,
+/// and layout of a snackbar including its position, content,
+/// styling, and dismissal behavior.
 class FabrikSnackbarConfig {
   const FabrikSnackbarConfig({
     this.title,
@@ -30,75 +34,76 @@ class FabrikSnackbarConfig {
     this.onDismissed,
   });
 
-  /// Title as simple String
+  /// Title text as a simple [String].
   final String? title;
 
-  /// Message as simple String
+  /// Message text as a simple [String].
   final String? message;
 
-  /// Alternative to [title] to allow rich text
+  /// Custom widget for title. Overrides [title] if provided.
   final Widget? titleText;
 
-  /// Alternative to [message] to allow rich text
+  /// Custom widget for message. Overrides [message] if provided.
   final Widget? messageText;
 
-  /// Optional leading icon
+  /// Optional leading icon shown before title/message.
   final Widget? icon;
 
-  /// Optional action button (eg. TextButton)
+  /// Optional action button (e.g. a [TextButton]) shown at the end.
   final Widget? actionButton;
 
-  /// How long the snackbar stays visible
+  /// How long the snackbar stays visible before auto-dismiss.
   final Duration duration;
 
-  /// Background color if no gradient is used
+  /// Background color of the snackbar (used if no [backgroundGradient] is provided).
   final Color backgroundColor;
 
-  /// Optional background gradient
+  /// Optional background gradient (overrides [backgroundColor] if set).
   final Gradient? backgroundGradient;
 
-  /// Corner radius
+  /// Corner radius of the snackbar (used when [style] is [FabrikSnackbarStyle.floating]).
   final BorderRadius borderRadius;
 
-  /// Margin around the snackbar
+  /// Outer margin around the snackbar.
   final EdgeInsets margin;
 
-  /// Padding inside the snackbar
+  /// Inner padding within the snackbar container.
   final EdgeInsets padding;
 
-  /// Max width (for web, tablet, desktop)
+  /// Maximum width of the snackbar (especially useful for larger screens).
   final double? maxWidth;
 
-  /// Whether the snackbar shows at the top or bottom
+  /// Whether to display the snackbar at the top or bottom of the screen.
   final FabrikSnackbarPosition position;
 
-  /// Floating (default) or Grounded to edge
+  /// Snackbar layout style — floating or grounded.
   final FabrikSnackbarStyle style;
 
-  /// How the snackbar can be dismissed
+  /// Direction in which the snackbar can be dismissed.
   final FabrikSnackbarDismissDirection dismissDirection;
 
-  /// Whether to respect SafeArea paddings
+  /// Whether to respect [SafeArea] paddings (e.g. avoid notches).
   final bool safeArea;
 
-  /// Shows a linear progress indicator if true
+  /// Whether to show a progress indicator below the message.
   final bool showProgressIndicator;
 
-  /// Progress indicator color
+  /// Color of the progress indicator (if shown).
   final Color? progressIndicatorColor;
 
-  /// If > 0, blurs the background behind the snackbar
+  /// Amount of background blur to apply behind the snackbar.
+  /// Set to 0 to disable blur.
   final double barrierBlur;
 
-  /// Background color behind snackbar if [blockBackgroundInteraction] is true
+  /// Background color behind the snackbar if [blockBackgroundInteraction] is true.
   final Color? barrierColor;
 
-  /// If true, blocks background taps
+  /// Whether to block user interaction with background widgets.
   final bool blockBackgroundInteraction;
 
-  /// Called when snackbar is tapped
+  /// Callback invoked when the snackbar is tapped.
   final VoidCallback? onTap;
 
-  /// Called when snackbar is dismissed
+  /// Callback invoked when the snackbar is dismissed.
   final VoidCallback? onDismissed;
 }
