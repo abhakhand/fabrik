@@ -2,18 +2,18 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-const locales = {
-  root: { label: "English", lang: "en" },
-  hi: { label: "हिन्दी", lang: "hi" },
-  es: { label: "Español", lang: "es" },
-};
+// const locales = {
+//   root: { label: "English", lang: "en" },
+//   hi: { label: "हिन्दी", lang: "hi" },
+//   es: { label: "Español", lang: "es" },
+// };
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [
     starlight({
       title: "Fabrik Docs",
-      locales: locales,
+      // locales,
       customCss: ["./src/styles/theme.css"],
       social: [
         {
@@ -26,7 +26,7 @@ export default defineConfig({
         {
           label: "Introduction",
           items: [
-            { label: "Fabrik", slug: "index" },
+            { label: "Fabrik", slug: "introduction" },
             {
               label: "Architecture",
               slug: "introduction/architecture",
