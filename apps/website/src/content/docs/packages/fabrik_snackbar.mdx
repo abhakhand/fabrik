@@ -23,8 +23,6 @@ Then run:
 flutter pub get
 ```
 
-## Usage
-
 Import `fabrik_snackbar` in your Dart files:
 
 ```dart
@@ -33,22 +31,67 @@ import 'package:fabrik_snackbar/fabrik_snackbar.dart';
 
 You're now ready to display your first snackbar or toast.
 
-### Show a Snackbar
+## Show a Snackbar
 
-Use the prebuilt `FabrikSnackbar.success` method to display a success snackbar from anywhere in your app:
+You can choose from prebuilt snackbar variants or create a custom snackbar.
+The prebuilt options cover most common use cases, eliminating the need to manually configure properties like snackbar color, icon color, and more.
+
+### Success
 
 ```dart
 FabrikSnackbar.success(
   context,
-  message: 'Profile updated!',
+  title: 'Registration Successful!',
+  message: 'You have been successfully registered.',
 );
 ```
 
-More snackbar types are available to use.
+### Error
 
-### Show a Toast
+```dart
+FabrikSnackbar.error(
+  context,
+  title: 'Error Occurred',
+  message: 'Something went wrong, please try again.',
+);
+```
 
-Use the `FabrikToast.show` method to display a snackbar from anywhere in your app:
+### Info
+
+```dart
+FabrikSnackbar.info(
+  context,
+  title: 'Heads Up!',
+  message: 'New update is available.',
+);
+```
+
+### Warning
+
+```dart
+FabrikSnackbar.warning(
+  context,
+  title: 'Warning!',
+  message: 'Your internet is unstable.',
+);
+```
+
+### Custom
+
+```dart
+FabrikSnackbar.custom(
+  context,
+  title: 'Custom Title',
+  message: 'Custom background and style.',
+  backgroundColor: Colors.purple,
+  borderRadius: BorderRadius.circular(16),
+  duration: const Duration(seconds: 2),
+);
+```
+
+## Show a Toast
+
+Use the `FabrikToast.show` method to display a toast from anywhere in your app:
 
 ```dart
 FabrikToast.show(
@@ -58,9 +101,3 @@ FabrikToast.show(
 ```
 
 These come with built-in styles that you can override globally or per use.
-
-## Full API Reference
-
-For more advanced customization, theming, and configuration options, check out the github repository:
-
-[![View on GitHub](https://img.shields.io/badge/GitHub-View%20README-black?logo=github)](https://github.com/abhakhand/fabrik/blob/main/packages/fabrik_snackbar/README.md)
