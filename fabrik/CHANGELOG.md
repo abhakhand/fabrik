@@ -52,7 +52,7 @@
 - Made it easier for contributors and team members to understand and extend the CLI codebase.
 - Improved onboarding clarity for developers using the CLI internally or externally.
 
-## [0.1.8] - 2025-05-05
+## [0.1.9] - 2025-05-05
 
 - Updated folder structure
 - Added failure for the feature
