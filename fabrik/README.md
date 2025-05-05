@@ -1,27 +1,28 @@
-# 🧱 Fabrik CLI
+# Fabrik CLI
 
 A powerful CLI tool to generate **scalable**, **testable**, and **clean Flutter feature scaffolding** using **DDD layered architecture**.
 
 Built with developer experience in mind — **generate complete feature folders in seconds**.
 
----
-
-## ✨ Features
-
-- ✅ Clean architecture structure (Model → Entity → DataSource → Repository → UseCase → BLoC)
-- ✅ Barrel files auto-generated
-- ✅ Supports `--output-dir` or `-o` to customize output
-- 🛠️ Optional flags like `--with-bloc`, `--minimal` coming soon
+**Learn more at → [fabriktoolkit.com](https://www.fabriktoolkit.com)**
 
 ---
 
-## 🚀 Installation
+## Key Features
+
+- Clean architecture structure (Model → Entity → DataSource → Repository → Usecase → BLoC → UI )
+- Supports `--output-dir` or `-o` to customize output
+- Optional flags like `--with-bloc`, `--minimal` coming soon
+
+---
+
+## Installation
 
 ```bash
 dart pub global activate fabrik
 ```
 
-### ⚙️ Set Up PATH (if needed)
+### Set Up PATH (if needed)
 
 After activating the CLI, make sure Dart’s global bin directory is in your system PATH.
 
@@ -42,9 +43,7 @@ C:\Users\<YourUsername>\AppData\Local\Pub\Cache\bin
 
 ---
 
-## 🧰 Usage
-
-### Generate a feature
+## Usage
 
 ```bash
 fabrik generate feature auth
@@ -63,17 +62,17 @@ This will create:
   |- auth.dart (barrel)
 ```
 
-### Generate into a specific folder
+### Generate feature into a specific folder
 
 ```bash
 fabrik generate feature auth -o app_auth
 ```
 
-➡️ Outputs to `./app_auth/`
+Outputs to `./app_auth/`
 
 ---
 
-## 📦 Output Example
+## Output Example
 
 Inside your feature folder:
 
@@ -101,7 +100,7 @@ All classes are stubbed with clean and minimal code — ready to be implemented.
 
 ---
 
-## 📚 Recommended Utility Packages
+## Recommended Utility Packages
 
 Fabrik scaffolds rely on some essential packages for clean architecture, error handling, and code generation.
 
@@ -109,12 +108,6 @@ To get started, add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  # Core utility package containing Failure & Status classes
-  flutter_core:
-    git:
-      url: https://github.com/abhakhand/flutter_core.git
-      ref: main
-
   # Functional programming support (Either, Option, etc.)
   dartz:
 
@@ -139,7 +132,7 @@ dev_dependencies:
   very_good_analysis:
 ```
 
-### ⚙️ Don’t forget to run
+### Don’t forget to run
 
 ```bash
 flutter pub get
@@ -148,14 +141,14 @@ dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-## 🔗 Related
+## Related
 
 - [mason](https://pub.dev/packages/mason) — powering this scaffolding magic.
-- [flutter_core](https://pub.dev/packages/flutter_core) — recommended base package for `Failure`, `Status`, and architecture utilities.
+- [bloc](https://pub.dev/packages/bloc) — the backbone of state management in Fabrik, ensuring predictable and scalable application state.
 
 ---
 
-## 📣 Coming Soon
+## Coming Soon
 
 - [ ] `--minimal` flag for model-only scaffolds
 - [ ] `fabrik init` to generate ApiClient, Config, and other architecture utils
