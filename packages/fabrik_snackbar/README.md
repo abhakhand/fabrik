@@ -3,7 +3,7 @@
 A beautifully crafted, easy-to-use, and customizable Snackbar + Toast library for Flutter.  
 It provides both **Snackbars** for rich feedback and **Toasts** for lightweight messages — all without boilerplate.
 
-**Learn more at → [fabriktoolkit.com](https://www.fabriktoolkit.com)**
+**Learn more at → [fabriktool.com](https://www.fabriktool.com)**
 
 ---
 
@@ -106,3 +106,4 @@ Open an issue or PR — we’d love your help 💙
 ## Maintainers
 
 - [Ashish Bhakhand](https://github.com/abhakhand)
+- [Pooja Prajapat](https://github.com/reachpooja)

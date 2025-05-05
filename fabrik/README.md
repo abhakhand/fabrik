@@ -4,7 +4,7 @@ A powerful CLI tool to generate **scalable**, **testable**, and **clean Flutter 
 
 Built with developer experience in mind — **generate complete feature folders in seconds**.
 
-**Learn more at → [fabriktoolkit.com](https://www.fabriktoolkit.com)**
+**Learn more at → [fabriktool.com](https://www.fabriktool.com)**
 
 ---
 
@@ -160,6 +160,7 @@ dart run build_runner build --delete-conflicting-outputs
 ## Maintainers
 
 - [Ashish Bhakhand](https://github.com/abhakhand)
+- [Pooja Prajapat](https://github.com/reachpooja)
 
 Inspired by real-world Flutter app architecture challenges.
 Open source. Open to contributions. Built for the Flutter community.

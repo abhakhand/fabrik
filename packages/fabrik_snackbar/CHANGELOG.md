@@ -12,3 +12,7 @@
 - Added icon in toast
 - Added border radius in toast
 - Updated documentation
+
+## 0.1.2
+
+- Fixed fabrik tool website link in docs

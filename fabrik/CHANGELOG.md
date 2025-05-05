@@ -57,3 +57,7 @@
 - Updated folder structure
 - Added failure for the feature
 - Updated readme
+
+## 0.1.10
+
+- Fixed the fabrik website link in docs

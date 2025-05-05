@@ -1,35 +1,23 @@
 # 🧱 Fabrik — Flutter Architecture Toolkit
 
->**Fabrik is an open-source developer toolkit for Flutter projects.It helps teams generate clean, scalable, testable feature scaffolding using Domain-Driven Design principles.**
+>**Fabrik is a complete Flutter toolkit designed to help you build scalable and maintainable apps with ease.**
 
 ---
 
-## 📦 What’s Inside
+## What’s Inside
 
 - `fabrik/` → Dart CLI package (published to pub.dev as `fabrik`)
-- `bricks/` → Mason bricks for features, models, entities, etc.
-- `docs/` → Architecture documentation (coming soon)
+- `apps/website/` → Fabrik docs & more
+- `packages/` → Awesome packages for flutter
 - `vscode_extension/` → VSCode plugin (coming soon)
 
 ---
 
-## 🚀 Quick Start (CLI)
-
-```bash
-dart pub global activate fabrik
-fabrik generate feature auth
-```
-
-👉 Full CLI usage: [`fabrik/README.md`](./fabrik/README.md)
+**Learn more at → [fabriktool.com](https://www.fabriktool.com)**
 
 ---
 
-## 🌍 Website
+## Maintainers
 
-Coming soon: [https://fabriktool.com](https://fabriktool.com)
-
----
-
-## 🙌 Contributing
-
-Want to help make Fabrik better? Check out the `CONTRIBUTING.md` (coming soon).
+- [Ashish Bhakhand](https://github.com/abhakhand)
+- [Pooja Prajapat](https://github.com/reachpooja)
