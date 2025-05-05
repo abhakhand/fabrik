@@ -20,7 +20,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fabrik Snackbar & Toast')),
+      appBar: AppBar(title: const Text('Fabrik Snackbars & Toasts')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Center(
@@ -131,6 +131,8 @@ class HomeView extends StatelessWidget {
                           context,
                           message: 'Toast at Bottom!',
                           position: FabrikToastPosition.bottom,
+                          icon: Icons.check_circle_outline_rounded,
+                          iconColor: Colors.green,
                         ),
                     child: const Text('Bottom'),
                   ),

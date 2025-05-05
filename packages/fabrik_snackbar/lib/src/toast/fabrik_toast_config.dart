@@ -6,19 +6,32 @@ import 'package:flutter/material.dart';
 class FabrikToastConfig {
   const FabrikToastConfig({
     required this.message,
+    this.position = FabrikToastPosition.bottom,
+    this.duration = const Duration(seconds: 2),
     this.backgroundColor = const Color(0xFF323232),
+    this.borderRadius = const BorderRadius.all(Radius.circular(100)),
     this.textColor = Colors.white,
     this.fontSize = 14.0,
-    this.duration = const Duration(seconds: 2),
-    this.position = FabrikToastPosition.bottom,
+    this.icon,
+    this.iconColor = Colors.white,
+    this.iconSize = 24.0,
     this.onTap,
   });
 
   /// The text shown in the toast.
   final String message;
 
+  /// Vertical placement of the toast on screen.
+  final FabrikToastPosition position;
+
+  /// Duration the toast remains visible before auto-dismissal.
+  final Duration duration;
+
   /// Background color of the toast container.
   final Color backgroundColor;
+
+  /// Border radius of the toast container.
+  final BorderRadius borderRadius;
 
   /// Text color used for the message.
   final Color textColor;
@@ -26,11 +39,14 @@ class FabrikToastConfig {
   /// Font size of the message text.
   final double fontSize;
 
-  /// Duration the toast remains visible before auto-dismissal.
-  final Duration duration;
+  /// Optional icon displayed alongside the message.
+  final IconData? icon;
 
-  /// Vertical placement of the toast on screen.
-  final FabrikToastPosition position;
+  /// Color of the icon.
+  final Color iconColor;
+
+  /// Size of the icon.
+  final double iconSize;
 
   /// Optional tap handler when the toast is tapped.
   final VoidCallback? onTap;

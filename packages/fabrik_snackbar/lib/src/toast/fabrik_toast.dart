@@ -19,11 +19,15 @@ class FabrikToast {
   static Future<void> show(
     BuildContext context, {
     required String message,
-    Duration duration = const Duration(seconds: 2),
     FabrikToastPosition position = FabrikToastPosition.bottom,
+    Duration duration = const Duration(seconds: 2),
     Color backgroundColor = const Color(0xFF323232),
+    BorderRadius borderRadius = const BorderRadius.all(Radius.circular(100)),
     Color textColor = Colors.white,
     double fontSize = 14.0,
+    IconData? icon,
+    Color iconColor = Colors.white,
+    double iconSize = 24.0,
     VoidCallback? onTap,
   }) async {
     final overlay = Overlay.of(context, rootOverlay: true);
@@ -37,8 +41,12 @@ class FabrikToast {
       duration: duration,
       position: position,
       backgroundColor: backgroundColor,
+      borderRadius: borderRadius,
       textColor: textColor,
       fontSize: fontSize,
+      icon: icon,
+      iconColor: iconColor,
+      iconSize: iconSize,
       onTap: onTap,
     );
 

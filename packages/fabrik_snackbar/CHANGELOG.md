@@ -6,3 +6,9 @@
 - `FabrikToast.show` with positioning and style customization
 - Overlay-based display system with animations
 - Defaults and config objects for advanced use cases
+
+## 0.1.1
+
+- Added icon in toast
+- Added border radius in toast
+- Updated documentation

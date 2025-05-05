@@ -1,23 +1,25 @@
-# 🧱 fabrik_snackbar
+# fabrik_snackbar
 
-A beautifully crafted, easy-to-use, and customizable Snackbar + Toast library for Flutter, built as part of the [Fabrik Toolkit](https://fabriktool.com).  
+A beautifully crafted, easy-to-use, and customizable Snackbar + Toast library for Flutter.  
 It provides both **Snackbars** for rich feedback and **Toasts** for lightweight messages — all without boilerplate.
 
----
-
-## ✨ Features
-
-- ✅ Modern, animated **Snackbars**
-- ✅ Minimal, centered **Toasts**
-- ✅ Custom icons, durations, and gradients
-- ✅ Prebuilt snackbar types: success, error, info, warning
-- ✅ Positioning support: top / bottom / center
-- ✅ Web and mobile compatibility
-- ✅ No extensions or init code needed
+**Learn more at → [fabriktoolkit.com](https://www.fabriktoolkit.com)**
 
 ---
 
-## 🚀 Installation
+## Features
+
+- Modern, animated **Snackbars**
+- Minimal, centered **Toasts**
+- Custom icons, durations, and gradients
+- Prebuilt snackbar types: success, error, info, warning
+- Positioning support: top / bottom / center
+- Web and mobile compatibility
+- No extensions or init code needed
+
+---
+
+## Installation
 
 Add to your `pubspec.yaml`:
 
@@ -28,7 +30,7 @@ dependencies:
 
 ---
 
-## Example Usage
+## Usage
 
 ### Prebuilt Snackbar
 
@@ -40,7 +42,7 @@ FabrikSnackbar.success(
 );
 ```
 
-Other types:  
+**Other types:**  
 ❌ `FabrikSnackbar.error`  
 ℹ️ `FabrikSnackbar.info`  
 ⚠️ `FabrikSnackbar.warning`
@@ -94,7 +96,13 @@ fontSize: 16,
 
 ---
 
-## 🔗 Contributing
+## Contributing
 
 Want to contribute or report a bug?  
 Open an issue or PR — we’d love your help 💙
+
+---
+
+## Maintainers
+
+- [Ashish Bhakhand](https://github.com/abhakhand)
