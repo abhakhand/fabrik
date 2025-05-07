@@ -123,6 +123,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                     : DismissDirection.down,
             onDismissed: (_) => _dismiss(),
             child: Material(
+              color: Colors.transparent,
               child: Container(
                 constraints: BoxConstraints(
                   maxWidth: _resolveMaxWidth(context),

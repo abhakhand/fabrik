@@ -1,6 +1,6 @@
 name: fabrik_snackbar
 description: "Beautifully crafted Snackbar + Toast package from the Fabrik Toolkit. Easy to use, highly customizable, works on all platforms."
-version: 0.1.2
+version: 0.1.3
 homepage: https://fabriktool.com
 repository: https://github.com/abhakhand/fabrik/tree/feat/fabrik_snackbar/packages/fabrik_snackbar
 

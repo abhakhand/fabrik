@@ -16,3 +16,7 @@
 ## 0.1.2
 
 - Fixed fabrik tool website link in docs
+
+## 0.1.3
+
+- Changed Snackbar's Material color to transparent
