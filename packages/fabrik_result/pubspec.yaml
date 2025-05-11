@@ -1,8 +1,8 @@
 name: fabrik_result
 description: "A lightweight toolkit for functional-style types like Either, built for clarity and real-world use."
-version: 0.1.0
+version: 0.1.1
 homepage: https://fabriktool.com
-repository: https://github.com/abhakhand/fabrik/tree/feat/fabrik_result/packages/fabrik_result
+repository: https://github.com/abhakhand/fabrik/tree/main/packages/fabrik_result
 
 environment:
   sdk: ^3.7.2
