@@ -20,3 +20,7 @@
 ## 0.1.3
 
 - Changed Snackbar's Material color to transparent
+
+## 0.1.4
+
+- updated repository url
