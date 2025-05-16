@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      fabrik_model_generator|fabrik_model:
+        generate_for:
+          include:
+            - lib/**.dart
