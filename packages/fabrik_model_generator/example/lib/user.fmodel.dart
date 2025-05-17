@@ -6,32 +6,28 @@ part of 'user.dart';
 // FabrikModelGenerator
 // **************************************************************************
 
-abstract class _$UserFromJson {
-  static User fromJson(Map<String, dynamic> json) {
-    return User(
-      email: json['email_address'] as String,
-      name: json['name'] as String,
-      age: json['age'] as int,
-    );
-  }
+User _$UserFromJson(Map<String, dynamic> json) {
+  return User(
+    email: json['email_address'] as String? ?? '',
+    name: json['name'] as String? ?? '',
+    age: json['age'] as int? ?? 0,
+  );
 }
 
-abstract class _$UserToJson {
-  static Map<String, dynamic> toJson(User instance) {
-    return {
-      'email_address': instance.email,
-      'name': instance.name,
-      'age': instance.age,
-    };
-  }
+Map<String, dynamic> _$UserToJson(User instance) {
+  return <String, dynamic>{
+    'email_address': instance.email,
+    'name': instance.name,
+    'age': instance.age,
+  };
 }
 
-abstract class _$UserCopyWith {
+class _$UserCopyWith {
   User copyWith(
     User instance, {
-    String email,
-    String name,
-    int age,
+    String? email,
+    String? name,
+    int? age,
   }) {
     return User(
       email: email ?? instance.email,
@@ -41,12 +37,13 @@ abstract class _$UserCopyWith {
   }
 }
 
-abstract class _$UserEquality {
+class _$UserEquality {
   bool operator ==(
-    User a,
-    User b,
+    Object a,
+    Object b,
   ) {
     if (identical(a, b)) return true;
+    if (a is! User || b is! User) return false;
     return a.email == b.email && a.name == b.name && a.age == b.age && true;
   }
 

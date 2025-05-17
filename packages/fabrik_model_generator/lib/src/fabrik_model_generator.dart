@@ -62,88 +62,89 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
         .toList();
   }
 
-  Class _generateFromJson(ClassElement classElement, List<_Field> fields) {
+  Spec _generateFromJson(ClassElement classElement, List<_Field> fields) {
     final fromJsonFields = fields.where((f) => f.includeFromJson);
 
-    return Class(
+    return Method(
       (b) =>
           b
             ..name = '_\$${classElement.name}FromJson'
-            ..abstract = true
-            ..methods.add(
-              Method(
+            ..returns = refer(classElement.name)
+            ..requiredParameters.add(
+              Parameter(
                 (b) =>
                     b
-                      ..name = 'fromJson'
-                      ..static = true
-                      ..returns = refer(classElement.name)
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = 'json'
-                                ..type = refer('Map<String, dynamic>'),
-                        ),
-                      )
-                      ..body = Block(
-                        (b) =>
-                            b
-                              ..statements.addAll([
-                                Code('return ${classElement.name}('),
-                                ...fromJsonFields.map((field) {
-                                  final jsonName = field.jsonName ?? field.name;
-                                  return Code(
-                                    '  ${field.name}: json[\'$jsonName\'] as ${field.type.getDisplayString()},',
-                                  );
-                                }),
-                                Code(');'),
-                              ]),
-                      ),
+                      ..name = 'json'
+                      ..type = refer('Map<String, dynamic>'),
               ),
+            )
+            ..body = Block(
+              (b) =>
+                  b
+                    ..statements.addAll([
+                      Code('return ${classElement.name}('),
+                      ...fromJsonFields.map((field) {
+                        final jsonName = field.jsonName ?? field.name;
+                        final type = field.type.getDisplayString();
+                        final defaultValue = _getDefaultValueForType(type);
+                        return Code(
+                          '  ${field.name}: json[\'$jsonName\'] as $type? ?? $defaultValue,',
+                        );
+                      }),
+                      Code(');'),
+                    ]),
             ),
     );
   }
 
-  Class _generateToJson(ClassElement classElement, List<_Field> fields) {
+  Spec _generateToJson(ClassElement classElement, List<_Field> fields) {
     final toJsonFields = fields.where((f) => f.includeToJson);
 
-    return Class(
+    return Method(
       (b) =>
           b
             ..name = '_\$${classElement.name}ToJson'
-            ..abstract = true
-            ..methods.add(
-              Method(
+            ..returns = refer('Map<String, dynamic>')
+            ..requiredParameters.add(
+              Parameter(
                 (b) =>
                     b
-                      ..name = 'toJson'
-                      ..static = true
-                      ..returns = refer('Map<String, dynamic>')
-                      ..requiredParameters.add(
-                        Parameter(
-                          (b) =>
-                              b
-                                ..name = 'instance'
-                                ..type = refer(classElement.name),
-                        ),
-                      )
-                      ..body = Block(
-                        (b) =>
-                            b
-                              ..statements.addAll([
-                                Code('return {'),
-                                ...toJsonFields.map((field) {
-                                  final jsonName = field.jsonName ?? field.name;
-                                  return Code(
-                                    '  \'$jsonName\': instance.${field.name},',
-                                  );
-                                }),
-                                Code('};'),
-                              ]),
-                      ),
+                      ..name = 'instance'
+                      ..type = refer(classElement.name),
               ),
+            )
+            ..body = Block(
+              (b) =>
+                  b
+                    ..statements.addAll([
+                      Code('return <String, dynamic>{'),
+                      ...toJsonFields.map((field) {
+                        final jsonName = field.jsonName ?? field.name;
+                        return Code('  \'$jsonName\': instance.${field.name},');
+                      }),
+                      Code('};'),
+                    ]),
             ),
     );
+  }
+
+  String _getDefaultValueForType(String type) {
+    switch (type) {
+      case 'String':
+        return "''";
+      case 'int':
+        return '0';
+      case 'double':
+        return '0.0';
+      case 'bool':
+        return 'false';
+      case 'List':
+        return '[]';
+      case 'Map':
+        return '{}';
+      default:
+        return 'null';
+    }
   }
 
   Class _generateCopyWith(ClassElement classElement, List<_Field> fields) {
@@ -151,7 +152,6 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
       (b) =>
           b
             ..name = '_\$${classElement.name}CopyWith'
-            ..abstract = true
             ..methods.add(
               Method(
                 (b) =>
@@ -172,7 +172,9 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
                             (b) =>
                                 b
                                   ..name = field.name
-                                  ..type = refer(field.type.getDisplayString())
+                                  ..type = refer(
+                                    '${field.type.getDisplayString()}?',
+                                  )
                                   ..named = true,
                           ),
                         ),
@@ -200,7 +202,6 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
       (b) =>
           b
             ..name = '_\$${classElement.name}Equality'
-            ..abstract = true
             ..methods.addAll([
               Method(
                 (b) =>
@@ -212,13 +213,13 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
                           (b) =>
                               b
                                 ..name = 'a'
-                                ..type = refer(classElement.name),
+                                ..type = refer('Object'),
                         ),
                         Parameter(
                           (b) =>
                               b
                                 ..name = 'b'
-                                ..type = refer(classElement.name),
+                                ..type = refer('Object'),
                         ),
                       ])
                       ..body = Block(
@@ -226,6 +227,9 @@ class FabrikModelGenerator extends GeneratorForAnnotation<FabrikModel> {
                             b
                               ..statements.addAll([
                                 Code('if (identical(a, b)) return true;'),
+                                Code(
+                                  'if (a is! ${classElement.name} || b is! ${classElement.name}) return false;',
+                                ),
                                 Code('return '),
                                 ...fields.map(
                                   (field) => Code(
