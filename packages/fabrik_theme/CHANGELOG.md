@@ -1,4 +1,4 @@
-## 0.1.0
+## 0.0.1
 
 - Color tokens (`FabrikColors`)
 - Radius tokens (`FabrikRadius`)
