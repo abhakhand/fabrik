@@ -3,7 +3,7 @@ import 'package:fabrik_model/fabrik_model.dart';
 part 'user.fmodel.dart';
 
 @FabrikModel()
-class User {
+class User extends BaseFabrikModel {
   const User({required this.email, required this.name, required this.age});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

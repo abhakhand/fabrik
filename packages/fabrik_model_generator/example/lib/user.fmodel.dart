@@ -22,36 +22,40 @@ Map<String, dynamic> _$UserToJson(User instance) {
   };
 }
 
-class _$UserCopyWith {
-  User copyWith(
-    User instance, {
+class _$UserImpl extends User {
+  _$UserImpl(
+    this.email,
+    this.name,
+    this.age,
+  );
+
+  User copyWith({
     String? email,
     String? name,
     int? age,
   }) {
     return User(
-      email: email ?? instance.email,
-      name: name ?? instance.name,
-      age: age ?? instance.age,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      age: age ?? this.age,
     );
   }
-}
 
-class _$UserEquality {
-  bool operator ==(
-    Object a,
-    Object b,
-  ) {
-    if (identical(a, b)) return true;
-    if (a is! User || b is! User) return false;
-    return a.email == b.email && a.name == b.name && a.age == b.age && true;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is User &&
+        other.email == email &&
+        other.name == name &&
+        other.age == age &&
+        true;
   }
 
-  int hashCode(User instance) {
-    return Object.hash(
-      instance.email,
-      instance.name,
-      instance.age,
-    );
+  int hashCode() {
+    return email.hashCode ^ name.hashCode ^ age.hashCode;
+  }
+
+  String toString() {
+    return 'User(email: $email, name: $name, age: $age)';
   }
 }
