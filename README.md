@@ -20,4 +20,3 @@
 ## Maintainers
 
 - [Ashish Bhakhand](https://github.com/abhakhand)
-- [Pooja Prajapat](https://github.com/reachpooja)
