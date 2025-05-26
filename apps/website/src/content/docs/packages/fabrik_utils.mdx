@@ -1,0 +1,103 @@
+---
+title: fabrik_utils
+description: A lightweight utility package with real-world-first helpers and extensions for Flutter apps.
+---
+
+> [![pub.dev](https://img.shields.io/pub/v/fabrik_utils.svg?label=pub)](https://pub.dev/packages/fabrik_utils)
+
+`fabrik_utils` is a lightweight, real-world-first utility package for Flutter apps.  
+It includes essential extensions, helpers, and utilities used across real products — crafted to improve DX and save development time.
+
+---
+
+## Features
+
+- 🗓 DateTime extensions (`isToday`, `timeAgo`, `weekdayName`, etc.)
+- 🔠 String casing helpers (`camelCase`, `PascalCase`, `titleCase`, etc.)
+- 🧼 String validation and formatting (`isNullOrBlank`, `capitalizeFirst`)
+- ⏱ Duration formatting and splitting
+- 🔁 Debounce & Throttle classes with status stream support
+- 🔽 Scroll helpers (`isApproachingScrollEnd`)
+- 🔢 Tuple-style time splitting for seconds
+
+---
+
+## Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  fabrik_utils: ^0.1.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Import it in your Dart files:
+
+```dart
+import 'package:fabrik_utils/fabrik_utils.dart';
+```
+
+---
+
+## Examples
+
+### String Casing
+
+```dart
+// "Hello World"
+'hello world'.titleCase
+
+// "fabrikUtils"
+'FABRIK Utils'.camelCase
+
+// "this_is_a_test"
+'this is a test'.snakeCase
+
+// "text-case"
+'TextCase'.kebabCase
+```
+
+### DateTime Extensions
+
+```dart
+// true
+DateTime.now().isToday
+
+// "just now"
+DateTime.now().timeAgo
+
+// "September 7, 2025 2:30 PM"
+someDate.fullDateTime
+```
+
+### Duration Helpers
+
+```dart
+// "01:01:05"
+formatDuration(Duration(seconds: 3665))
+
+// (hours: "01", minutes: "01", seconds: "05")
+splitDuration(3665)
+```
+
+### Debounce & Throttle
+
+```dart
+final throttle = Throttle<void>(duration: Duration(seconds: 1));
+throttle(() => print('Only once per second'));
+
+final debounce = Debounce<void>(duration: Duration(milliseconds: 300));
+debounce(() => print('Triggered after pause'));
+```
+
+### Scroll Helpers
+
+```dart
+isApproachingScrollEnd(scrollController)
+```

@@ -1,0 +1,146 @@
+---
+title: fabrik_forms
+description: A clean, UI-agnostic form state and validation system for Flutter.
+---
+
+> [![pub.dev](https://img.shields.io/pub/v/fabrik_forms.svg?label=pub)](https://pub.dev/packages/fabrik_forms)
+
+The **fabrik_forms** package is a clean, testable, and UI-agnostic form state management system for Flutter.
+
+It's designed to support both reactive patterns and integration with any state management solution like BLoC, Riverpod, or Provider.
+
+## Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  fabrik_forms: ^0.1.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Import `fabrik_forms` in your Dart files:
+
+```dart
+import 'package:fabrik_forms/fabrik_forms.dart';
+```
+
+---
+
+## Getting Started
+
+Create a form with fields and validators:
+
+```dart
+final formNotifier = FabrikFormNotifier<String>(
+  FabrikForm({
+    'email': FabrikField<String>(
+      value: '',
+      validators: [EmailValidator()],
+    ),
+    'password': FabrikField<String>(
+      value: '',
+      validators: [
+        PasswordValidator(
+          requireDigit: true,
+          requireSpecialChar: true,
+        ),
+      ],
+    ),
+  }),
+);
+```
+
+Wrap your UI with `FabrikFormBuilder`:
+
+```dart
+FabrikFormBuilder<String>(
+  formNotifier: formNotifier,
+  builder: (context, form, get) {
+    final email = get<String>('email');
+    final password = get<String>('password');
+
+    return Column(
+      children: [
+        TextFormField(
+          onChanged: (val) => formNotifier.update('email', val),
+          decoration: InputDecoration(
+            labelText: 'Email',
+            errorText: email.visibleError,
+          ),
+        ),
+        TextFormField(
+          onChanged: (val) => formNotifier.update('password', val),
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'Password',
+            errorText: password.visibleError,
+          ),
+        ),
+        ElevatedButton(
+          onPressed: form.isValid ? () => submit(form.values) : null,
+          child: const Text('Sign In'),
+        ),
+      ],
+    );
+  },
+);
+```
+
+---
+
+## Built-in Validators
+
+### RequiredValidator
+
+```dart
+RequiredValidator(message: 'This field is required');
+```
+
+### MinLengthValidator
+
+```dart
+MinLengthValidator(min: 6, message: 'Too short');
+```
+
+### MaxLengthValidator
+
+```dart
+MaxLengthValidator(max: 20, message: 'Too long');
+```
+
+### EmailValidator
+
+```dart
+EmailValidator(
+  isRequired: true,
+  requiredMessage: 'Required',
+  invalidMessage: 'Invalid email',
+);
+```
+
+### PasswordValidator
+
+```dart
+PasswordValidator(
+  requireDigit: true,
+  requireUppercase: true,
+  requireSpecialChar: true,
+);
+```
+
+---
+
+## Features
+
+- ✅ Field-level validation with reusable validators
+- ✅ Form-level state with `.isValid`, `.isDirty`, `.isTouched`, `.values`, `.errors`
+- ✅ Notifier-based reactivity
+- ✅ Builder widget for clean UI
+- ✅ Works with or without a widget tree
+- ✅ Fully testable without Flutter widgets

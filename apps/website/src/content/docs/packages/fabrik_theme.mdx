@@ -1,0 +1,82 @@
+---
+title: fabrik_theme
+description: A powerful theming system for the Fabrik Flutter ecosystem.
+---
+
+> [![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg?label=pub)](https://pub.dev/packages/fabrik_theme)
+
+The **Fabrik Theme** package provides a consistent design system with typography, spacing, colors, and theming configuration to help you maintain visual consistency across your Flutter apps.
+
+## Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  fabrik_theme: ^0.0.1
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Import `fabrik_theme` in your Dart files:
+
+```dart
+import 'package:fabrik_theme/fabrik_theme.dart';
+```
+
+## Getting Started
+
+Apply the theme in `MaterialApp`:
+
+```dart
+MaterialApp(
+  themeMode: ThemeMode.system,
+  theme: FabrikThemeBuilder.light(),
+  darkTheme: FabrikThemeBuilder.dark(),
+  home: HomePage(),
+);
+```
+
+Customize the `FabrikTheme`:
+
+```dart
+final colors = FabrikColors.custom(
+  lightPrimary: Colors.green,
+  darkPrimary: Colors.greenAccent,
+);
+
+return MaterialApp(
+  themeMode: ThemeMode.system,
+  theme: FabrikThemeBuilder.light(fontFamily: 'Roboto', colors: colors),
+  darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Roboto', colors: colors),
+  home: const HomePage(),
+);
+```
+
+## Access Theme in Widgets
+
+You can access the theme anywhere in the widget tree:
+
+```dart
+final theme = FabrikTheme.of(context);
+
+Text(
+  'Fabrik Typography.',
+  theme.typography.bodyLarge.copyWith(
+    color: theme.colors.primary,
+  ),
+),
+```
+
+## Use Tokens
+
+Access token values anywhere in your app:
+
+```dart
+FabrikSpacing.x4
+FabrikRadius.r4
+```

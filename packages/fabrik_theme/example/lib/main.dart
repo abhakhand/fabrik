@@ -10,11 +10,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = FabrikColors.custom(
+      lightPrimary: Colors.green,
+      darkPrimary: Colors.greenAccent,
+    );
+
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,
-      theme: FabrikThemeBuilder.light(),
-      darkTheme: FabrikThemeBuilder.dark(),
+      theme: FabrikThemeBuilder.light(fontFamily: 'Roboto', colors: colors),
+      darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Roboto', colors: colors),
       home: const HomePage(),
     );
   }
