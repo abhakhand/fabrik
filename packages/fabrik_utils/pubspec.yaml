@@ -1,7 +1,7 @@
 name: fabrik_utils
 description: "A lightweight utility toolkit for real-world Flutter apps. Includes DateTime and String extensions, debounce/throttle, and more."
 version: 0.0.1
-homepage:homepage: https://fabriktool.com
+homepage: https://fabriktool.com
 repository: https://github.com/abhakhand/fabrik/tree/main/packages/fabrik_utils
 
 environment:
