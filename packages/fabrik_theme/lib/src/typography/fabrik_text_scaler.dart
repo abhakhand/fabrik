@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 /// A utility for scaling text responsively using Flutter's [TextScaler].
 ///
 /// Use this to apply responsive text scaling in a clean and consistent way
-/// across breakpoints.
+/// across layouts.
 ///
 /// Example:
 /// ```dart
@@ -17,22 +17,19 @@ import 'package:flutter/widgets.dart';
 class FabrikTextScaler {
   const FabrikTextScaler._();
 
-  /// Returns a [TextScaler.linear] with optional breakpoint-specific factors.
+  /// Returns a [TextScaler.linear] with optional layout-specific factors.
   ///
   /// If no custom scale values are provided, defaults are:
   /// - Mobile: 1.0
-  /// - Tablet: 1.1
   /// - Desktop: 1.2
   static TextScaler linear(
     BuildContext context, {
     double mobile = 1.0,
-    double? tablet,
     double? desktop,
   }) {
     final scale = FabrikResponsive.value(
       context,
       mobile: mobile,
-      tablet: tablet ?? 1.1,
       desktop: desktop ?? 1.2,
     );
 

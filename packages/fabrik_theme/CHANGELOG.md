@@ -8,3 +8,8 @@
 - Responsive utilities (`FabrikResponsive`)
 - Text scaling utility (`textScaler`)
 - Theme builder (`FabrikThemeBuilder`) and default themes
+
+## 0.1.0
+
+- Changed breakpoints to layout
+- Update responsive logic to check isMobile and isDesktop

@@ -91,8 +91,7 @@ class FabrikPaddings {
   /// Responsive content padding for use in screens, cards, dialogs, etc.
   ///
   /// Returns symmetric horizontal/vertical padding based on screen size:
-  /// - **Small phones:** H:16 (x4), V:12 (x3)
-  /// - **Phones/Tablets:** H:20 (x5), V:16 (x4)
+  /// - **Mobile/Tablet:** H:16 (x4), V:12 (x3)
   /// - **Desktop/Web:** H:24 (x6), V:20 (x5)
   static EdgeInsets contentPadding(BuildContext context) {
     return FabrikResponsive.value(
@@ -100,10 +99,6 @@ class FabrikPaddings {
       mobile: const EdgeInsets.symmetric(
         horizontal: FabrikSpacing.x4,
         vertical: FabrikSpacing.x3,
-      ),
-      tablet: const EdgeInsets.symmetric(
-        horizontal: FabrikSpacing.x5,
-        vertical: FabrikSpacing.x4,
       ),
       desktop: const EdgeInsets.symmetric(
         horizontal: FabrikSpacing.x6,
@@ -114,7 +109,7 @@ class FabrikPaddings {
 
   /// Custom responsive padding defined by the caller.
   ///
-  /// Use when you want different padding values for each breakpoint.
+  /// Use when you want different padding values for each layout.
   ///
   /// Example:
   /// ```dart
@@ -122,7 +117,6 @@ class FabrikPaddings {
   ///   padding: FabrikPaddings.custom(
   ///     context,
   ///     mobile: EdgeInsets.all(12),
-  ///     tablet: EdgeInsets.symmetric(horizontal: 20),
   ///     desktop: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
   ///   ),
   /// );
@@ -130,14 +124,8 @@ class FabrikPaddings {
   static EdgeInsets custom(
     BuildContext context, {
     required EdgeInsets mobile,
-    EdgeInsets? tablet,
-    EdgeInsets? desktop,
+    required EdgeInsets desktop,
   }) {
-    return FabrikResponsive.value(
-      context,
-      mobile: mobile,
-      tablet: tablet,
-      desktop: desktop,
-    );
+    return FabrikResponsive.value(context, mobile: mobile, desktop: desktop);
   }
 }

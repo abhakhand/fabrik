@@ -46,19 +46,19 @@ class FabrikIconSizes {
   ///
   /// Typically for secondary icons or tight UIs.
   static double small(BuildContext context) =>
-      FabrikResponsive.value(context, mobile: x4, tablet: x4, desktop: x5);
+      FabrikResponsive.value(context, mobile: x4, desktop: x5);
 
   /// Responsive regular icon size.
   ///
   /// Default size for most interactive icons.
   static double regular(BuildContext context) =>
-      FabrikResponsive.value(context, mobile: x6, tablet: x6, desktop: x7);
+      FabrikResponsive.value(context, mobile: x6, desktop: x7);
 
   /// Responsive large icon size.
   ///
   /// For hero icons or larger sections.
   static double large(BuildContext context) =>
-      FabrikResponsive.value(context, mobile: x7, tablet: x7, desktop: x8);
+      FabrikResponsive.value(context, mobile: x7, desktop: x8);
 
   /// Custom responsive icon size defined by the caller.
   ///
@@ -69,7 +69,6 @@ class FabrikIconSizes {
   ///   size: FabrikIconSizes.custom(
   ///     context,
   ///     mobile: 20,
-  ///     tablet: 28,
   ///     desktop: 32,
   ///   ),
   /// );
@@ -77,14 +76,8 @@ class FabrikIconSizes {
   static double custom(
     BuildContext context, {
     required double mobile,
-    double? tablet,
-    double? desktop,
+    required double desktop,
   }) {
-    return FabrikResponsive.value(
-      context,
-      mobile: mobile,
-      tablet: tablet,
-      desktop: desktop,
-    );
+    return FabrikResponsive.value(context, mobile: mobile, desktop: desktop);
   }
 }

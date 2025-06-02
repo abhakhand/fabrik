@@ -9,7 +9,7 @@
 
 - 🎨 **Design Tokens** for colors, spacing, radius, elevation, and icon sizes
 - 🔠 **Typography system** with responsive scaling and theme aware colors
-- 📱 **Responsive utilities** to adapt UI across breakpoints
+- 📱 **Responsive utilities** to adapt UI across layouts (Mobile/Desktop)
 - 🎯 **Theme builder** for generating a `ThemeData` using Fabrik tokens
 
 ---
@@ -70,10 +70,10 @@ Text(
 
 ## 📱 Responsive Helpers
 
-Use breakpoints to build adaptive layouts:
+Use layouts to build adaptive layouts:
 
 ```dart
-final isTablet = FabrikResponsive.isTablet(context);
+final isMobile = FabrikResponsive.isMobile(context);
 ```
 
 ---
