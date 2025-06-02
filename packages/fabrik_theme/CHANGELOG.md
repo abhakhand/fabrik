@@ -13,3 +13,8 @@
 
 - Changed breakpoints to layout
 - Update responsive logic to check isMobile and isDesktop
+
+## 0.1.1
+
+- Added tablet layout
+- Refined responsive logic based on platform and width

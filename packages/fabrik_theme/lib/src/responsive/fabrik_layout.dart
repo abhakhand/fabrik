@@ -1,35 +1,22 @@
 /// Defines the responsive layout buckets used in the Fabrik UI system.
 ///
 /// Layouts are classified based on **perceived UI behavior**, not just screen size.
-/// The goal is to reflect how users expect the interface to behave in different
-/// device and orientation contexts.
+/// This system supports three levels:
+/// - `mobile`: for compact vertical layouts
+/// - `tablet`: for medium-sized screens (e.g. tablets or wide phones)
+/// - `desktop`: for wide layouts with multiple columns or sidebars
 ///
-/// A screen is considered:
+/// ### Platform-specific rules:
 ///
-/// - [FabrikLayout.desktop] when it has enough width to comfortably support
-///   multi-column layouts, sidebars, and other wide-screen UI behaviors.
-///
-/// - [FabrikLayout.mobile] when it is narrow, vertical, or otherwise better suited
-///   to stacked, single-column layouts.
-///
-/// The classification rules are:
-/// - On **desktop platforms** (macOS, Windows, Linux) or **web**:
-///   - `desktop` layout is used if width ≥ 700
-///   - `mobile` layout is used if width < 700
+/// - On **desktop platforms** (macOS, Windows, Linux):
+///   - `desktop` if width ≥ 1024
+///   - `tablet` if width ≥ 700 and < 1024
+///   - `mobile` if width < 700
 ///
 /// - On **mobile platforms** (Android, iOS):
-///   - If in **landscape** and width ≥ 740 → `desktop`
-///   - Otherwise → `mobile`
-enum FabrikLayout {
-  /// For narrow or vertically-oriented screens, such as:
-  /// - Phones in portrait
-  /// - Tablets in portrait
-  /// - Very small windows on desktop
-  mobile,
-
-  /// For wide-screen layouts that support split views and desktop-like UI, such as:
-  /// - Laptops and desktops
-  /// - Tablets in landscape
-  /// - Phones in landscape (if width ≥ 740)
-  desktop,
-}
+///   - If in **portrait**, always `mobile`
+///   - If in **landscape**:
+///     - `desktop` if width ≥ 1024
+///     - `tablet` if width ≥ 740 and < 1024
+///     - `mobile` otherwise
+enum FabrikLayout { mobile, tablet, desktop }
