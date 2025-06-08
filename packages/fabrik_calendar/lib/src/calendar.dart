@@ -1,6 +1,7 @@
-import 'package:fabrik_calendar/src/model/calender_day.dart';
-import 'package:fabrik_calendar/src/model/weekdays.dart';
-import 'package:fabrik_calendar/src/core/calendar_provider.dart';
+import 'package:fabrik_calendar/src/models/fc_day.dart';
+import 'package:fabrik_calendar/src/models/fc_day_decoration.dart';
+import 'package:fabrik_calendar/src/models/weekdays.dart';
+import 'package:fabrik_calendar/src/widgets/fc_day_cell.dart';
 import 'package:fabrik_calendar/src/widgets/month_view.dart';
 import 'package:fabrik_calendar/src/widgets/month_header.dart';
 import 'package:fabrik_calendar/src/widgets/weekday_header.dart';
@@ -9,24 +10,20 @@ import 'package:flutter/material.dart';
 class FabrikCalendar extends StatefulWidget {
   const FabrikCalendar({
     super.key,
-    this.streakDates = const [],
-    this.freezeDates = const [],
     this.disableFutureDates = false,
-    this.initialDate,
-    this.todayColor = Colors.blue,
+    this.currentDate,
     this.onDayTap,
     this.cellBuilder,
     this.customWeekdayLabels,
     this.startWeekWithSunday = false,
+    this.decoration,
   });
 
-  final List<DateTime> streakDates;
-  final List<DateTime> freezeDates;
   final bool disableFutureDates;
-  final DateTime? initialDate;
-  final Color todayColor;
+  final DateTime? currentDate;
   final void Function(DateTime)? onDayTap;
-  final Widget Function(CalendarDay)? cellBuilder;
+  final Widget Function(FCDay day)? cellBuilder;
+  final FCDayDecoration? decoration;
   final Weekdays? customWeekdayLabels;
   final bool startWeekWithSunday;
 
@@ -43,7 +40,7 @@ class _FabrikCalendarState extends State<FabrikCalendar> {
   @override
   void initState() {
     super.initState();
-    _currentDate = widget.initialDate ?? DateTime.now();
+    _currentDate = widget.currentDate ?? DateTime.now();
     _initialPage = _currentDate.year * 12 + _currentDate.month - 1;
     _currentPage = _initialPage;
     _pageController = PageController(initialPage: _initialPage);
@@ -77,47 +74,48 @@ class _FabrikCalendarState extends State<FabrikCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return CalendarProvider(
-      streakDates: widget.streakDates,
-      freezeDates: widget.freezeDates,
-      todayColor: widget.todayColor,
-      onDayTap: widget.onDayTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MonthHeader(
-            currentPage: _currentPage,
-            disableFutureDates: widget.disableFutureDates,
-            onPrevious: _previousMonth,
-            onNext: _nextMonth,
-            goToToday: _goToToday,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        MonthHeader(
+          currentPage: _currentPage,
+          disableFutureDates: widget.disableFutureDates,
+          onPrevious: _previousMonth,
+          onNext: _nextMonth,
+          goToToday: _goToToday,
+        ),
+        const SizedBox(height: 8),
+        WeekdayHeader(
+          customWeekdayLabels: widget.customWeekdayLabels,
+          startWeekWithSunday: widget.startWeekWithSunday,
+        ),
+        Expanded(
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            itemBuilder: (context, index) {
+              final date = DateTime(index ~/ 12, (index % 12) + 1, 1);
+              return MonthView(
+                month: date,
+                cellBuilder: widget.cellBuilder ??
+                    (day) {
+                      return FCDayCell(
+                        day.date,
+                        decoration: widget.decoration,
+                        onTap: widget.onDayTap,
+                      );
+                    },
+                startWeekWithSunday: widget.startWeekWithSunday,
+                disableFutureDates: widget.disableFutureDates,
+              );
+            },
           ),
-          const SizedBox(height: 8),
-          WeekdayHeader(
-            customWeekdayLabels: widget.customWeekdayLabels,
-            startWeekWithSunday: widget.startWeekWithSunday,
-          ),
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              itemBuilder: (context, index) {
-                final date = DateTime(index ~/ 12, (index % 12) + 1, 1);
-                return MonthView(
-                  month: date,
-                  cellBuilder: widget.cellBuilder,
-                  startWeekWithSunday: widget.startWeekWithSunday,
-                  disableFutureDates: widget.disableFutureDates,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

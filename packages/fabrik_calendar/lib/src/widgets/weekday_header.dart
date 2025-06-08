@@ -1,4 +1,4 @@
-import 'package:fabrik_calendar/src/model/weekdays.dart';
+import 'package:fabrik_calendar/src/models/weekdays.dart';
 import 'package:flutter/material.dart';
 
 class WeekdayHeader extends StatelessWidget {
