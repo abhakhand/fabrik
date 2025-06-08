@@ -1,9 +1,9 @@
 import 'package:fabrik_calendar/src/model/calender_day.dart';
 import 'package:fabrik_calendar/src/model/weekdays.dart';
-import 'package:fabrik_calendar/src/provider/calendar_provider.dart';
-import 'package:fabrik_calendar/src/view/pages/month_page.dart';
-import 'package:fabrik_calendar/src/view/widgets/month_header.dart';
-import 'package:fabrik_calendar/src/view/widgets/weekday_header.dart';
+import 'package:fabrik_calendar/src/core/calendar_provider.dart';
+import 'package:fabrik_calendar/src/widgets/month_view.dart';
+import 'package:fabrik_calendar/src/widgets/month_header.dart';
+import 'package:fabrik_calendar/src/widgets/weekday_header.dart';
 import 'package:flutter/material.dart';
 
 class FabrikCalendar extends StatefulWidget {
@@ -107,7 +107,7 @@ class _FabrikCalendarState extends State<FabrikCalendar> {
               },
               itemBuilder: (context, index) {
                 final date = DateTime(index ~/ 12, (index % 12) + 1, 1);
-                return MonthPage(
+                return MonthView(
                   month: date,
                   cellBuilder: widget.cellBuilder,
                   startWeekWithSunday: widget.startWeekWithSunday,

@@ -1,10 +1,10 @@
 import 'package:fabrik_calendar/src/model/calender_day.dart';
-import 'package:fabrik_calendar/src/provider/calendar_provider.dart';
-import 'package:fabrik_calendar/src/view/widgets/default_cell.dart';
+import 'package:fabrik_calendar/src/core/calendar_provider.dart';
+import 'package:fabrik_calendar/src/widgets/default_cell.dart';
 import 'package:flutter/material.dart';
 
-class MonthPage extends StatelessWidget {
-  const MonthPage({
+class MonthView extends StatelessWidget {
+  const MonthView({
     super.key,
     required this.month,
     this.cellBuilder,
