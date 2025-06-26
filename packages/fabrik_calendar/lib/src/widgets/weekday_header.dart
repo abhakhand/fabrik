@@ -14,8 +14,12 @@ class WeekdayHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final weekdays = customWeekdayLabels ?? const Weekdays();
+    final weekdayList = startWeekWithSunday
+        ? [...weekdays.list.skip(6), ...weekdays.list.take(6)] // Sunday first
+        : weekdays.list; // Monday first
+
     return Row(
-      children: weekdays.list
+      children: weekdayList
           .map(
             (day) => Expanded(
               child: Center(

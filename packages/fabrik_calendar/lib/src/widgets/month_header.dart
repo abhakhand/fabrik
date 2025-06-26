@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MonthHeader extends StatelessWidget {
-  final int currentPage;
-  final bool disableFutureDates;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
-  final VoidCallback goToToday;
-
   const MonthHeader({
     super.key,
     required this.currentPage,
@@ -16,6 +10,12 @@ class MonthHeader extends StatelessWidget {
     required this.onNext,
     required this.goToToday,
   });
+
+  final int currentPage;
+  final bool disableFutureDates;
+  final VoidCallback? onPrevious;
+  final VoidCallback? onNext;
+  final VoidCallback goToToday;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,13 @@ class MonthHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: onPrevious, icon: const Icon(Icons.arrow_left)),
+        if (onPrevious != null)
+          IconButton(
+            onPressed: onPrevious,
+            icon: const Icon(Icons.arrow_left),
+          )
+        else
+          const SizedBox(),
         GestureDetector(
           onTap: goToToday,
           child: Text(
@@ -36,10 +42,13 @@ class MonthHeader extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        IconButton(
-          onPressed: (!disableFutureDates || !isFuture) ? onNext : null,
-          icon: const Icon(Icons.arrow_right),
-        ),
+        if (onNext != null)
+          IconButton(
+            onPressed: (!disableFutureDates || !isFuture) ? onNext : null,
+            icon: const Icon(Icons.arrow_right),
+          )
+        else
+          const SizedBox(),
       ],
     );
   }

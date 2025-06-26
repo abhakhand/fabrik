@@ -7,13 +7,11 @@ class MonthView extends StatelessWidget {
     required this.month,
     this.cellBuilder,
     this.startWeekWithSunday = false,
-    required this.disableFutureDates,
   });
 
   final DateTime month;
   final Widget Function(FCDay day)? cellBuilder;
   final bool startWeekWithSunday;
-  final bool disableFutureDates;
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +24,56 @@ class MonthView extends StatelessWidget {
     int startOffset =
         startWeekWithSunday ? (firstWeekday % 7) : (firstWeekday - 1);
 
+    // Fill placeholders for leading empty cells
     for (int i = 0; i < startOffset; i++) {
       days.add(FCDay(date: DateTime(0), isPlaceholder: true));
     }
 
+    // Fill actual days
     for (int i = 0; i < daysInMonth; i++) {
       final day = DateTime(month.year, month.month, i + 1);
-
       days.add(FCDay(date: day));
     }
 
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      itemCount: days.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-      ),
-      itemBuilder: (context, index) {
-        final day = days[index];
+    // Fill trailing placeholders (to reach a multiple of 7 first)
+    while (days.length % 7 != 0) {
+      days.add(FCDay(date: DateTime(0), isPlaceholder: true));
+    }
 
-        if (day.isPlaceholder) return const SizedBox();
+// Ensure total 42 cells (6 rows x 7 columns)
+    while (days.length < 42) {
+      days.add(FCDay(date: DateTime(0), isPlaceholder: true));
+    }
 
-        return cellBuilder?.call(day);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double totalHeight = constraints.maxHeight;
+        final double totalWidth = constraints.maxWidth;
+
+        const int rows = 6;
+        const int columns = 7;
+
+        final double cellHeight = totalHeight / rows;
+        final double cellWidth = totalWidth / columns;
+
+        return Column(
+          children: List.generate(rows, (rowIndex) {
+            return Row(
+              children: List.generate(columns, (colIndex) {
+                final int dayIndex = rowIndex * columns + colIndex;
+                final FCDay day = days[dayIndex];
+
+                return SizedBox(
+                  width: cellWidth,
+                  height: cellHeight,
+                  child: day.isPlaceholder
+                      ? const SizedBox()
+                      : cellBuilder?.call(day),
+                );
+              }),
+            );
+          }),
+        );
       },
     );
   }

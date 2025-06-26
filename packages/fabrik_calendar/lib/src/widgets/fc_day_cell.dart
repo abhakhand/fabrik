@@ -77,7 +77,7 @@ class FCDayCell extends StatelessWidget {
         child: Text(
           '${date.day}',
           style: (isToday
-                  ? decoration?.todayTextStyle ?? decoration?.textStyle
+                  ? decoration?.todayTextStyle ?? decoration?.todayTextStyle
                   : decoration?.textStyle) ??
               TextStyle(
                 color: effectiveTextColor,
