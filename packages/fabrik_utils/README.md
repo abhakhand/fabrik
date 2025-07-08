@@ -1,18 +1,18 @@
 # Fabrik Utils
 
-`fabrik_utils` is a lightweight, real-world-first utility package for Flutter apps. It includes essential extensions, helpers, and utilities used across real products — crafted to improve DX and save development time.
+`fabrik_utils` is a lightweight, real-world-first utility package for Flutter apps. It includes essential extensions, helpers, and utilities used across real products, crafted to improve DX and save development time.
 
 ---
 
 ## Features
 
-- 🗓 DateTime extensions (`isToday`, `timeAgo`, `weekdayName`, etc.)
-- 🔠 String casing helpers (`camelCase`, `PascalCase`, `titleCase`, etc.)
-- 🧼 String validation and formatting (`isNullOrBlank`, `capitalizeFirst`)
-- ⏱ Duration formatting and splitting
-- 🔁 Debounce & Throttle classes with status stream support
-- 🔽 Scroll helpers (`isApproachingScrollEnd`)
-- 🔢 Tuple-style time splitting for seconds
+- DateTime extensions (`isToday`, `timeAgo`, `weekdayName`, etc.)
+- String casing helpers (`camelCase`, `PascalCase`, `titleCase`, etc.)
+- String validation and formatting (`isNullOrBlank`, `capitalizeFirst`)
+- Duration formatting and splitting
+- Debounce & Throttle classes with status stream support
+- Scroll helpers (`isApproachingScrollEnd`)
+- Tuple-style time splitting for seconds
 
 ---
 

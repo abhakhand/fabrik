@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 /// Extension methods on [DateTime] for commonly used formatted date strings.
 ///
 /// These use the `intl` package under the hood and are safe to use on all platforms.
-/// ⚠️ Make sure to call `initializeDateFormatting()` in `main()` if using custom locales.
+/// Make sure to call `initializeDateFormatting()` in `main()` if using custom locales.
 extension DateTimeX on DateTime {
   /// Checks if the date is today.
   bool get isToday {
