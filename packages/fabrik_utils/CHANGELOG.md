@@ -7,4 +7,8 @@
   - `formatDuration` (HH:mm:ss or mm:ss)
   - `splitDuration` (returns hours, minutes, seconds as strings)
 - Debounce and Throttle classes with stream-based `Status` updates
-- ✅ Scroll utility: `isApproachingScrollEnd()`
+- Scroll utility: `isApproachingScrollEnd()`
+
+## 0.0.2
+
+- Updated dart and packages
