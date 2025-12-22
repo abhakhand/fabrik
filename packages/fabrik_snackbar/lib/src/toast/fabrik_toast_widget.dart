@@ -76,35 +76,40 @@ class _FabrikToastWidgetState extends State<FabrikToastWidget>
             opacity: _fadeAnimation,
             child: GestureDetector(
               onTap: widget.config.onTap,
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: widget.config.backgroundColor,
-                    borderRadius: widget.config.borderRadius,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 8,
-                    children: [
-                      if (widget.config.icon != null)
-                        Icon(
-                          widget.config.icon,
-                          color: widget.config.iconColor,
-                          size: widget.config.iconSize,
+              child: Semantics(
+                container: true,
+                liveRegion: true,
+                label: widget.config.message,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: widget.config.backgroundColor,
+                      borderRadius: widget.config.borderRadius,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 8,
+                      children: [
+                        if (widget.config.icon != null)
+                          Icon(
+                            widget.config.icon,
+                            color: widget.config.iconColor,
+                            size: widget.config.iconSize,
+                          ),
+                        Text(
+                          widget.config.message,
+                          style: TextStyle(
+                            color: widget.config.textColor,
+                            fontSize: widget.config.fontSize,
+                          ),
                         ),
-                      Text(
-                        widget.config.message,
-                        style: TextStyle(
-                          color: widget.config.textColor,
-                          fontSize: widget.config.fontSize,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

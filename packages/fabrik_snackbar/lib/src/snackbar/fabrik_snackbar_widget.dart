@@ -48,8 +48,9 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
       duration: const Duration(milliseconds: 400),
     );
 
-    final beginOffset =
-        widget.config.position.isTop ? const Offset(0, -1) : const Offset(0, 1);
+    final beginOffset = widget.config.position.isTop
+        ? const Offset(0, -1)
+        : const Offset(0, 1);
 
     _slideAnimation = Tween<Offset>(
       begin: beginOffset,
@@ -107,20 +108,18 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
       top: widget.config.safeArea && widget.config.position.isTop,
       bottom: widget.config.safeArea && widget.config.position.isBottom,
       child: Align(
-        alignment:
-            widget.config.position.isTop
-                ? Alignment.topCenter
-                : Alignment.bottomCenter,
+        alignment: widget.config.position.isTop
+            ? Alignment.topCenter
+            : Alignment.bottomCenter,
         child: SlideTransition(
           position: _slideAnimation,
           child: Dismissible(
             key: const Key('fabrik_snackbar_dismissible'),
-            direction:
-                widget.config.dismissDirection.isHorizontal
-                    ? DismissDirection.horizontal
-                    : widget.config.position.isTop
-                    ? DismissDirection.up
-                    : DismissDirection.down,
+            direction: widget.config.dismissDirection.isHorizontal
+                ? DismissDirection.horizontal
+                : widget.config.position.isTop
+                ? DismissDirection.up
+                : DismissDirection.down,
             onDismissed: (_) => _dismiss(),
             child: Material(
               color: Colors.transparent,
@@ -128,21 +127,18 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                 constraints: BoxConstraints(
                   maxWidth: _resolveMaxWidth(context),
                 ),
-                margin:
-                    widget.config.style.isFloating
-                        ? widget.config.margin
-                        : EdgeInsets.zero,
+                margin: widget.config.style.isFloating
+                    ? widget.config.margin
+                    : EdgeInsets.zero,
                 padding: widget.config.padding,
                 decoration: BoxDecoration(
-                  color:
-                      widget.config.backgroundGradient == null
-                          ? widget.config.backgroundColor
-                          : null,
+                  color: widget.config.backgroundGradient == null
+                      ? widget.config.backgroundColor
+                      : null,
                   gradient: widget.config.backgroundGradient,
-                  borderRadius:
-                      widget.config.style.isFloating
-                          ? widget.config.borderRadius
-                          : BorderRadius.zero,
+                  borderRadius: widget.config.style.isFloating
+                      ? widget.config.borderRadius
+                      : BorderRadius.zero,
                 ),
                 child: FabrikSnackbarRow(config: widget.config),
               ),
@@ -199,47 +195,103 @@ class FabrikSnackbarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (config.icon != null)
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: config.icon!,
-          ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            spacing: 2,
-            children: [
-              if (config.titleText != null)
-                config.titleText!
-              else if (config.title != null)
-                Text(
-                  config.title!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: _buildSemanticLabel(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (config.icon != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: config.icon!,
+            ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              spacing: 2,
+              children: [
+                if (config.richTitle != null)
+                  RichText(text: config.richTitle!)
+                else if (config.titleText != null)
+                  config.titleText!
+                else if (config.title != null)
+                  Text(
+                    config.title!,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-              if (config.messageText != null)
-                config.messageText!
-              else if (config.message != null)
-                Text(
-                  config.message!,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
-                ),
-            ],
+                if (config.richMessage != null)
+                  RichText(text: config.richMessage!)
+                else if (config.messageText != null)
+                  config.messageText!
+                else if (config.message != null)
+                  Text(
+                    config.message!,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+              ],
+            ),
           ),
-        ),
-        if (config.actionButton != null) ...[
-          const SizedBox(width: 8.0),
-          config.actionButton!,
+          if (config.actionButton != null) ...[
+            const SizedBox(width: 8.0),
+            config.actionButton!,
+          ],
         ],
-      ],
+      ),
     );
+  }
+
+  /// Builds a semantic label for accessibility from the title and message content.
+  String _buildSemanticLabel() {
+    final buffer = StringBuffer();
+
+    // Get title text from various sources
+    if (config.richTitle != null) {
+      buffer.write(_extractTextFromInlineSpan(config.richTitle!));
+    } else if (config.title != null) {
+      buffer.write(config.title!);
+    }
+
+    // Add separator if we have both title and message
+    if (buffer.isNotEmpty && _hasMessageContent()) {
+      buffer.write('. ');
+    }
+
+    // Get message text from various sources
+    if (config.richMessage != null) {
+      buffer.write(_extractTextFromInlineSpan(config.richMessage!));
+    } else if (config.message != null) {
+      buffer.write(config.message!);
+    }
+
+    return buffer.toString();
+  }
+
+  /// Checks if there is any message content to display.
+  bool _hasMessageContent() {
+    return config.richMessage != null ||
+        config.messageText != null ||
+        config.message != null;
+  }
+
+  /// Extracts plain text from an InlineSpan for accessibility purposes.
+  String _extractTextFromInlineSpan(InlineSpan span) {
+    final buffer = StringBuffer();
+    span.visitChildren((child) {
+      if (child is TextSpan) {
+        if (child.text != null) {
+          buffer.write(child.text);
+        }
+      }
+      return true;
+    });
+    return buffer.toString();
   }
 }

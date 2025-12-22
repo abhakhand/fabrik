@@ -12,6 +12,8 @@ class FabrikSnackbarConfig {
     this.message,
     this.titleText,
     this.messageText,
+    this.richTitle,
+    this.richMessage,
     this.icon,
     this.actionButton,
     this.duration = const Duration(seconds: 3),
@@ -46,10 +48,16 @@ class FabrikSnackbarConfig {
   /// Custom widget for message. Overrides [message] if provided.
   final Widget? messageText;
 
+  /// Rich text content for title. Takes precedence over [title] and [titleText] if provided.
+  final InlineSpan? richTitle;
+
+  /// Rich text content for message. Takes precedence over [message] and [messageText] if provided.
+  final InlineSpan? richMessage;
+
   /// Optional leading icon shown before title/message.
   final Widget? icon;
 
-  /// Optional action button (e.g. a [TextButton]) shown at the end.
+  /// Optional action button (e.g., a [TextButton]) shown at the end.
   final Widget? actionButton;
 
   /// How long the snackbar stays visible before auto-dismiss.
@@ -76,13 +84,13 @@ class FabrikSnackbarConfig {
   /// Whether to display the snackbar at the top or bottom of the screen.
   final FabrikSnackbarPosition position;
 
-  /// Snackbar layout style — floating or grounded.
+  /// Snackbar layout style: floating or grounded.
   final FabrikSnackbarStyle style;
 
   /// Direction in which the snackbar can be dismissed.
   final FabrikSnackbarDismissDirection dismissDirection;
 
-  /// Whether to respect [SafeArea] paddings (e.g. avoid notches).
+  /// Whether to respect [SafeArea] paddings (e.g., avoid notches).
   final bool safeArea;
 
   /// Whether to show a progress indicator below the message.

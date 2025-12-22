@@ -10,21 +10,20 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
-            builder:
-                (context) => Scaffold(
-                  body: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        FabrikSnackbar.success(
-                          context,
-                          title: 'Test Title',
-                          message: 'Test Message',
-                        );
-                      },
-                      child: const Text('Show Snackbar'),
-                    ),
-                  ),
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    FabrikSnackbar.success(
+                      context,
+                      title: 'Test Title',
+                      message: 'Test Message',
+                    );
+                  },
+                  child: const Text('Show Snackbar'),
                 ),
+              ),
+            ),
           ),
         ),
       );

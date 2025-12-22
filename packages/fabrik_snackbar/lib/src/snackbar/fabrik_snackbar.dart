@@ -11,11 +11,33 @@ import 'fabrik_snackbar_defaults.dart';
 class FabrikSnackbar {
   FabrikSnackbar._();
 
-  /// Show a green success snackbar.
+  /// Validates that content is provided properly. Either regular text or rich text, but not both.
+  static void _validateContent({
+    String? title,
+    String? message,
+    InlineSpan? richTitle,
+    InlineSpan? richMessage,
+  }) {
+    // Validate title
+    assert(
+      (title != null) != (richTitle != null),
+      'Either title or richTitle must be provided, but not both.',
+    );
+
+    // Validate message
+    assert(
+      (message != null) != (richMessage != null),
+      'Either message or richMessage must be provided, but not both.',
+    );
+  }
+
+  /// Shows a green success snackbar.
   static Future<void> success(
     BuildContext context, {
-    required String title,
-    required String message,
+    String? title,
+    String? message,
+    InlineSpan? richTitle,
+    InlineSpan? richMessage,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -26,11 +48,19 @@ class FabrikSnackbar {
     double? barrierBlur,
     Color? barrierColor,
   }) async {
+    _validateContent(
+      title: title,
+      message: message,
+      richTitle: richTitle,
+      richMessage: richMessage,
+    );
     return _show(
       context,
       config: FabrikSnackbarConfig(
         title: title,
         message: message,
+        richTitle: richTitle,
+        richMessage: richMessage,
         icon: const Icon(
           Icons.check_circle_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -55,11 +85,13 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show a red error snackbar.
+  /// Shows a red error snackbar.
   static Future<void> error(
     BuildContext context, {
-    required String title,
-    required String message,
+    String? title,
+    String? message,
+    InlineSpan? richTitle,
+    InlineSpan? richMessage,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -70,11 +102,19 @@ class FabrikSnackbar {
     double? barrierBlur,
     Color? barrierColor,
   }) async {
+    _validateContent(
+      title: title,
+      message: message,
+      richTitle: richTitle,
+      richMessage: richMessage,
+    );
     return _show(
       context,
       config: FabrikSnackbarConfig(
         title: title,
         message: message,
+        richTitle: richTitle,
+        richMessage: richMessage,
         icon: const Icon(
           Icons.error_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -99,11 +139,13 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show a blue informational snackbar.
+  /// Shows a blue informational snackbar.
   static Future<void> info(
     BuildContext context, {
-    required String title,
-    required String message,
+    String? title,
+    String? message,
+    InlineSpan? richTitle,
+    InlineSpan? richMessage,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -114,11 +156,19 @@ class FabrikSnackbar {
     double? barrierBlur,
     Color? barrierColor,
   }) async {
+    _validateContent(
+      title: title,
+      message: message,
+      richTitle: richTitle,
+      richMessage: richMessage,
+    );
     return _show(
       context,
       config: FabrikSnackbarConfig(
         title: title,
         message: message,
+        richTitle: richTitle,
+        richMessage: richMessage,
         icon: const Icon(
           Icons.info_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -143,11 +193,13 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show an orange warning snackbar.
+  /// Shows an orange warning snackbar.
   static Future<void> warning(
     BuildContext context, {
-    required String title,
-    required String message,
+    String? title,
+    String? message,
+    InlineSpan? richTitle,
+    InlineSpan? richMessage,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -158,11 +210,19 @@ class FabrikSnackbar {
     double? barrierBlur,
     Color? barrierColor,
   }) async {
+    _validateContent(
+      title: title,
+      message: message,
+      richTitle: richTitle,
+      richMessage: richMessage,
+    );
     return _show(
       context,
       config: FabrikSnackbarConfig(
         title: title,
         message: message,
+        richTitle: richTitle,
+        richMessage: richMessage,
         icon: const Icon(
           Icons.warning_amber_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -187,7 +247,7 @@ class FabrikSnackbar {
     );
   }
 
-  /// Show a fully custom snackbar with full control.
+  /// Shows a fully custom snackbar with full control.
   static Future<void> custom(
     BuildContext context, {
     required FabrikSnackbarConfig config,
