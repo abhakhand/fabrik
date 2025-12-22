@@ -1,4 +1,4 @@
-## [0.1.0] - Initial release
+# [0.1.0] - Initial release
 
 - `FabrikSnackbar.success`, `.error`, `.info`, `.warning`
 - `FabrikSnackbar.custom` for full flexibility
@@ -30,3 +30,7 @@
 - Added rich content support with `richTitle` and `richMessage` parameters for styled text
 - Built-in accessibility features with semantic labels and live regions
 - Updated documentation
+
+## 0.1.6
+
+- Improved documentation

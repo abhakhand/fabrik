@@ -5,6 +5,12 @@ It provides both **Snackbars** for rich feedback and **Toasts** for lightweight 
 
 **Learn more at → [fabriktool.com](https://www.fabriktool.com)**
 
+## Demo
+
+Showcasing various snackbar types and toast positions
+
+![Fabrik Snackbar Demo](https://github.com/abhakhand/fabrik/blob/main/packages/fabrik_snackbar/assets/demo.gif?raw=true)
+
 ## Features
 
 - Modern, animated **Snackbars**

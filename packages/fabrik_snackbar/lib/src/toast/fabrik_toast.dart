@@ -53,11 +53,8 @@ class FabrikToast {
     late OverlayEntry entry;
 
     entry = OverlayEntry(
-      builder:
-          (_) => FabrikToastWidget(
-            config: config,
-            onDismissed: () => entry.remove(),
-          ),
+      builder: (_) =>
+          FabrikToastWidget(config: config, onDismissed: () => entry.remove()),
     );
 
     overlay.insert(entry);
