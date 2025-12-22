@@ -1,23 +1,20 @@
 # fabrik_snackbar
 
 A beautifully crafted, easy-to-use, and customizable Snackbar + Toast library for Flutter.  
-It provides both **Snackbars** for rich feedback and **Toasts** for lightweight messages — all without boilerplate.
+It provides both **Snackbars** for rich feedback and **Toasts** for lightweight messages, all without boilerplate.
 
 **Learn more at → [fabriktool.com](https://www.fabriktool.com)**
-
----
 
 ## Features
 
 - Modern, animated **Snackbars**
 - Minimal, centered **Toasts**
 - Custom icons, durations, and gradients
+- Rich text support with styled content
 - Prebuilt snackbar types: success, error, info, warning
 - Positioning support: top / bottom / center
 - Web and mobile compatibility
 - No extensions or init code needed
-
----
 
 ## Installation
 
@@ -27,8 +24,6 @@ Add to your `pubspec.yaml`:
 dependencies:
   fabrik_snackbar: ^0.1.0
 ```
-
----
 
 ## Usage
 
@@ -42,10 +37,11 @@ FabrikSnackbar.success(
 );
 ```
 
-**Other types:**  
-❌ `FabrikSnackbar.error`  
-ℹ️ `FabrikSnackbar.info`  
-⚠️ `FabrikSnackbar.warning`
+**Available types:**  
+`FabrikSnackbar.success`  
+`FabrikSnackbar.error`  
+`FabrikSnackbar.info`  
+`FabrikSnackbar.warning`
 
 Customize if needed:
 
@@ -55,6 +51,55 @@ maxWidth: 480,
 safeArea: false,
 barrierBlur: 4.0,
 ```
+
+### Rich Content Snackbar
+
+Use `richTitle` and `richMessage` for styled text with multiple colors, fonts, and decorations:
+
+```dart
+FabrikSnackbar.success(
+  context,
+  richTitle: TextSpan(
+    children: [
+      TextSpan(
+        text: 'Success ',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      TextSpan(
+        text: '✓',
+        style: TextStyle(
+          color: Colors.green,
+          fontSize: 18,
+        ),
+      ),
+    ],
+  ),
+  richMessage: TextSpan(
+    children: [
+      TextSpan(
+        text: 'Your account has been ',
+        style: TextStyle(color: Colors.white70),
+      ),
+      TextSpan(
+        text: 'successfully',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+      TextSpan(
+        text: ' created!',
+        style: TextStyle(color: Colors.white70),
+      ),
+    ],
+  ),
+);
+```
+
+**Note:** Use either regular text (`title`, `message`) or rich text (`richTitle`, `richMessage`).
 
 ---
 
@@ -99,11 +144,8 @@ fontSize: 16,
 ## Contributing
 
 Want to contribute or report a bug?  
-Open an issue or PR — we’d love your help 💙
-
----
+Open an issue or PR on our repository.
 
 ## Maintainers
 
 - [Ashish Bhakhand](https://github.com/abhakhand)
-- [Pooja Prajapat](https://github.com/reachpooja)

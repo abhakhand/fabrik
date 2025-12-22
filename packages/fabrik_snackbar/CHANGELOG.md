@@ -24,3 +24,9 @@
 ## 0.1.4
 
 - updated repository url
+
+## 0.1.5
+
+- Added rich content support with `richTitle` and `richMessage` parameters for styled text
+- Built-in accessibility features with semantic labels and live regions
+- Updated documentation
