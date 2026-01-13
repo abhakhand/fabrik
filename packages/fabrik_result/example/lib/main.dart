@@ -1,45 +1,57 @@
 import 'package:fabrik_result/fabrik_result.dart';
 
 void main() {
-  final result = fetchUserById("123");
+  // Example 1: Fetching a user (Either<Failure, User>)
+  final result = fetchUserById('123');
 
+  // Exhaustive handling using fold
   result.fold(
-    (failure) => print("Error: ${failure.message}"),
-    (user) => print("Welcome, ${user.name}!"),
+    (failure) => print('Error: ${failure.message}'),
+    (user) => print('Welcome, ${user.name}!'),
   );
 
-  final saveResult = saveUserData(user: User(name: "Ashu"));
+  // One-sided handling when only success matters
+  result.onRight((user) {
+    print('User loaded: ${user.name}');
+  });
 
-  if (saveResult.isRight) {
-    print("Data saved successfully ✅");
+  // Safe extraction when control flow is simple
+  final user = result.rightOrNull;
+  if (user == null) {
+    print('No user available');
+    return;
   }
+
+  // Example 2: Saving data (Either<Failure, Unit>)
+  final saveResult = saveUserData(user: user);
+
+  saveResult.fold(
+    (failure) => print('Failed to save: ${failure.message}'),
+    (_) => print('Data saved successfully'),
+  );
 }
 
-/// User Entity
 class User {
   const User({required this.name});
 
   final String name;
 }
 
-/// Simulated failure
 class AppFailure {
   const AppFailure(this.message);
 
   final String message;
 }
 
-/// Simulated usecase returning Either
 Either<AppFailure, User> fetchUserById(String id) {
-  if (id == "123") {
-    return right(User(name: "Ashu"));
-  } else {
-    return left(AppFailure("User not found"));
+  if (id == '123') {
+    return right(User(name: 'Ashu'));
   }
+
+  return left(AppFailure('User not found'));
 }
 
-/// Simulated usecase returning Either with Unit
 Either<AppFailure, Unit> saveUserData({required User user}) {
-  // pretend to save something
+  // Pretend to persist data
   return right(unit);
 }
