@@ -1,6 +1,6 @@
-export 'fabrik_colors.dart';
-export 'fabrik_elevation.dart';
-export 'fabrik_icon_sizes.dart';
-export 'fabrik_paddings.dart';
-export 'fabrik_radius.dart';
-export 'fabrik_spacing.dart';
+export 'border_tokens.dart';
+export 'color_tokens.dart';
+export 'elevation_tokens.dart';
+export 'radius_tokens.dart';
+export 'spacing_tokens.dart';
+export 'typography_tokens.dart';
