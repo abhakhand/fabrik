@@ -1,39 +1,148 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# fabrik_layout
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+A lightweight, opinionated layout and responsiveness foundation for Flutter applications.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+`fabrik_layout` provides a simple and predictable way to understand **what kind of screen your app is running on** (mobile, tablet, desktop) and optionally apply **safe, global text scaling**, without introducing layout widgets, UI abstractions, or performance pitfalls.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+This package focuses on layout context, not UI composition.
 
-## Features
+---
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## Learn more
 
-## Getting started
+Detailed documentation, guides, and design rationale are available at  
+**<https://fabriktool.com>**
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+---
 
-## Usage
+## Overview
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+The goal of `fabrik_layout` is to make responsive decisions **explicit and centralized**.
+
+It encourages:
+
+- Clear device categorization (mobile, tablet, desktop)
+- Layout decisions based on constraints, not platform checks
+- Optional, controlled text scaling
+- Zero global state and no widget-level calculations
+
+The package is intentionally small and framework-aligned.
+
+---
+
+## What this package provides
+
+### Layout context
+
+A single widget, `FabrikLayout`, computes layout information once and exposes it via `BuildContext`.
 
 ```dart
-const like = 'sample';
+if (context.layout.isTablet) {
+  // Tablet-specific UI
+}
 ```
 
-## Additional information
+### Device classification
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+Responsive behavior is derived from width-based breakpoints:
+
+- Mobile
+- Tablet
+- Desktop
+
+Defaults are provided and can be overridden if needed.
+
+### Optional text scaling
+
+`fabrik_layout` can optionally apply conservative, device-aware text scaling using Flutter’s `TextScaler` API.
+
+Scaling is:
+
+- Opt-in
+- Applied via `MediaQuery`
+- Fully compatible with accessibility settings
+
+---
+
+## Installation
+
+```yaml
+dependencies:
+  fabrik_layout: ^1.0.0
+```
+
+---
+
+## Basic usage
+
+### Wrap your app once
+
+`FabrikLayout` must be placed inside `MaterialApp.builder` or `CupertinoApp.builder`.
+
+```dart
+MaterialApp(
+  builder: (context, child) {
+    return FabrikLayout(
+      enableTextScaling: true,
+      child: child!,
+    );
+  },
+  home: const HomePage(),
+);
+```
+
+---
+
+### Consume layout information
+
+```dart
+if (context.layout.isMobile) {
+  return const MobileView();
+}
+
+if (context.layout.isTablet) {
+  return const TabletView();
+}
+
+return const DesktopView();
+```
+
+---
+
+### Use with theming
+
+`fabrik_layout` works independently, but pairs naturally with `fabrik_theme`.
+
+```dart
+Text(
+  'Dashboard',
+  style: context.layout.isMobile
+      ? context.typography.titleMedium
+      : context.typography.titleLarge,
+);
+```
+
+Layout controls structure.  
+Theme controls appearance.
+
+---
+
+## Text scaling
+
+When enabled, text scaling is applied globally via `MediaQuery`.
+
+```dart
+FabrikLayout(
+  enableTextScaling: true,
+  child: child,
+);
+```
+
+All `Text` widgets automatically respect scaling.  
+No theme mutation or manual font size adjustments are required.
+
+---
+
+## Maintainers
+
+- [Ashish Bhakhand](https://github.com/abhakhand)
