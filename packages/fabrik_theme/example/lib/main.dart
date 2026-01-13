@@ -10,19 +10,47 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = FabrikColors.custom(
-      lightPrimary: Colors.green,
-      darkPrimary: Colors.greenAccent,
-    );
-
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Fabrik Theme Example',
       themeMode: ThemeMode.system,
-      theme: FabrikThemeBuilder.light(fontFamily: 'Roboto', colors: colors),
-      darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Roboto', colors: colors),
+      theme: FabrikTheme.create(
+        brightness: Brightness.light,
+        colors: AppThemeColors.light,
+        fontFamily: 'Roboto',
+      ),
+      darkTheme: FabrikTheme.create(
+        brightness: Brightness.dark,
+        colors: AppThemeColors.dark,
+        fontFamily: 'Roboto',
+      ),
       home: const HomePage(),
     );
   }
+}
+
+/// Example application color definitions.
+class AppThemeColors {
+  static const light = AppColors(
+    primary: Color(0xFF2E7D32),
+    accent: Color(0xFF66BB6A),
+    textPrimary: Color(0xFF111111),
+    textSecondary: Color(0xFF444444),
+    textTertiary: Color(0xFF777777),
+    background: Color(0xFFFFFFFF),
+    surface: Color(0xFFF6F6F6),
+    divider: Color(0xFFE0E0E0),
+  );
+
+  static const dark = AppColors(
+    primary: Color(0xFF81C784),
+    accent: Color(0xFFA5D6A7),
+    textPrimary: Color(0xFFFFFFFF),
+    textSecondary: Color(0xFFCCCCCC),
+    textTertiary: Color(0xFF999999),
+    background: Color(0xFF121212),
+    surface: Color(0xFF1E1E1E),
+    divider: Color(0xFF2C2C2C),
+  );
 }
 
 class HomePage extends StatelessWidget {
@@ -30,25 +58,25 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = FabrikTheme.of(context);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Fabrik Theme Example')),
+      appBar: AppBar(
+        title: Text(
+          'Fabrik Theme',
+          style: context.typography.titleMediumPrimary,
+        ),
+      ),
       body: Center(
         child: Column(
-          spacing: FabrikSpacing.x5,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Hello, Fabrik!',
-              style: theme.typography.titleXL,
-              textScaler: FabrikTextScaler.linear(context),
+              style: context.typography.headlineMediumPrimary,
             ),
+            const SizedBox(height: 12),
             Text(
-              'This is a sample text using Fabrik Typography.',
-              style: theme.typography.bodyLarge.copyWith(
-                color: theme.colors.primary,
-              ),
+              'This text uses semantic typography and colors.',
+              style: context.typography.bodyMediumSecondary,
             ),
           ],
         ),

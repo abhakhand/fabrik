@@ -1,59 +1,40 @@
+import 'package:fabrik_theme/src/builders/builders.dart';
+import 'package:fabrik_theme/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
-import '../tokens/fabrik_colors.dart';
-import '../typography/fabrik_typography.dart';
 
-/// A custom theme extension for Fabrik UI design system.
+/// Factory for constructing a fully configured [ThemeData] instance
+/// using Fabrik design system primitives.
 ///
-/// This holds both the design system colors and typography,
-/// allowing them to be accessed from the widget tree using:
+/// [FabrikTheme] composes semantic colors and typography into Flutter's
+/// theming system. It is intended to be the single entry point for
+/// initializing application themes.
 ///
-/// ```dart
-/// final theme = FabrikTheme.of(context);
-/// final color = theme.colors.primary;
-/// final textStyle = theme.typography.bodyRegular;
-/// ```
-class FabrikTheme extends ThemeExtension<FabrikTheme> {
-  /// Design system colors (resolved dynamically with brightness).
-  final FabrikColors colors;
+/// This class does not hold state and should not be instantiated.
+class FabrikTheme {
+  const FabrikTheme._();
 
-  /// Design system typography (includes fonts, weights, text colors).
-  final FabrikTypography typography;
-
-  /// Creates a new [FabrikTheme] with required colors and typography.
-  const FabrikTheme({required this.colors, required this.typography});
-
-  /// Allows the theme to be copied with new values (immutable pattern).
-  @override
-  FabrikTheme copyWith({FabrikColors? colors, FabrikTypography? typography}) {
-    return FabrikTheme(
-      colors: colors ?? this.colors,
-      typography: typography ?? this.typography,
-    );
-  }
-
-  /// Theme animation interpolation.
+  /// Creates a [ThemeData] instance using Fabrik theming conventions.
   ///
-  /// Currently no animation logic is implemented — just returns [this].
-  @override
-  FabrikTheme lerp(ThemeExtension<FabrikTheme>? other, double t) {
-    if (other is! FabrikTheme) return this;
-    return this;
-  }
-
-  /// Access the current [FabrikTheme] from the widget tree.
+  /// The caller must provide [brightness] and [colors]. Typography is
+  /// optional and will be automatically derived from the provided colors
+  /// if not supplied.
   ///
-  /// Throws an assertion error if not initialized in `ThemeData.extensions`.
-  static FabrikTheme of(BuildContext context) {
-    final theme = Theme.of(context).extension<FabrikTheme>();
-    assert(
-      theme != null,
-      'FabrikTheme is not added to ThemeData.extensions. '
-      'Make sure you include it inside ThemeData(extensions: [...])',
+  /// The optional [fontFamily] is applied uniformly across all typography
+  /// styles when typography is built internally. If a custom [typography]
+  /// instance is provided, [fontFamily] is ignored.
+  static ThemeData create({
+    required Brightness brightness,
+    required AppColors colors,
+    AppTypography? typography,
+    String? fontFamily,
+  }) {
+    final resolvedTypography =
+        typography ??
+        FabrikTypographyBuilder.build(colors, fontFamily: fontFamily);
+
+    return ThemeData(
+      brightness: brightness,
+      extensions: [colors, resolvedTypography],
     );
-
-    // Resolve theme-based dynamic colors (e.g. for light/dark mode).
-    theme!.colors.resolveWith(Theme.of(context).brightness);
-
-    return theme;
   }
 }
