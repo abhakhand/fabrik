@@ -34,6 +34,35 @@ class FabrikTheme {
 
     return ThemeData(
       brightness: brightness,
+      fontFamily: fontFamily,
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: colors.primary,
+        brightness: brightness,
+        primary: colors.primary,
+        onPrimary: colors.onPrimary,
+        secondary: colors.accent,
+        onSecondary: colors.onAccent,
+        surface: colors.surface,
+        onSurface: colors.onSurface,
+      ),
+      textTheme: TextTheme(
+        displayLarge: resolvedTypography.displayLarge,
+        displayMedium: resolvedTypography.displayMedium,
+        displaySmall: resolvedTypography.displaySmall,
+        headlineLarge: resolvedTypography.headlineLarge,
+        headlineMedium: resolvedTypography.headlineMedium,
+        headlineSmall: resolvedTypography.headlineSmall,
+        titleLarge: resolvedTypography.titleLarge,
+        titleMedium: resolvedTypography.titleMedium,
+        titleSmall: resolvedTypography.titleSmall,
+        bodyLarge: resolvedTypography.bodyLarge,
+        bodyMedium: resolvedTypography.bodyMedium,
+        bodySmall: resolvedTypography.bodySmall,
+        labelLarge: resolvedTypography.labelLarge,
+        labelMedium: resolvedTypography.labelMedium,
+        labelSmall: resolvedTypography.labelSmall,
+      ),
       extensions: [colors, resolvedTypography],
     );
   }

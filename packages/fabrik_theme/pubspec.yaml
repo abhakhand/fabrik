@@ -1,6 +1,6 @@
 name: fabrik_theme
 description: "A foundational theme system for Flutter apps, built on design tokens."
-version: 1.0.0
+version: 1.0.1
 homepage: https://fabriktool.com
 repository: https://github.com/abhakhand/fabrik/tree/main/packages/fabrik_theme
 

@@ -1,8 +1,12 @@
 # Changelog
 
 All notable changes to this package are documented in this file.
-
 The format is based on Keep a Changelog, and this project adheres to semantic versioning.
+
+## 1.0.1
+
+- Material 3 theme defaults with `ColorScheme.fromSeed`
+- Full `TextTheme` wiring using semantic typography tokens
 
 ---
 

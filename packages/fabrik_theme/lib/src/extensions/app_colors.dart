@@ -15,8 +15,14 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Primary brand color used for key actions and emphasis.
   final Color primary;
 
+  /// Color used for text and icons displayed on primary backgrounds.
+  final Color onPrimary;
+
   /// Supporting accent color used for secondary emphasis.
   final Color accent;
+
+  /// Color used for text and icons displayed on accent backgrounds.
+  final Color onAccent;
 
   /// Primary text color used for high-emphasis text.
   final Color textPrimary;
@@ -27,24 +33,22 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Tertiary text color used for low-emphasis content.
   final Color textTertiary;
 
-  /// Background color used for the main application surface.
-  final Color background;
-
-  /// Surface color used for cards and contained elements.
+  /// Background color used for the main application background.
   final Color surface;
 
-  /// Divider color used for separators and outlines.
-  final Color divider;
+  /// Color used for text and icons displayed on surface backgrounds.
+  final Color onSurface;
 
   const AppColors({
     required this.primary,
+    required this.onPrimary,
     required this.accent,
+    required this.onAccent,
+    required this.surface,
+    required this.onSurface,
     required this.textPrimary,
     required this.textSecondary,
     required this.textTertiary,
-    required this.background,
-    required this.surface,
-    required this.divider,
   });
 
   /// Creates a default [AppColors] instance using [ColorTokens].
@@ -55,36 +59,39 @@ class AppColors extends ThemeExtension<AppColors> {
   factory AppColors.defaults() {
     return const AppColors(
       primary: ColorTokens.primary,
+      onPrimary: ColorTokens.onPrimary,
       accent: ColorTokens.accent,
+      onAccent: ColorTokens.onAccent,
+      surface: ColorTokens.surface,
+      onSurface: ColorTokens.onSurface,
       textPrimary: ColorTokens.textPrimary,
       textSecondary: ColorTokens.textSecondary,
       textTertiary: ColorTokens.textTertiary,
-      background: ColorTokens.background,
-      surface: ColorTokens.surface,
-      divider: ColorTokens.divider,
     );
   }
 
   @override
   AppColors copyWith({
     Color? primary,
+    Color? onPrimary,
     Color? accent,
+    Color? onAccent,
+    Color? surface,
+    Color? onSurface,
     Color? textPrimary,
     Color? textSecondary,
     Color? textTertiary,
-    Color? background,
-    Color? surface,
-    Color? divider,
   }) {
     return AppColors(
       primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
       accent: accent ?? this.accent,
+      onAccent: onAccent ?? this.onAccent,
+      surface: surface ?? this.surface,
+      onSurface: onSurface ?? this.onSurface,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textTertiary: textTertiary ?? this.textTertiary,
-      background: background ?? this.background,
-      surface: surface ?? this.surface,
-      divider: divider ?? this.divider,
     );
   }
 
@@ -93,13 +100,14 @@ class AppColors extends ThemeExtension<AppColors> {
     if (other is! AppColors) return this;
     return AppColors(
       primary: Color.lerp(primary, other.primary, t)!,
+      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
+      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
+      surface: Color.lerp(surface, other.surface, t)!,
+      onSurface: Color.lerp(onSurface, other.onSurface, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
-      background: Color.lerp(background, other.background, t)!,
-      surface: Color.lerp(surface, other.surface, t)!,
-      divider: Color.lerp(divider, other.divider, t)!,
     );
   }
 }

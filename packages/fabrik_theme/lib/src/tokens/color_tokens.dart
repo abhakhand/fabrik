@@ -14,8 +14,20 @@ abstract final class ColorTokens {
   /// The primary brand color.
   static const primary = Color(0xFF6750A4);
 
+  /// The color used for text and icons displayed on primary backgrounds.
+  static const onPrimary = Color(0xFFFFFFFF);
+
   /// A supporting accent color used alongside the primary brand color.
   static const accent = Color(0xFF625B71);
+
+  /// The color used for text and icons displayed on accent backgrounds.
+  static const onAccent = Color(0xFFFFFFFF);
+
+  /// Background color used for the main application surface.
+  static const surface = Color(0xFFFFFFFF);
+
+  /// Color used for text and icons displayed on surface backgrounds.
+  static const onSurface = Color(0xFF000000);
 
   /// Primary text color used for high-emphasis content.
   static const textPrimary = Color(0xFF000000);
@@ -25,13 +37,4 @@ abstract final class ColorTokens {
 
   /// Tertiary text color used for low-emphasis or helper content.
   static const textTertiary = Color(0xFF79747E);
-
-  /// Default background color for the application.
-  static const background = Color(0xFFFFFFFF);
-
-  /// Surface color used for cards and elevated containers.
-  static const surface = Color(0xFFF5F5F5);
-
-  /// Divider color used for separators and outlines.
-  static const divider = Color(0xFFE0E0E0);
 }

@@ -32,24 +32,26 @@ class MyApp extends StatelessWidget {
 class AppThemeColors {
   static const light = AppColors(
     primary: Color(0xFF2E7D32),
+    onPrimary: Color(0xFFFFFFFF),
     accent: Color(0xFF66BB6A),
+    onAccent: Color(0xFFFFFFFF),
+    surface: Color(0xFFF6F6F6),
+    onSurface: Color(0xFF000000),
     textPrimary: Color(0xFF111111),
     textSecondary: Color(0xFF444444),
     textTertiary: Color(0xFF777777),
-    background: Color(0xFFFFFFFF),
-    surface: Color(0xFFF6F6F6),
-    divider: Color(0xFFE0E0E0),
   );
 
   static const dark = AppColors(
     primary: Color(0xFF81C784),
+    onPrimary: Color(0xFF000000),
     accent: Color(0xFFA5D6A7),
+    onAccent: Color(0xFF000000),
+    surface: Color(0xFF1E1E1E),
+    onSurface: Color(0xFFFFFFFF),
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFFCCCCCC),
     textTertiary: Color(0xFF999999),
-    background: Color(0xFF121212),
-    surface: Color(0xFF1E1E1E),
-    divider: Color(0xFF2C2C2C),
   );
 }
 
