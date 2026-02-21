@@ -37,5 +37,22 @@ void main() {
     test('None.toString returns readable value', () {
       expect(none<int>().toString(), 'None');
     });
+
+    test('Some equality holds for same value', () {
+      expect(some(42), equals(some(42)));
+    });
+
+    test('Some equality fails for different values', () {
+      expect(some(1), isNot(equals(some(2))));
+    });
+
+    test('None equality holds regardless of type parameter', () {
+      expect(none<int>(), equals(none<int>()));
+      expect(none<String>(), equals(none<int>()));
+    });
+
+    test('Some and None are never equal', () {
+      expect(some(0), isNot(equals(none<int>())));
+    });
   });
 }

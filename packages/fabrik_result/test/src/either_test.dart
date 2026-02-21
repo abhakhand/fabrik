@@ -87,5 +87,25 @@ void main() {
       expect(either.rightOrNull, isNull);
       expect(either.leftOrNull, 'error');
     });
+
+    test('Left equality holds for same value', () {
+      expect(Left<String, int>('error'), equals(Left<String, int>('error')));
+    });
+
+    test('Left equality fails for different values', () {
+      expect(Left<String, int>('a'), isNot(equals(Left<String, int>('b'))));
+    });
+
+    test('Right equality holds for same value', () {
+      expect(Right<String, int>(42), equals(Right<String, int>(42)));
+    });
+
+    test('Right equality fails for different values', () {
+      expect(Right<String, int>(1), isNot(equals(Right<String, int>(2))));
+    });
+
+    test('Left and Right with same wrapped value are not equal', () {
+      expect(Left<int, int>(1), isNot(equals(Right<int, int>(1))));
+    });
   });
 }

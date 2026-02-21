@@ -52,6 +52,12 @@ final class Left<L, R> extends Either<L, R> {
   }
 
   @override
+  bool operator ==(Object other) => other is Left<L, R> && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
   String toString() => 'Left($value)';
 }
 
@@ -68,6 +74,13 @@ final class Right<L, R> extends Either<L, R> {
   T fold<T>(T Function(L left) onLeft, T Function(R right) onRight) {
     return onRight(value);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Right<L, R> && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
 
   @override
   String toString() => 'Right($value)';
@@ -144,6 +157,11 @@ extension EitherExtensions<L, R> on Either<L, R> {
   }
 
   /// Returns the [Left] value or `null` if this is a [Right].
+  ///
+  /// Example:
+  /// ```dart
+  /// result.leftOrNull?.let((failure) => logError(failure));
+  /// ```
   L? get leftOrNull {
     if (this is Left<L, R>) {
       return (this as Left<L, R>).value;

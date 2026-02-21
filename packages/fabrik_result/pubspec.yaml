@@ -1,16 +1,13 @@
 name: fabrik_result
 description: "A lightweight toolkit for functional-style types like Either, built for clarity and real-world use."
-version: 1.0.0
+version: 1.0.1
 homepage: https://fabriktool.com
 repository: https://github.com/abhakhand/fabrik/tree/main/packages/fabrik_result
 
 environment:
   sdk: ^3.10.4
-  flutter: ">=1.17.0"
 
-dependencies:
-  flutter:
-    sdk: flutter
+dependencies: {}
 
 dev_dependencies:
   flutter_test:

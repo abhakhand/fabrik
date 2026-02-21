@@ -1,49 +1,20 @@
 # fabrik_result
 
-A lightweight, explicit result-handling foundation for Dart and Flutter applications.
+Lightweight, explicit result types for Dart and Flutter — model success, failure, and absence of values without exceptions or nulls.
 
-`fabrik_result` provides small, focused primitives for modeling **success**, **failure**, and **absence of values** without relying on exceptions, nulls, or heavy functional abstractions.
-
-This package focuses on clarity, predictability, and real-world usage.
-
----
-
-## Learn more
-
-Detailed documentation and examples are available at  
-**<https://fabriktool.com>**
+[![pub.dev](https://img.shields.io/pub/v/fabrik_result.svg)](https://pub.dev/packages/fabrik_result)
+[![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
+[![pure dart](https://img.shields.io/badge/pure-dart-02569B.svg?logo=dart)](https://dart.dev)
 
 ---
 
-## Overview
+## What's included
 
-The goal of `fabrik_result` is to make failure and absence **explicit** in application code.
-
-It encourages:
-
-- Clear success and failure modeling
-- Explicit domain boundaries
-- Predictable control flow
-- Typed APIs without `try-catch` or nullable ambiguity
-
-The package is intentionally minimal and avoids introducing a full functional programming framework.
-
----
-
-## What this package provides
-
-### Result types
-
-Core primitives for modeling outcomes:
-
-- `Either<L, R>`  
-  Represents either a failure (`Left`) or a success (`Right`)
-
-- `Option<T>`  
-  Represents the presence (`Some`) or absence (`None`) of a value
-
-- `Unit`  
-  A typed replacement for `void` when no meaningful value is returned
+| Type | Purpose |
+| --- | --- |
+| `Either<L, R>` | Success (`Right`) or failure (`Left`) with exhaustive handling |
+| `Option<T>` | Value present (`Some`) or absent (`None`) |
+| `Unit` | Typed replacement for `void` in generic APIs |
 
 ---
 
@@ -51,59 +22,92 @@ Core primitives for modeling outcomes:
 
 ```yaml
 dependencies:
-  fabrik_result: ^1.0.0
+  fabrik_result: ^1.0.1
+```
+
+```sh
+flutter pub get
 ```
 
 ---
 
-## Basic usage
+## Quick Start
 
-### Either
-
-Use `Either` when an operation can fail for expected reasons and the caller must handle it explicitly.
+### Either — handle failures explicitly
 
 ```dart
-Either<Failure, User> result = await getUser();
+Either<Failure, User> result = await getUser(id);
 
 result.fold(
-  (failure) => handleError(failure),
-  (user) => handleSuccess(user),
+  (failure) => showError(failure.message),
+  (user) => navigateToDashboard(user),
 );
 ```
 
----
-
-### Option
-
-Use `Option` when a value may or may not exist, and `null` would be ambiguous or unsafe.
+Return values using the helper functions:
 
 ```dart
-Option<User> user = findCachedUser();
-
-user.fold(
-  () => showLogin(),
-  (u) => showDashboard(u),
-);
+Future<Either<Failure, User>> getUser(String id) async {
+  try {
+    final user = await api.fetchUser(id);
+    return right(user);
+  } catch (e) {
+    return left(Failure(e.toString()));
+  }
+}
 ```
 
----
-
-### Unit
-
-Use `Unit` when an operation returns no meaningful data but must still be typed.
+### Option — model absence without null
 
 ```dart
-Either<Failure, Unit> result = await saveSettings();
+Option<User> cached = findCachedUser();
 
-result.fold(
-  (failure) => showError(failure),
-  (_) => showSuccessToast(),
+cached.fold(
+  () => showLoginScreen(),
+  (user) => showDashboard(user),
 );
 ```
 
-This avoids mixing `void` with typed APIs and keeps function signatures consistent.
+### Unit — type-safe void
+
+Use `Unit` when an operation succeeds but has nothing meaningful to return:
+
+```dart
+Future<Either<Failure, Unit>> saveSettings(Settings s) async {
+  try {
+    await storage.write(s);
+    return right(unit);
+  } catch (e) {
+    return left(Failure(e.toString()));
+  }
+}
+```
 
 ---
+
+## Extras
+
+`Either` also has side-effect helpers for imperative code:
+
+```dart
+result.onRight((user) => analytics.track('login'));
+result.onLeft((failure) => logger.error(failure));
+
+final user = result.rightOrNull;
+```
+
+---
+
+## Documentation
+
+Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+
+---
+
+## Contributing
+
+Found a bug or have a suggestion?
+Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
 
 ## Maintainers
 

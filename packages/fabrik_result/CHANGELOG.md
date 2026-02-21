@@ -6,6 +6,14 @@ The format is based on **Keep a Changelog**, and this project adheres to **seman
 
 ---
 
+## 1.0.1
+
+- **Fix:** Added `==` and `hashCode` to `Left`, `Right`, `Some`, and `None` — value equality was broken (`right(42) == right(42)` previously returned `false`)
+- **Fix:** Removed Flutter as a runtime dependency — `fabrik_result` is pure Dart and now works in any Dart project, not just Flutter apps
+- Added equality test coverage for all four types
+
+---
+
 ## 1.0.0
 
 This is a **major, stabilizing release** that defines the long-term scope and philosophy of `fabrik_result`.

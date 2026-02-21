@@ -45,6 +45,12 @@ final class Some<T> extends Option<T> {
   }
 
   @override
+  bool operator ==(Object other) => other is Some<T> && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
   String toString() => 'Some($value)';
 }
 
@@ -56,6 +62,12 @@ final class None<T> extends Option<T> {
   R fold<R>(R Function() onNone, R Function(T value) onSome) {
     return onNone();
   }
+
+  @override
+  bool operator ==(Object other) => other is None;
+
+  @override
+  int get hashCode => (None).hashCode;
 
   @override
   String toString() => 'None';
