@@ -5,22 +5,7 @@ description: A lightweight utility package with real-world-first helpers and ext
 
 > [![pub.dev](https://img.shields.io/pub/v/fabrik_utils.svg?label=pub)](https://pub.dev/packages/fabrik_utils)
 
-`fabrik_utils` is a lightweight, real-world-first utility package for Flutter apps.  
-It includes essential extensions, helpers, and utilities used across real products — crafted to improve DX and save development time.
-
----
-
-## Features
-
-- 🗓 DateTime extensions (`isToday`, `timeAgo`, `weekdayName`, etc.)
-- 🔠 String casing helpers (`camelCase`, `PascalCase`, `titleCase`, etc.)
-- 🧼 String validation and formatting (`isNullOrBlank`, `capitalizeFirst`)
-- ⏱ Duration formatting and splitting
-- 🔁 Debounce & Throttle classes with status stream support
-- 🔽 Scroll helpers (`isApproachingScrollEnd`)
-- 🔢 Tuple-style time splitting for seconds
-
----
+**fabrik_utils** is a lightweight, real-world-first utility package for Flutter apps. It includes the essential extensions and helpers that show up in almost every production app — crafted to improve developer experience and save time.
 
 ## Installation
 
@@ -45,59 +30,135 @@ import 'package:fabrik_utils/fabrik_utils.dart';
 
 ---
 
-## Examples
+## String Extensions
 
-### String Casing
+10 case conversions and null-safe helpers:
 
 ```dart
-// "Hello World"
-'hello world'.titleCase
+'hello world'.titleCase      // "Hello World"
+'helloWorld'.snakeCase       // "hello_world"
+'user_name'.camelCase        // "userName"
+'http_request'.pascalCase    // "HttpRequest"
+'Hello World'.kebabCase      // "hello-world"
+'Hello World'.constantCase   // "HELLO_WORLD"
 
-// "fabrikUtils"
-'FABRIK Utils'.camelCase
+'hello'.capitalizeFirst      // "Hello"
 
-// "this_is_a_test"
-'this is a test'.snakeCase
-
-// "text-case"
-'TextCase'.kebabCase
+String? value = null;
+value.isNullOrBlank          // true
+'   '.isNullOrBlank          // true
 ```
 
-### DateTime Extensions
+---
+
+## DateTime Extensions
+
+Checkers, formatters, date math, and relative time:
 
 ```dart
-// true
-DateTime.now().isToday
+// Checkers
+DateTime.now().isToday       // true
+DateTime.now().isWeekend     // false (on a weekday)
+someDate.isYesterday
+someDate.isTomorrow
 
-// "just now"
-DateTime.now().timeAgo
+// Relative time
+someDate.timeAgo             // "3 hours ago" / "2 days ago" / "1 month ago"
 
-// "September 7, 2025 2:30 PM"
-someDate.fullDateTime
+// Formatters
+date.isoDate                 // "2024-06-15"
+date.dayMonthYear            // "15 Jun 2024"
+date.fullWithWeekday         // "Saturday, June 15, 2024"
+date.time12Hour              // "2:30 PM"
+date.hourMinute24h           // "14:30"
+
+// Date math
+date.startOfDay              // 2024-06-15 00:00:00.000
+date.endOfDay                // 2024-06-15 23:59:59.999
+date.startOfWeek             // midnight of the most recent Monday
+
+// Range check
+date.isBetween(start, end)   // true if start <= date <= end
 ```
 
-### Duration Helpers
+---
+
+## Duration Helpers
 
 ```dart
-// "01:01:05"
-formatDuration(Duration(seconds: 3665))
+formatDuration(Duration(seconds: 3665))           // "01:01:05"
+formatDuration(Duration(minutes: 4, seconds: 5))  // "04:05"
+formatDuration(Duration(seconds: 90), alwaysShowHours: true) // "00:01:30"
 
-// (hours: "01", minutes: "01", seconds: "05")
-splitDuration(3665)
+final parts = splitDuration(3665);
+parts.hours    // "01"
+parts.minutes  // "01"
+parts.seconds  // "05"
 ```
 
-### Debounce & Throttle
+---
+
+## Throttle
+
+Executes a function at most once per duration:
 
 ```dart
-final throttle = Throttle<void>(duration: Duration(seconds: 1));
-throttle(() => print('Only once per second'));
+final throttle = Throttle<void>(duration: const Duration(seconds: 1));
 
-final debounce = Debounce<void>(duration: Duration(milliseconds: 300));
-debounce(() => print('Triggered after pause'));
+throttle.throttle(() {
+  print('Runs at most once per second');
+});
+
+// Stream-based status
+throttle.listen((status) {
+  print(status); // ThrottleStatus.idle or ThrottleStatus.busy
+});
+
+throttle.close();
 ```
 
-### Scroll Helpers
+---
+
+## Debounce
+
+Delays execution until a pause in activity:
 
 ```dart
-isApproachingScrollEnd(scrollController)
+final debounce = Debounce<void>(duration: const Duration(milliseconds: 300));
+
+// Fires after 300ms of inactivity
+debounce.debounce(() => search(query));
+
+// With maxWait — fires after at most 1 second regardless of call frequency
+final debounce = Debounce<void>(
+  duration: const Duration(milliseconds: 300),
+  maxWait: const Duration(seconds: 1),
+);
+
+// Cancel a pending call without closing the stream
+debounce.cancel();
+
+// Stream-based status
+debounce.listen((status) {
+  print(status); // DebounceStatus.idle or DebounceStatus.waiting
+});
+
+debounce.close();
+```
+
+---
+
+## Scroll Helpers
+
+Detect when a list is approaching the bottom — useful for pagination:
+
+```dart
+scrollController.addListener(() {
+  if (isApproachingScrollEnd(scrollController)) {
+    loadNextPage();
+  }
+});
+
+// Custom threshold — trigger at 90% instead of the default 70%
+isApproachingScrollEnd(controller, scrollOffsetThreshold: 0.9)
 ```

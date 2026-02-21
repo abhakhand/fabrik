@@ -1,37 +1,30 @@
 ---
-title: Fabrik
+title: Introduction
+description: An overview of the Fabrik Flutter toolkit.
 ---
 
-Fabrik is a complete Flutter toolkit designed to help you build scalable and maintainable apps with ease.
+Fabrik is a modular Flutter toolkit designed to help you build scalable, maintainable apps with less boilerplate and more consistency.
 
-It combines a powerful CLI and a growing set of packages — built for developers who care about clean architecture, productivity, and consistency.
+It's a growing set of production-ready packages — built for developers who care about clean architecture, great developer experience, and code that holds up as apps grow.
 
-## What does Fabrik Offer?
+## Packages
 
-### Fabrik CLI
-
-Scaffold complete, ready-to-use features with clean architecture (DDD-inspired)
-No boilerplate — just run
-
-```bash
-fabrik generate feature user_profile
-```
-
-### Fabrik Snackbar (package)
-
-A powerful, customizable snackbar & toast solution
-Themes, variants, icons, durations — easily configurable
+| Package | What it does |
+| --- | --- |
+| **fabrik_theme** | Design tokens, typography scale, color system, and `MaterialApp` theming |
+| **fabrik_layout** | Responsive layout context with breakpoints, orientation, and device-aware text scaling |
+| **fabrik_snackbar** | Production-ready snackbars and toasts with success, error, info, and warning variants |
+| **fabrik_forms** | UI-agnostic form state, field validation, and a reactive `ValueNotifier`-based API |
+| **fabrik_utils** | DateTime/String extensions, duration helpers, `Debounce`, `Throttle`, and scroll utilities |
+| **fabrik_result** | Lightweight `Either<L, R>` and `Unit` types for functional error handling |
 
 ## Why Fabrik?
 
-We built Fabrik because we were tired of copy-pasting the same architecture setup over and over.  
-We also wanted to simplify the process of choosing and integrating common essentials like snackbars, toasts, and calendars — things that almost every app needs, but often require evaluating multiple options or custom setups.
+Every Flutter app needs some version of the same things: a theming system, responsive layout, form validation, a snackbar, a way to handle errors, some string and date helpers. Fabrik packages these up into a coherent, well-tested toolkit so you don't have to evaluate and wire things together from scratch each time.
 
-**Our goals:**
+**Goals:**
 
-- Provide a clean, reusable system for feature generation
-- Bake in best practices for DDD, modularity, testability
+- Ship the things almost every app needs, done well and consistently
+- Provide minimal, focused packages with no unnecessary dependencies
 - Make codebases more maintainable for teams and solo devs
-- Offer commonly needed components like snackbars, toasts, calendars, and more — all under one reliable toolkit
-
-Fabrik is more than just a CLI — it's a philosophy of building Flutter projects that scale.
+- Bake in best practices for testability and clean architecture

@@ -1,11 +1,11 @@
 ---
 title: fabrik_theme
-description: A powerful theming system for the Fabrik Flutter ecosystem.
+description: A scalable design system with typography, colors, spacing, and theming for Flutter apps.
 ---
 
 > [![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg?label=pub)](https://pub.dev/packages/fabrik_theme)
 
-The **Fabrik Theme** package provides a consistent design system with typography, spacing, colors, and theming configuration to help you maintain visual consistency across your Flutter apps.
+**fabrik_theme** provides a consistent design system — typography, color tokens, spacing, border radii, and `MaterialApp` theming — so you maintain visual consistency across your entire Flutter app without reinventing the wheel.
 
 ## Installation
 
@@ -13,7 +13,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fabrik_theme: ^0.0.1
+  fabrik_theme: ^1.0.2
 ```
 
 Then run:
@@ -22,61 +22,129 @@ Then run:
 flutter pub get
 ```
 
-Import `fabrik_theme` in your Dart files:
+Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_theme/fabrik_theme.dart';
 ```
 
+---
+
 ## Getting Started
 
-Apply the theme in `MaterialApp`:
+Apply the Fabrik theme in `MaterialApp`:
 
 ```dart
 MaterialApp(
   themeMode: ThemeMode.system,
   theme: FabrikThemeBuilder.light(),
   darkTheme: FabrikThemeBuilder.dark(),
-  home: HomePage(),
-);
-```
-
-Customize the `FabrikTheme`:
-
-```dart
-final colors = FabrikColors.custom(
-  lightPrimary: Colors.green,
-  darkPrimary: Colors.greenAccent,
-);
-
-return MaterialApp(
-  themeMode: ThemeMode.system,
-  theme: FabrikThemeBuilder.light(fontFamily: 'Roboto', colors: colors),
-  darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Roboto', colors: colors),
   home: const HomePage(),
 );
 ```
 
-## Access Theme in Widgets
+Both `light()` and `dark()` accept optional `fontFamily` and `colors` parameters:
 
-You can access the theme anywhere in the widget tree:
+```dart
+final colors = FabrikColors.custom(
+  lightPrimary: Colors.indigo,
+  darkPrimary: Colors.indigoAccent,
+);
+
+MaterialApp(
+  themeMode: ThemeMode.system,
+  theme: FabrikThemeBuilder.light(fontFamily: 'Inter', colors: colors),
+  darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Inter', colors: colors),
+  home: const HomePage(),
+);
+```
+
+---
+
+## Accessing the Theme
+
+Use `FabrikTheme.of(context)` anywhere in the widget tree:
 
 ```dart
 final theme = FabrikTheme.of(context);
 
 Text(
-  'Fabrik Typography.',
-  theme.typography.bodyLarge.copyWith(
+  'Hello, Fabrik',
+  style: theme.typography.bodyLarge.copyWith(
     color: theme.colors.primary,
   ),
 ),
 ```
 
-## Use Tokens
+---
 
-Access token values anywhere in your app:
+## Typography
+
+`FabrikTheme.of(context).typography` exposes the full type scale:
+
+| Token | Usage |
+| --- | --- |
+| `displayLarge` | Hero headlines |
+| `displayMedium` | Section headings |
+| `displaySmall` | Sub-headings |
+| `headlineLarge` | Page titles |
+| `headlineMedium` | Card titles |
+| `headlineSmall` | Minor headings |
+| `titleLarge` | App bar titles |
+| `titleMedium` | List item titles |
+| `titleSmall` | Supporting labels |
+| `bodyLarge` | Primary body copy |
+| `bodyMedium` | Default body text |
+| `bodySmall` | Captions, helper text |
+| `labelLarge` | Button labels |
+| `labelMedium` | Tab labels |
+| `labelSmall` | Overlines, tags |
+
+---
+
+## Colors
+
+`FabrikTheme.of(context).colors` gives you access to the semantic color tokens:
 
 ```dart
-FabrikSpacing.x4
-FabrikRadius.r4
+theme.colors.primary     // brand primary
+theme.colors.secondary   // brand secondary
+theme.colors.background  // page background
+theme.colors.surface     // card / sheet surface
+theme.colors.error       // error state
+theme.colors.onPrimary   // text/icons on primary color
+```
+
+Use `FabrikColors.custom(...)` to override defaults for both light and dark modes.
+
+---
+
+## Spacing Tokens
+
+Static design tokens for consistent padding and gaps:
+
+```dart
+FabrikSpacing.x1   // 4px
+FabrikSpacing.x2   // 8px
+FabrikSpacing.x3   // 12px
+FabrikSpacing.x4   // 16px
+FabrikSpacing.x5   // 20px
+FabrikSpacing.x6   // 24px
+FabrikSpacing.x8   // 32px
+FabrikSpacing.x10  // 40px
+FabrikSpacing.x12  // 48px
+```
+
+---
+
+## Radius Tokens
+
+```dart
+FabrikRadius.r1    // 4px
+FabrikRadius.r2    // 8px
+FabrikRadius.r3    // 12px
+FabrikRadius.r4    // 16px
+FabrikRadius.r5    // 20px
+FabrikRadius.r6    // 24px
+FabrikRadius.full  // circular / pill
 ```

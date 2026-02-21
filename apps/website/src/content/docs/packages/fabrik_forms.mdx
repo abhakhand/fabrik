@@ -5,9 +5,7 @@ description: A clean, UI-agnostic form state and validation system for Flutter.
 
 > [![pub.dev](https://img.shields.io/pub/v/fabrik_forms.svg?label=pub)](https://pub.dev/packages/fabrik_forms)
 
-The **fabrik_forms** package is a clean, testable, and UI-agnostic form state management system for Flutter.
-
-It's designed to support both reactive patterns and integration with any state management solution like BLoC, Riverpod, or Provider.
+**fabrik_forms** is a clean, testable, UI-agnostic form state management system for Flutter. It handles field values, validation, dirty/touched state, and reactive rebuilds — without coupling your logic to any specific widget.
 
 ## Installation
 
@@ -24,7 +22,7 @@ Then run:
 flutter pub get
 ```
 
-Import `fabrik_forms` in your Dart files:
+Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_forms/fabrik_forms.dart';
@@ -34,19 +32,19 @@ import 'package:fabrik_forms/fabrik_forms.dart';
 
 ## Getting Started
 
-Create a form with fields and validators:
+Define your form with typed fields and validators:
 
 ```dart
 final formNotifier = FabrikFormNotifier<String>(
   FabrikForm({
-    'email': FabrikField<String>(
+    'email': FabrikField(
       value: '',
-      validators: [EmailValidator()],
+      validators: [const EmailValidator()],
     ),
-    'password': FabrikField<String>(
+    'password': FabrikField(
       value: '',
       validators: [
-        PasswordValidator(
+        const PasswordValidator(
           requireDigit: true,
           requireSpecialChar: true,
         ),
@@ -56,7 +54,7 @@ final formNotifier = FabrikFormNotifier<String>(
 );
 ```
 
-Wrap your UI with `FabrikFormBuilder`:
+Wrap your UI with `FabrikFormBuilder` to rebuild reactively:
 
 ```dart
 FabrikFormBuilder<String>(
@@ -67,14 +65,14 @@ FabrikFormBuilder<String>(
 
     return Column(
       children: [
-        TextFormField(
+        TextField(
           onChanged: (val) => formNotifier.update('email', val),
           decoration: InputDecoration(
             labelText: 'Email',
             errorText: email.visibleError,
           ),
         ),
-        TextFormField(
+        TextField(
           onChanged: (val) => formNotifier.update('password', val),
           obscureText: true,
           decoration: InputDecoration(
@@ -83,7 +81,13 @@ FabrikFormBuilder<String>(
           ),
         ),
         ElevatedButton(
-          onPressed: form.isValid ? () => submit(form.values) : null,
+          onPressed: () {
+            if (form.isValid) {
+              submit(form.values);
+            } else {
+              formNotifier.markAllTouched(); // reveal all errors
+            }
+          },
           child: const Text('Sign In'),
         ),
       ],
@@ -94,53 +98,117 @@ FabrikFormBuilder<String>(
 
 ---
 
+## Field Metadata
+
+Every `FabrikField` tracks:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `value` | `T` | Current field value |
+| `error` | `String?` | Active validation error |
+| `visibleError` | `String?` | Error shown only after the field is touched |
+| `isValid` | `bool` | No active errors |
+| `isTouched` | `bool` | User has interacted with the field |
+| `isDirty` | `bool` | Value differs from initial |
+
+---
+
+## Resetting a Form
+
+Call `reset()` to restore all fields to their initial values and clear all touched/dirty state:
+
+```dart
+formNotifier.reset();
+```
+
+This is useful for clearing a form after submission or on cancel.
+
+---
+
 ## Built-in Validators
 
 ### RequiredValidator
 
 ```dart
-RequiredValidator(message: 'This field is required');
+const RequiredValidator()
+const RequiredValidator(message: 'Name is required', trim: false)
 ```
 
-### MinLengthValidator
+### MinLengthValidator / MaxLengthValidator
 
 ```dart
-MinLengthValidator(min: 6, message: 'Too short');
-```
-
-### MaxLengthValidator
-
-```dart
-MaxLengthValidator(max: 20, message: 'Too long');
+const MinLengthValidator(min: 6)
+const MaxLengthValidator(max: 100, message: 'Too long')
 ```
 
 ### EmailValidator
 
 ```dart
-EmailValidator(
-  isRequired: true,
-  requiredMessage: 'Required',
-  invalidMessage: 'Invalid email',
-);
+const EmailValidator()                          // required by default
+const EmailValidator(isRequired: false)         // optional — empty is valid
+const EmailValidator(invalidMessage: 'Bad email')
 ```
 
 ### PasswordValidator
 
 ```dart
-PasswordValidator(
-  requireDigit: true,
+const PasswordValidator()                       // requires 8+ chars, non-empty
+const PasswordValidator(isRequired: false)      // optional password
+const PasswordValidator(
+  minLength: 12,
   requireUppercase: true,
+  requireDigit: true,
   requireSpecialChar: true,
-);
+)
+```
+
+### UrlValidator
+
+```dart
+const UrlValidator()                            // accepts http and https
+const UrlValidator(requireHttps: true)          // https only
+const UrlValidator(isRequired: false)           // optional — empty is valid
+```
+
+### PhoneValidator
+
+```dart
+const PhoneValidator()                          // required by default
+const PhoneValidator(isRequired: false)         // optional — empty is valid
+// Accepts: +1 234 567 8900 · (123) 456-7890 · 123-456-7890 · 1234567890
+```
+
+### RangeValidator
+
+```dart
+const RangeValidator(min: 1, max: 100)
+const RangeValidator(min: 0.0, max: 1.0, minMessage: 'Too low', maxMessage: 'Too high')
+```
+
+### Custom Validators
+
+Extend `FabrikValidator<T>` to create your own:
+
+```dart
+class UsernameValidator extends FabrikValidator<String> {
+  const UsernameValidator();
+
+  @override
+  String? call(String value) {
+    if (value.contains(' ')) return 'No spaces allowed';
+    return null;
+  }
+}
 ```
 
 ---
 
 ## Features
 
-- ✅ Field-level validation with reusable validators
-- ✅ Form-level state with `.isValid`, `.isDirty`, `.isTouched`, `.values`, `.errors`
-- ✅ Notifier-based reactivity
-- ✅ Builder widget for clean UI
-- ✅ Works with or without a widget tree
-- ✅ Fully testable without Flutter widgets
+- Field-level validation with reusable, composable validators
+- Form-level state: `.isValid`, `.isDirty`, `.isTouched`, `.values`, `.errors`
+- `markAllTouched()` to reveal all errors on submit
+- `reset()` to restore initial state
+- `ValueNotifier`-based reactivity with `FabrikFormNotifier`
+- Declarative UI with `FabrikFormBuilder`
+- Works independently of the widget tree — fully unit-testable

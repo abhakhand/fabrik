@@ -32,29 +32,13 @@ export default defineConfig({
       sidebar: [
         {
           label: "Fabrik",
-          items: [
-            { label: "Introduction", slug: "introduction" },
-            {
-              label: "Architecture",
-              slug: "introduction/architecture",
-            },
-          ],
-        },
-        {
-          label: "CLI",
-          items: [
-            { label: "Fabrik CLI", slug: "cli" },
-            {
-              label: "Installation & Usage",
-              slug: "cli/cli-installation-and-usage",
-            },
-          ],
+          items: [{ label: "Introduction", slug: "introduction" }],
         },
         {
           label: "Packages",
-          badge: { text: "new" },
           items: [
             { label: "fabrik_theme", slug: "packages/fabrik_theme" },
+            { label: "fabrik_layout", slug: "packages/fabrik_layout" },
             { label: "fabrik_forms", slug: "packages/fabrik_forms" },
             { label: "fabrik_snackbar", slug: "packages/fabrik_snackbar" },
             { label: "fabrik_utils", slug: "packages/fabrik_utils" },

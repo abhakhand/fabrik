@@ -1,0 +1,201 @@
+---
+title: fabrik_layout
+description: Responsive layout context, breakpoints, orientation, and device-aware text scaling for Flutter.
+---
+
+> [![pub.dev](https://img.shields.io/pub/v/fabrik_layout.svg?label=pub)](https://pub.dev/packages/fabrik_layout)
+
+**fabrik_layout** provides a lightweight responsive layout foundation for Flutter apps. It classifies the current device as mobile, tablet, or desktop based on screen width, exposes orientation, and optionally applies device-aware minimum text scaling — all available anywhere in the widget tree via `context.layout`.
+
+## Installation
+
+Add the package to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  fabrik_layout: ^1.1.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+Import it in your Dart files:
+
+```dart
+import 'package:fabrik_layout/fabrik_layout.dart';
+```
+
+---
+
+## Getting Started
+
+Wrap your app inside `MaterialApp.builder`:
+
+```dart
+MaterialApp(
+  builder: (context, child) => FabrikLayout(
+    child: child!,
+  ),
+  home: const HomePage(),
+)
+```
+
+Then access the layout context anywhere in the tree:
+
+```dart
+final layout = context.layout;
+
+if (layout.isMobile) {
+  return const MobileView();
+}
+if (layout.isTablet) {
+  return const TabletView();
+}
+return const DesktopView();
+```
+
+---
+
+## Responsive Values
+
+Use `layout.value<T>()` to return different values per device without a chain of `if` statements:
+
+```dart
+final padding = context.layout.value<double>(
+  mobile: 16,
+  tablet: 24,
+  desktop: 32,
+);
+
+final columns = context.layout.value<int>(
+  mobile: 1,
+  tablet: 2,
+  desktop: 3,
+);
+```
+
+`tablet` and `desktop` are optional and fall back intelligently:
+- `desktop` not provided → uses `tablet` value
+- `tablet` not provided → uses `mobile` value
+
+---
+
+## Layout Data
+
+`context.layout` returns a `FabrikLayoutData` with:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `type` | `FabrikLayoutType` | `mobile`, `tablet`, or `desktop` |
+| `isMobile` | `bool` | `true` when on mobile |
+| `isTablet` | `bool` | `true` when on tablet |
+| `isDesktop` | `bool` | `true` when on desktop |
+| `screenSize` | `Size` | Current screen dimensions |
+| `orientation` | `Orientation` | `portrait` or `landscape` |
+| `isPortrait` | `bool` | `true` when portrait |
+| `isLandscape` | `bool` | `true` when landscape |
+| `textScaler` | `TextScaler` | Applied text scaler |
+
+---
+
+## Breakpoints
+
+Default thresholds (width in logical pixels):
+
+| Range | Device |
+| --- | --- |
+| `< 600` | Mobile |
+| `600 – 1023` | Tablet |
+| `≥ 1024` | Desktop |
+
+Override them with `FabrikBreakpoints`:
+
+```dart
+FabrikLayout(
+  breakpoints: const FabrikBreakpoints(
+    mobile: 480,
+    tablet: 900,
+  ),
+  child: child!,
+)
+```
+
+---
+
+## Orientation
+
+```dart
+final layout = context.layout;
+
+layout.orientation   // Orientation.portrait or Orientation.landscape
+layout.isPortrait    // true
+layout.isLandscape   // false
+```
+
+---
+
+## Text Scaling
+
+By default, text scaling is disabled. Enable it to apply device-aware minimum scale floors that respect the user's system accessibility settings — they're never reduced, only raised:
+
+```dart
+FabrikLayout(
+  enableTextScaling: true,
+  child: child!,
+)
+```
+
+Default scale floors per device:
+
+| Device | Minimum scale |
+| --- | --- |
+| Mobile | 1.0× |
+| Tablet | 1.05× |
+| Desktop | 1.1× |
+
+Customize the floors with `FabrikTextScaleConfig`:
+
+```dart
+FabrikLayout(
+  enableTextScaling: true,
+  textScaleConfig: const FabrikTextScaleConfig(
+    mobile: 1.0,
+    tablet: 1.1,
+    desktop: 1.2,
+  ),
+  child: child!,
+)
+```
+
+> The system accessibility scale is never reduced — `FabrikTextScaleConfig` values only set a minimum floor.
+
+---
+
+## Full Example
+
+```dart
+class ResponsiveScaffold extends StatelessWidget {
+  const ResponsiveScaffold({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final layout = context.layout;
+
+    final padding = layout.value<double>(mobile: 16, tablet: 24, desktop: 40);
+    final columns = layout.value<int>(mobile: 1, tablet: 2, desktop: 3);
+
+    return Scaffold(
+      body: Padding(
+        padding: EdgeInsets.all(padding),
+        child: GridView.count(
+          crossAxisCount: columns,
+          children: const [...],
+        ),
+      ),
+    );
+  }
+}
+```

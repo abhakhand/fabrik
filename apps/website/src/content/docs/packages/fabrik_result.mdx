@@ -1,27 +1,11 @@
 ---
 title: fabrik_result
-description: A minimal and lightweight result-handling toolkit for real-world Dart and Flutter apps.
+description: A minimal, lightweight result-handling toolkit for Dart and Flutter apps.
 ---
 
 > [![pub.dev](https://img.shields.io/pub/v/fabrik_result.svg?label=pub)](https://pub.dev/packages/fabrik_result)
 
-`fabrik_result` is a minimal and lightweight result-handling toolkit for real-world Dart and Flutter apps.
-
----
-
-## Features
-
-- ✅ A sealed `Either<L, R>` type to model success/failure without using try-catch
-- 🎯 A `Unit` type to represent a typed `void` for functional-style APIs
-
----
-
-## Philosophy
-
-`fabrik_result` is built for **clarity, simplicity, and real usage** in domain-driven apps.  
-It provides only what you need, making it extremely lightweight.
-
----
+**fabrik_result** is a minimal result-handling toolkit for Dart and Flutter. It gives you a typed way to model success and failure without relying on exceptions — making your domain logic easier to read, test, and reason about.
 
 ## Installation
 
@@ -29,40 +13,94 @@ It provides only what you need, making it extremely lightweight.
 dart pub add fabrik_result
 ```
 
----
+Or add it to your `pubspec.yaml`:
 
-## Usage
-
-### Either
-
-Use `Either<Failure, Success>` to safely model operations that may fail:
-
-```dart
-Either<Failure, User> result = await getUser();
-
-result.fold(
-  (failure) => handleError(failure),
-  (user) => handleSuccess(user),
-);
+```yaml
+dependencies:
+  fabrik_result: ^1.0.1
 ```
 
-### Unit
-
-Use `Unit` when the success case doesn’t need to return data:
+Import it in your Dart files:
 
 ```dart
-Either<Failure, Unit> result = await save();
-
-result.fold(
-  (failure) => showError(failure),
-  (_) => showSuccessToast(),
-);
+import 'package:fabrik_result/fabrik_result.dart';
 ```
 
 ---
 
-## Summary
+## Either
 
-- Lightweight alternative to `dartz` and other functional packages
-- Built for simplicity and real-world Flutter/Dart apps
-- Great for clean architecture and domain-driven design
+`Either<L, R>` is a sealed type that holds either a left value (conventionally failure) or a right value (conventionally success). It makes the possible outcomes of an operation explicit in the return type.
+
+```dart
+Either<Failure, User> result = await userRepository.getUser(id);
+
+result.fold(
+  (failure) => showError(failure.message),
+  (user) => navigateToProfile(user),
+);
+```
+
+**Constructing values:**
+
+```dart
+// Success
+return Right(user);
+
+// Failure
+return Left(Failure('User not found'));
+```
+
+**Checking the side:**
+
+```dart
+result.isRight  // true if success
+result.isLeft   // true if failure
+```
+
+---
+
+## Unit
+
+`Unit` is a typed `void` — use it when an operation succeeds but has nothing meaningful to return.
+
+```dart
+Either<Failure, Unit> result = await settingsRepository.save(settings);
+
+result.fold(
+  (failure) => showError(failure.message),
+  (_) => showSuccess('Settings saved'),
+);
+```
+
+Instead of returning `Either<Failure, void>` (which isn't valid in Dart), return `Either<Failure, Unit>` and use `Right(unit)` as the success value.
+
+---
+
+## In a Repository
+
+A typical repository method using `fabrik_result`:
+
+```dart
+Future<Either<Failure, User>> getUser(String id) async {
+  try {
+    final model = await dataSource.fetchUser(id);
+    return Right(model.toEntity());
+  } catch (e) {
+    return Left(Failure(e.toString()));
+  }
+}
+```
+
+---
+
+## Why Not Try-Catch?
+
+| | `try-catch` | `Either` |
+| --- | --- | --- |
+| Failure is explicit in signature | No | Yes |
+| Caller must handle failure | No | Yes |
+| Testable without exceptions | Hard | Easy |
+| Composable | No | Yes |
+
+`fabrik_result` is a lightweight alternative to packages like `dartz` — it provides only `Either` and `Unit`, nothing more.

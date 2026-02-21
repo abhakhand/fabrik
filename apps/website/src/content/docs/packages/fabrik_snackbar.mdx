@@ -1,12 +1,11 @@
 ---
 title: fabrik_snackbar
-description: A flexible, clean snackbar and toast UI component for Flutter.
+description: A flexible, production-ready snackbar and toast component for Flutter.
 ---
 
 > [![pub.dev](https://img.shields.io/pub/v/fabrik_snackbar.svg?label=pub)](https://pub.dev/packages/fabrik_snackbar)
 
-The **Fabrik Snackbar** package is a customizable, production-ready solution for showing snackbars and toasts in your Flutter app.
-It’s designed to be simple to use, highly configurable, and seamlessly integrated with your app’s theme.
+**fabrik_snackbar** is a customizable, production-ready solution for showing snackbars and toasts in your Flutter app. It ships with prebuilt semantic variants — success, error, info, warning — and a fully configurable custom mode.
 
 ## Installation
 
@@ -14,7 +13,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fabrik_snackbar: ^0.1.0
+  fabrik_snackbar: ^0.1.7
 ```
 
 Then run:
@@ -23,25 +22,24 @@ Then run:
 flutter pub get
 ```
 
-Import `fabrik_snackbar` in your Dart files:
+Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_snackbar/fabrik_snackbar.dart';
 ```
 
-You're now ready to display your first snackbar or toast.
+---
 
-## Show a Snackbar
+## Snackbars
 
-You can choose from prebuilt snackbar variants or create a custom snackbar.
-The prebuilt options cover most common use cases, eliminating the need to manually configure properties like snackbar color, icon color, and more.
+Choose from prebuilt semantic variants or create a fully custom snackbar.
 
 ### Success
 
 ```dart
 FabrikSnackbar.success(
   context,
-  title: 'Registration Successful!',
+  title: 'Registration Successful',
   message: 'You have been successfully registered.',
 );
 ```
@@ -51,8 +49,8 @@ FabrikSnackbar.success(
 ```dart
 FabrikSnackbar.error(
   context,
-  title: 'Error Occurred',
-  message: 'Something went wrong, please try again.',
+  title: 'Something went wrong',
+  message: 'Please try again later.',
 );
 ```
 
@@ -61,8 +59,8 @@ FabrikSnackbar.error(
 ```dart
 FabrikSnackbar.info(
   context,
-  title: 'Heads Up!',
-  message: 'New update is available.',
+  title: 'Update Available',
+  message: 'A new version of the app is ready to install.',
 );
 ```
 
@@ -71,8 +69,8 @@ FabrikSnackbar.info(
 ```dart
 FabrikSnackbar.warning(
   context,
-  title: 'Warning!',
-  message: 'Your internet is unstable.',
+  title: 'Unstable Connection',
+  message: 'Your internet connection may be slow.',
 );
 ```
 
@@ -81,23 +79,37 @@ FabrikSnackbar.warning(
 ```dart
 FabrikSnackbar.custom(
   context,
-  title: 'Custom Title',
-  message: 'Custom background and style.',
-  backgroundColor: Colors.purple,
+  title: 'Custom Snackbar',
+  message: 'Fully styled to your design.',
+  backgroundColor: Colors.deepPurple,
   borderRadius: BorderRadius.circular(16),
-  duration: const Duration(seconds: 2),
+  duration: const Duration(seconds: 3),
 );
 ```
 
-## Show a Toast
+---
 
-Use the `FabrikToast.show` method to display a toast from anywhere in your app:
+## Toasts
+
+`FabrikToast` is a lightweight, floating message that appears above the UI — ideal for short, non-blocking feedback.
 
 ```dart
 FabrikToast.show(
   context,
-  message: 'Copied to Clipboard!',
+  message: 'Copied to clipboard',
 );
 ```
 
-These come with built-in styles that you can override globally or per use.
+Toasts use sensible defaults and disappear automatically.
+
+---
+
+## When to Use Which
+
+| Use case | Recommended |
+| --- | --- |
+| Form submission result | `FabrikSnackbar.success` / `.error` |
+| Network or API errors | `FabrikSnackbar.error` |
+| Passive system notifications | `FabrikSnackbar.info` |
+| Low-priority confirmations | `FabrikToast.show` |
+| Fully branded feedback | `FabrikSnackbar.custom` |
