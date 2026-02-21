@@ -99,15 +99,46 @@ class AppColors extends ThemeExtension<AppColors> {
   AppColors lerp(ThemeExtension<AppColors>? other, double t) {
     if (other is! AppColors) return this;
     return AppColors(
-      primary: Color.lerp(primary, other.primary, t)!,
-      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
-      accent: Color.lerp(accent, other.accent, t)!,
-      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
-      surface: Color.lerp(surface, other.surface, t)!,
-      onSurface: Color.lerp(onSurface, other.onSurface, t)!,
-      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
-      textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
-      textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
+      primary: Color.lerp(primary, other.primary, t) ?? primary,
+      onPrimary: Color.lerp(onPrimary, other.onPrimary, t) ?? onPrimary,
+      accent: Color.lerp(accent, other.accent, t) ?? accent,
+      onAccent: Color.lerp(onAccent, other.onAccent, t) ?? onAccent,
+      surface: Color.lerp(surface, other.surface, t) ?? surface,
+      onSurface: Color.lerp(onSurface, other.onSurface, t) ?? onSurface,
+      textPrimary:
+          Color.lerp(textPrimary, other.textPrimary, t) ?? textPrimary,
+      textSecondary:
+          Color.lerp(textSecondary, other.textSecondary, t) ?? textSecondary,
+      textTertiary:
+          Color.lerp(textTertiary, other.textTertiary, t) ?? textTertiary,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AppColors &&
+        other.primary == primary &&
+        other.onPrimary == onPrimary &&
+        other.accent == accent &&
+        other.onAccent == onAccent &&
+        other.surface == surface &&
+        other.onSurface == onSurface &&
+        other.textPrimary == textPrimary &&
+        other.textSecondary == textSecondary &&
+        other.textTertiary == textTertiary;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    primary,
+    onPrimary,
+    accent,
+    onAccent,
+    surface,
+    onSurface,
+    textPrimary,
+    textSecondary,
+    textTertiary,
+  );
 }

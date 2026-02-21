@@ -1,82 +1,22 @@
 # fabrik_theme
 
-A lightweight, opinionated theming foundation for Flutter applications.
+A lightweight, opinionated theming foundation for Flutter — semantic colors, typography, and design tokens with zero layout or UI concerns.
 
-`fabrik_theme` helps you define and consume **colors**, **typography**, and **design tokens** in a consistent, scalable, and predictable way, without mixing UI widgets, layout concerns, or responsiveness into the theming layer.
-
-This package focuses on fundamentals and stays intentionally small.
-
----
-
-## Learn more
-
-Detailed documentation, guides, and rationale are available at  
-**<https://fabriktool.com>**
+[![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg)](https://pub.dev/packages/fabrik_theme)
+[![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
+[![platform](https://img.shields.io/badge/platform-flutter-02569B.svg?logo=flutter)](https://flutter.dev)
 
 ---
 
-## Overview
+## What's included
 
-The goal of `fabrik_theme` is to provide a **clear design language layer** for Flutter apps.
-
-It encourages:
-
-- Semantic colors and typography
-- Centralized theme construction
-- Predictable usage in widgets
-- Strong separation between design tokens and UI components
-
----
-
-## What this package provides
-
-### Design tokens
-
-Static, context-independent values that describe your design system:
-
-- `ColorTokens`
-- `TypographyTokens`
-- `SpacingTokens`
-- `RadiusTokens`
-- `BorderTokens`
-- `ElevationTokens`
-
-Tokens are accessed directly and never depend on `BuildContext`.
-
-```dart
-Padding(
-  padding: EdgeInsets.all(SpacingTokens.md),
-)
-```
-
----
-
-### Semantic theme extensions
-
-Design semantics are expressed using `ThemeExtension`s:
-
-- `AppColors`
-- `AppTypography`
-
-These are resolved once during theme creation and then consumed by widgets.
-
-```dart
-Text(
-  'Profile',
-  style: context.typography.titleMedium,
-)
-```
-
----
-
-### Builders
-
-Builders compose raw tokens into usable theme data.
-
-- `FabrikTypographyBuilder` resolves typography using colors and font family
-- `FabrikTheme` wires everything into `ThemeData`
-
-Widgets never perform theme composition.
+| Layer | What it does |
+| --- | --- |
+| **Design tokens** | Static values for color, spacing, radius, border, elevation, typography |
+| **`AppColors`** | Semantic color roles as a `ThemeExtension` |
+| **`AppTypography`** | Semantic text styles as a `ThemeExtension` |
+| **`FabrikTheme.create`** | Single entry point to build a complete `ThemeData` |
+| **`context.colors` / `context.typography`** | Ergonomic widget-level access |
 
 ---
 
@@ -84,44 +24,48 @@ Widgets never perform theme composition.
 
 ```yaml
 dependencies:
-  fabrik_theme: ^1.0.0
+  fabrik_theme: ^1.0.2
+```
+
+```sh
+flutter pub get
 ```
 
 ---
 
-## Basic usage
+## Quick Start
 
-### Define your colors
+### 1. Define your colors
 
 ```dart
 class AppThemeColors {
   static const light = AppColors(
     primary: Color(0xFF6C5CE7),
+    onPrimary: Color(0xFFFFFFFF),
     accent: Color(0xFF00CEC9),
+    onAccent: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF111111),
     textPrimary: Color(0xFF111111),
     textSecondary: Color(0xFF444444),
     textTertiary: Color(0xFF777777),
-    background: Color(0xFFFFFFFF),
-    surface: Color(0xFFF6F6F6),
-    divider: Color(0xFFE0E0E0),
   );
 
   static const dark = AppColors(
     primary: Color(0xFFB4A7FF),
+    onPrimary: Color(0xFF1A1A2E),
     accent: Color(0xFF55EFC4),
+    onAccent: Color(0xFF003D33),
+    surface: Color(0xFF121212),
+    onSurface: Color(0xFFFFFFFF),
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFFCCCCCC),
     textTertiary: Color(0xFF999999),
-    background: Color(0xFF121212),
-    surface: Color(0xFF1E1E1E),
-    divider: Color(0xFF2C2C2C),
   );
 }
 ```
 
----
-
-### Create a theme
+### 2. Create the theme
 
 ```dart
 MaterialApp(
@@ -138,91 +82,68 @@ MaterialApp(
 );
 ```
 
-Typography is generated automatically unless explicitly provided.
+Typography is generated automatically from the colors unless you pass a custom `AppTypography`.
 
----
-
-## Using colors and typography
-
-### Colors
+### 3. Consume in widgets
 
 ```dart
-Container(
-  color: context.colors.surface,
-)
+// Colors
+Container(color: context.colors.surface)
+
+// Typography
+Text('Welcome', style: context.typography.headlineMedium)
+Text('Subtitle', style: context.typography.bodyMediumSecondary)
+Text('Action', style: context.typography.labelLarge)
 ```
 
-### Typography
+---
+
+## Design Tokens
+
+Tokens are static and never require `BuildContext`:
 
 ```dart
-Text(
-  'Settings',
-  style: context.typography.titleMediumPrimary,
-)
+Padding(padding: EdgeInsets.all(SpacingTokens.lg))         // 16
+BorderRadius.circular(RadiusTokens.md)                     // 12
+Border.all(width: BorderTokens.thin)                       // 1
+PhysicalModel(elevation: ElevationTokens.sm)               // 3
 ```
 
-Typography variants are semantic.  
-For one-off cases, `copyWith` is fully supported.
-
 ---
 
-## Typography philosophy
+## Typography Variants
 
-`fabrik_theme` avoids mechanical permutations.
+Each scale has semantic variants:
 
-Instead, it provides:
+| Suffix | Color role |
+| --- | --- |
+| *(none)* | `textPrimary` — high emphasis |
+| `Secondary` | `textSecondary` — supporting content |
+| `Tertiary` | `textTertiary` — low emphasis |
+| `Primary` | brand `primary` — accent emphasis |
+| `Emphasis` | `textPrimary` + `FontWeight.w500` |
 
-- Primary variants for display, headlines, and titles
-- Secondary and tertiary variants for body text
-- Emphasis variants where weight-based emphasis is common
-
-If a styling pattern repeats across the app, it belongs in the system.  
-If it is contextual, `copyWith` is appropriate.
-
----
-
-## Opinionated boundaries
-
-This package intentionally does **not** include:
-
-- Responsive scaling or breakpoints
-- Context-based spacing
-- Layout or UI widgets
-- Component abstractions
-
-These decisions keep the theming layer stable and predictable.
-
-Responsiveness, layout helpers, and components are expected to live in separate packages.
-
----
-
-## Extensibility
-
-`fabrik_theme` is designed to be extended, not forked.
-
-You can:
-
-- Add your own `ThemeExtension`s
-- Build component libraries on top of the tokens
-- Layer responsive systems above it
-- Replace typography entirely if needed
-
-The package does not lock you into a closed system.
+```dart
+context.typography.bodyMedium           // primary color
+context.typography.bodyMediumSecondary  // secondary color
+context.typography.bodyMediumTertiary   // tertiary color
+context.typography.titleLargePrimary    // brand accent color
+context.typography.bodyLargeEmphasis    // bold primary
+```
 
 ---
 
 ## Documentation
 
-This README covers the essentials.
-
-Detailed documentation and examples are available at  
-**<https://fabriktool.com>**
+Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
 
 ---
 
-## Closing note
+## Contributing
 
-`fabrik_theme` is intentionally boring in the best way possible.
+Found a bug or have a suggestion?
+Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
 
-It favors clarity over cleverness and stability over convenience.  
-If you value maintainable UI code, this package is built for you.
+## Maintainers
+
+- [Ashish Bhakhand](https://github.com/abhakhand)

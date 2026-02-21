@@ -3,6 +3,15 @@
 All notable changes to this package are documented in this file.
 The format is based on Keep a Changelog, and this project adheres to semantic versioning.
 
+## 1.0.2
+
+- **Fix:** `context.colors` and `context.typography` now throw a `StateError` in both debug and release mode when the extension is missing — previously the `assert` was silently stripped in release builds, leaving a force-unwrap `!` that could crash without any helpful message
+- **Fix:** `AppTypography.defaults()` now correctly applies the primary brand color to `*Primary` accent variants (`displayLargePrimary`, `headlineLargePrimary`, etc.) — previously all variants received `textPrimary` (black), making accent variants indistinguishable from base ones; also added `textSecondary`, `textTertiary`, and `primary` parameters to the factory
+- **Fix:** `AppColors.lerp()` force-unwrap on `Color.lerp()` replaced with a null-safe fallback (`?? this.color`)
+- Added `==` and `hashCode` to `AppColors` and `AppTypography`
+
+---
+
 ## 1.0.1
 
 - Material 3 theme defaults with `ColorScheme.fromSeed`

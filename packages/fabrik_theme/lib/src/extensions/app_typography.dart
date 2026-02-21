@@ -134,66 +134,77 @@ class AppTypography extends ThemeExtension<AppTypography> {
     required this.labelSmallSecondary,
   });
 
-  /// Creates a default typography configuration.
+  /// Creates a default typography configuration using explicit color inputs.
   ///
   /// This factory exists for fallback, testing, and demo purposes only.
   /// Production applications are expected to construct typography using
-  /// theme builders that compose typography from [AppColors].
-  factory AppTypography.defaults({Color textPrimary = Colors.black}) {
-    TextStyle withColor(TextStyle base) => base.copyWith(color: textPrimary);
+  /// [FabrikTypographyBuilder.build], which derives colors from [AppColors].
+  ///
+  /// - [textPrimary] is used for base display, headline, title, and body styles.
+  /// - [textSecondary] is used for secondary body and label variants.
+  /// - [textTertiary] is used for tertiary body variants.
+  /// - [primary] is used for the `*Primary` accent variants (e.g.
+  ///   [displayLargePrimary], [headlineLargePrimary]) and primary labels.
+  factory AppTypography.defaults({
+    Color textPrimary = Colors.black,
+    Color textSecondary = const Color(0xFF49454F),
+    Color textTertiary = const Color(0xFF79747E),
+    Color primary = const Color(0xFF6750A4),
+  }) {
+    TextStyle withPrimary(TextStyle base) => base.copyWith(color: textPrimary);
+    TextStyle withSecondary(TextStyle base) =>
+        base.copyWith(color: textSecondary);
+    TextStyle withTertiary(TextStyle base) => base.copyWith(color: textTertiary);
+    TextStyle withAccent(TextStyle base) => base.copyWith(color: primary);
+    TextStyle withEmphasis(TextStyle base) =>
+        base.copyWith(color: textPrimary, fontWeight: FontWeight.w500);
 
     return AppTypography(
       // Display
-      displayLarge: withColor(TypographyTokens.displayLarge),
-      displayMedium: withColor(TypographyTokens.displayMedium),
-      displaySmall: withColor(TypographyTokens.displaySmall),
-      displayLargePrimary: withColor(TypographyTokens.displayLarge),
-      displayMediumPrimary: withColor(TypographyTokens.displayMedium),
-      displaySmallPrimary: withColor(TypographyTokens.displaySmall),
+      displayLarge: withPrimary(TypographyTokens.displayLarge),
+      displayMedium: withPrimary(TypographyTokens.displayMedium),
+      displaySmall: withPrimary(TypographyTokens.displaySmall),
+      displayLargePrimary: withAccent(TypographyTokens.displayLarge),
+      displayMediumPrimary: withAccent(TypographyTokens.displayMedium),
+      displaySmallPrimary: withAccent(TypographyTokens.displaySmall),
 
       // Headlines
-      headlineLarge: withColor(TypographyTokens.headlineLarge),
-      headlineMedium: withColor(TypographyTokens.headlineMedium),
-      headlineSmall: withColor(TypographyTokens.headlineSmall),
-      headlineLargePrimary: withColor(TypographyTokens.headlineLarge),
-      headlineMediumPrimary: withColor(TypographyTokens.headlineMedium),
-      headlineSmallPrimary: withColor(TypographyTokens.headlineSmall),
+      headlineLarge: withPrimary(TypographyTokens.headlineLarge),
+      headlineMedium: withPrimary(TypographyTokens.headlineMedium),
+      headlineSmall: withPrimary(TypographyTokens.headlineSmall),
+      headlineLargePrimary: withAccent(TypographyTokens.headlineLarge),
+      headlineMediumPrimary: withAccent(TypographyTokens.headlineMedium),
+      headlineSmallPrimary: withAccent(TypographyTokens.headlineSmall),
 
       // Titles
-      titleLarge: withColor(TypographyTokens.titleLarge),
-      titleMedium: withColor(TypographyTokens.titleMedium),
-      titleSmall: withColor(TypographyTokens.titleSmall),
-      titleLargePrimary: withColor(TypographyTokens.titleLarge),
-      titleMediumPrimary: withColor(TypographyTokens.titleMedium),
-      titleSmallPrimary: withColor(TypographyTokens.titleSmall),
+      titleLarge: withPrimary(TypographyTokens.titleLarge),
+      titleMedium: withPrimary(TypographyTokens.titleMedium),
+      titleSmall: withPrimary(TypographyTokens.titleSmall),
+      titleLargePrimary: withAccent(TypographyTokens.titleLarge),
+      titleMediumPrimary: withAccent(TypographyTokens.titleMedium),
+      titleSmallPrimary: withAccent(TypographyTokens.titleSmall),
 
       // Body
-      bodyLarge: withColor(TypographyTokens.bodyLarge),
-      bodyMedium: withColor(TypographyTokens.bodyMedium),
-      bodySmall: withColor(TypographyTokens.bodySmall),
-      bodyLargeSecondary: withColor(TypographyTokens.bodyLarge),
-      bodyMediumSecondary: withColor(TypographyTokens.bodyMedium),
-      bodySmallSecondary: withColor(TypographyTokens.bodySmall),
-      bodyLargeTertiary: withColor(TypographyTokens.bodyLarge),
-      bodyMediumTertiary: withColor(TypographyTokens.bodyMedium),
-      bodySmallTertiary: withColor(TypographyTokens.bodySmall),
-      bodyLargeEmphasis: withColor(
-        TypographyTokens.bodyLarge,
-      ).copyWith(fontWeight: FontWeight.w500),
-      bodyMediumEmphasis: withColor(
-        TypographyTokens.bodyMedium,
-      ).copyWith(fontWeight: FontWeight.w500),
-      bodySmallEmphasis: withColor(
-        TypographyTokens.bodySmall,
-      ).copyWith(fontWeight: FontWeight.w500),
+      bodyLarge: withPrimary(TypographyTokens.bodyLarge),
+      bodyMedium: withPrimary(TypographyTokens.bodyMedium),
+      bodySmall: withPrimary(TypographyTokens.bodySmall),
+      bodyLargeSecondary: withSecondary(TypographyTokens.bodyLarge),
+      bodyMediumSecondary: withSecondary(TypographyTokens.bodyMedium),
+      bodySmallSecondary: withSecondary(TypographyTokens.bodySmall),
+      bodyLargeTertiary: withTertiary(TypographyTokens.bodyLarge),
+      bodyMediumTertiary: withTertiary(TypographyTokens.bodyMedium),
+      bodySmallTertiary: withTertiary(TypographyTokens.bodySmall),
+      bodyLargeEmphasis: withEmphasis(TypographyTokens.bodyLarge),
+      bodyMediumEmphasis: withEmphasis(TypographyTokens.bodyMedium),
+      bodySmallEmphasis: withEmphasis(TypographyTokens.bodySmall),
 
       // Labels
-      labelLarge: withColor(TypographyTokens.labelLarge),
-      labelMedium: withColor(TypographyTokens.labelMedium),
-      labelSmall: withColor(TypographyTokens.labelSmall),
-      labelLargeSecondary: withColor(TypographyTokens.labelLarge),
-      labelMediumSecondary: withColor(TypographyTokens.labelMedium),
-      labelSmallSecondary: withColor(TypographyTokens.labelSmall),
+      labelLarge: withAccent(TypographyTokens.labelLarge),
+      labelMedium: withAccent(TypographyTokens.labelMedium),
+      labelSmall: withAccent(TypographyTokens.labelSmall),
+      labelLargeSecondary: withSecondary(TypographyTokens.labelLarge),
+      labelMediumSecondary: withSecondary(TypographyTokens.labelMedium),
+      labelSmallSecondary: withSecondary(TypographyTokens.labelSmall),
     );
   }
 
@@ -403,4 +414,86 @@ class AppTypography extends ThemeExtension<AppTypography> {
       ),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AppTypography) return false;
+    return displayLarge == other.displayLarge &&
+        displayMedium == other.displayMedium &&
+        displaySmall == other.displaySmall &&
+        displayLargePrimary == other.displayLargePrimary &&
+        displayMediumPrimary == other.displayMediumPrimary &&
+        displaySmallPrimary == other.displaySmallPrimary &&
+        headlineLarge == other.headlineLarge &&
+        headlineMedium == other.headlineMedium &&
+        headlineSmall == other.headlineSmall &&
+        headlineLargePrimary == other.headlineLargePrimary &&
+        headlineMediumPrimary == other.headlineMediumPrimary &&
+        headlineSmallPrimary == other.headlineSmallPrimary &&
+        titleLarge == other.titleLarge &&
+        titleMedium == other.titleMedium &&
+        titleSmall == other.titleSmall &&
+        titleLargePrimary == other.titleLargePrimary &&
+        titleMediumPrimary == other.titleMediumPrimary &&
+        titleSmallPrimary == other.titleSmallPrimary &&
+        bodyLarge == other.bodyLarge &&
+        bodyMedium == other.bodyMedium &&
+        bodySmall == other.bodySmall &&
+        bodyLargeSecondary == other.bodyLargeSecondary &&
+        bodyMediumSecondary == other.bodyMediumSecondary &&
+        bodySmallSecondary == other.bodySmallSecondary &&
+        bodyLargeTertiary == other.bodyLargeTertiary &&
+        bodyMediumTertiary == other.bodyMediumTertiary &&
+        bodySmallTertiary == other.bodySmallTertiary &&
+        bodyLargeEmphasis == other.bodyLargeEmphasis &&
+        bodyMediumEmphasis == other.bodyMediumEmphasis &&
+        bodySmallEmphasis == other.bodySmallEmphasis &&
+        labelLarge == other.labelLarge &&
+        labelMedium == other.labelMedium &&
+        labelSmall == other.labelSmall &&
+        labelLargeSecondary == other.labelLargeSecondary &&
+        labelMediumSecondary == other.labelMediumSecondary &&
+        labelSmallSecondary == other.labelSmallSecondary;
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    displayLarge,
+    displayMedium,
+    displaySmall,
+    displayLargePrimary,
+    displayMediumPrimary,
+    displaySmallPrimary,
+    headlineLarge,
+    headlineMedium,
+    headlineSmall,
+    headlineLargePrimary,
+    headlineMediumPrimary,
+    headlineSmallPrimary,
+    titleLarge,
+    titleMedium,
+    titleSmall,
+    titleLargePrimary,
+    titleMediumPrimary,
+    titleSmallPrimary,
+    bodyLarge,
+    bodyMedium,
+    bodySmall,
+    bodyLargeSecondary,
+    bodyMediumSecondary,
+    bodySmallSecondary,
+    bodyLargeTertiary,
+    bodyMediumTertiary,
+    bodySmallTertiary,
+    bodyLargeEmphasis,
+    bodyMediumEmphasis,
+    bodySmallEmphasis,
+    labelLarge,
+    labelMedium,
+    labelSmall,
+    labelLargeSecondary,
+    labelMediumSecondary,
+    labelSmallSecondary,
+  ]);
 }

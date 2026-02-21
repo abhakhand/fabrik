@@ -7,30 +7,33 @@ import 'package:fabrik_theme/src/extensions/app_typography.dart';
 /// These getters provide ergonomic access to semantic colors and typography
 /// defined via [ThemeExtension]s. They are thin wrappers over [Theme.of]
 /// and do not introduce additional rebuilds or state.
+///
+/// Both getters throw a [StateError] if the corresponding extension is not
+/// registered in the active [ThemeData]. This check is enforced in both debug
+/// and release builds — unlike `assert`, which is stripped in release mode.
+/// Always initialize your theme with [FabrikTheme.create] to avoid this.
 extension FabrikThemeContext on BuildContext {
   /// Returns the active [AppColors] from the current theme.
   ///
-  /// Throws a clear error if the colors extension is not registered.
+  /// Throws a [StateError] in debug and release mode if [AppColors] is not
+  /// registered. Use [FabrikTheme.create] to ensure it is present.
   AppColors get colors {
-    final colors = Theme.of(this).extension<AppColors>();
-    assert(
-      colors != null,
-      'AppColors not found in ThemeData.extensions. '
-      'Did you forget to use FabrikTheme.create?',
-    );
-    return colors!;
+    return Theme.of(this).extension<AppColors>() ??
+        (throw StateError(
+          'AppColors not found in ThemeData.extensions. '
+          'Did you forget to use FabrikTheme.create?',
+        ));
   }
 
   /// Returns the active [AppTypography] from the current theme.
   ///
-  /// Throws a clear error if the typography extension is not registered.
+  /// Throws a [StateError] in debug and release mode if [AppTypography] is not
+  /// registered. Use [FabrikTheme.create] to ensure it is present.
   AppTypography get typography {
-    final typography = Theme.of(this).extension<AppTypography>();
-    assert(
-      typography != null,
-      'AppTypography not found in ThemeData.extensions. '
-      'Did you forget to use FabrikTheme.create?',
-    );
-    return typography!;
+    return Theme.of(this).extension<AppTypography>() ??
+        (throw StateError(
+          'AppTypography not found in ThemeData.extensions. '
+          'Did you forget to use FabrikTheme.create?',
+        ));
   }
 }
