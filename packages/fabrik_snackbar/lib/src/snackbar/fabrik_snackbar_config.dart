@@ -3,9 +3,25 @@ import 'package:flutter/material.dart';
 
 /// Configuration for displaying a [FabrikSnackbar].
 ///
-/// This class allows you to customize the appearance, behavior,
-/// and layout of a snackbar including its position, content,
-/// styling, and dismissal behavior.
+/// This class allows you to customize the appearance, behavior, and layout of
+/// a snackbar including its position, content, styling, and dismissal behavior.
+///
+/// **Content fields and render priority:**
+///
+/// There are three ways to provide title and message content, each with a
+/// different priority. For the title slot: [richTitle] > [titleText] > [title].
+/// For the message slot: [richMessage] > [messageText] > [message].
+///
+/// - [title] / [message] — plain [String] content.
+/// - [titleText] / [messageText] — a fully custom [Widget], taking priority
+///   over the plain string equivalents.
+/// - [richTitle] / [richMessage] — an [InlineSpan] for styled text, taking the
+///   highest priority. Mutually exclusive with [title] / [message] respectively
+///   (enforced via constructor assertions).
+///
+/// At least one content field should be populated when using [FabrikSnackbar.custom].
+/// The named constructors ([FabrikSnackbar.success], etc.) enforce this via
+/// [FabrikSnackbar._validateContent].
 class FabrikSnackbarConfig {
   const FabrikSnackbarConfig({
     this.title,
@@ -34,7 +50,14 @@ class FabrikSnackbarConfig {
     this.blockBackgroundInteraction = false,
     this.onTap,
     this.onDismissed,
-  });
+  })  : assert(
+          title == null || richTitle == null,
+          'Provide either title or richTitle, not both.',
+        ),
+        assert(
+          message == null || richMessage == null,
+          'Provide either message or richMessage, not both.',
+        );
 
   /// Title text as a simple [String].
   final String? title;
@@ -42,10 +65,12 @@ class FabrikSnackbarConfig {
   /// Message text as a simple [String].
   final String? message;
 
-  /// Custom widget for title. Overrides [title] if provided.
+  /// Custom [Widget] rendered as the title.
+  /// Takes priority over [title] but is itself overridden by [richTitle].
   final Widget? titleText;
 
-  /// Custom widget for message. Overrides [message] if provided.
+  /// Custom [Widget] rendered as the message.
+  /// Takes priority over [message] but is itself overridden by [richMessage].
   final Widget? messageText;
 
   /// Rich text content for title. Takes precedence over [title] and [titleText] if provided.
@@ -99,14 +124,19 @@ class FabrikSnackbarConfig {
   /// Color of the progress indicator (if shown).
   final Color? progressIndicatorColor;
 
-  /// Amount of background blur to apply behind the snackbar.
-  /// Set to 0 to disable blur.
+  /// Blur sigma applied to the full-screen barrier when
+  /// [blockBackgroundInteraction] is true. Set to `0.0` (default) for no blur.
   final double barrierBlur;
 
-  /// Background color behind the snackbar if [blockBackgroundInteraction] is true.
+  /// Tint color of the full-screen barrier when [blockBackgroundInteraction]
+  /// is true. Defaults to a semi-transparent black when [barrierBlur] is also
+  /// non-zero; has no visual effect if both are at their defaults.
   final Color? barrierColor;
 
-  /// Whether to block user interaction with background widgets.
+  /// Whether to block user interaction with widgets behind the snackbar.
+  /// When `true`, a full-screen overlay is inserted beneath the snackbar that
+  /// absorbs all touch events. Use [barrierBlur] and [barrierColor] to
+  /// optionally add a visual dimming or blur effect.
   final bool blockBackgroundInteraction;
 
   /// Callback invoked when the snackbar is tapped.

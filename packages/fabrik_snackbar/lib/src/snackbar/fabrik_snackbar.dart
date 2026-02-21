@@ -11,27 +11,34 @@ import 'fabrik_snackbar_defaults.dart';
 class FabrikSnackbar {
   FabrikSnackbar._();
 
-  /// Validates that content is provided properly. Either regular text or rich text, but not both.
+  /// Validates that content is provided properly.
+  /// At least one content field must be present, and title/richTitle are
+  /// mutually exclusive, as are message/richMessage.
   static void _validateContent({
     String? title,
     String? message,
     InlineSpan? richTitle,
     InlineSpan? richMessage,
   }) {
-    // Validate title
     assert(
-      (title != null) != (richTitle != null),
-      'Either title or richTitle must be provided, but not both.',
+      title != null || richTitle != null || message != null || richMessage != null,
+      'At least one of title, richTitle, message, or richMessage must be provided.',
     );
-
-    // Validate message
     assert(
-      (message != null) != (richMessage != null),
-      'Either message or richMessage must be provided, but not both.',
+      title == null || richTitle == null,
+      'Provide either title or richTitle, not both.',
+    );
+    assert(
+      message == null || richMessage == null,
+      'Provide either message or richMessage, not both.',
     );
   }
 
   /// Shows a green success snackbar.
+  ///
+  /// At least one of [title], [richTitle], [message], or [richMessage] must be
+  /// provided. [title] and [richTitle] are mutually exclusive, as are [message]
+  /// and [richMessage].
   static Future<void> success(
     BuildContext context, {
     String? title,
@@ -86,6 +93,10 @@ class FabrikSnackbar {
   }
 
   /// Shows a red error snackbar.
+  ///
+  /// At least one of [title], [richTitle], [message], or [richMessage] must be
+  /// provided. [title] and [richTitle] are mutually exclusive, as are [message]
+  /// and [richMessage].
   static Future<void> error(
     BuildContext context, {
     String? title,
@@ -140,6 +151,10 @@ class FabrikSnackbar {
   }
 
   /// Shows a blue informational snackbar.
+  ///
+  /// At least one of [title], [richTitle], [message], or [richMessage] must be
+  /// provided. [title] and [richTitle] are mutually exclusive, as are [message]
+  /// and [richMessage].
   static Future<void> info(
     BuildContext context, {
     String? title,
@@ -194,6 +209,10 @@ class FabrikSnackbar {
   }
 
   /// Shows an orange warning snackbar.
+  ///
+  /// At least one of [title], [richTitle], [message], or [richMessage] must be
+  /// provided. [title] and [richTitle] are mutually exclusive, as are [message]
+  /// and [richMessage].
   static Future<void> warning(
     BuildContext context, {
     String? title,
@@ -247,7 +266,11 @@ class FabrikSnackbar {
     );
   }
 
-  /// Shows a fully custom snackbar with full control.
+  /// Shows a fully custom snackbar using a [FabrikSnackbarConfig].
+  ///
+  /// All validation (mutual exclusivity of title/richTitle and
+  /// message/richMessage) is enforced via assertions in [FabrikSnackbarConfig]'s
+  /// constructor.
   static Future<void> custom(
     BuildContext context, {
     required FabrikSnackbarConfig config,

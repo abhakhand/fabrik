@@ -29,6 +29,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
+  late final Key _dismissibleKey;
   Timer? _dismissTimer;
 
   /// Determines the maxWidth based on config or screen width.
@@ -42,6 +43,8 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
   @override
   void initState() {
     super.initState();
+
+    _dismissibleKey = UniqueKey();
 
     _controller = AnimationController(
       vsync: this,
@@ -82,29 +85,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
 
   @override
   Widget build(BuildContext context) {
-    Widget snackbarContent = FabrikSnackbarContent(
-      onTap: widget.config.onTap,
-      child: FabrikSnackbarRow(config: widget.config),
-    );
-
-    // If interaction is blocked, wrap content with blur/barrier.
-    if (widget.config.blockBackgroundInteraction) {
-      snackbarContent = Stack(
-        children: [
-          if (widget.config.barrierBlur > 0 ||
-              widget.config.barrierColor != null)
-            Positioned.fill(
-              child: FabrikSnackbarBackgroundBlur(
-                blur: widget.config.barrierBlur,
-                color: widget.config.barrierColor,
-              ),
-            ),
-          snackbarContent,
-        ],
-      );
-    }
-
-    return SafeArea(
+    final Widget positionedSnackbar = SafeArea(
       top: widget.config.safeArea && widget.config.position.isTop,
       bottom: widget.config.safeArea && widget.config.position.isBottom,
       child: Align(
@@ -114,7 +95,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
         child: SlideTransition(
           position: _slideAnimation,
           child: Dismissible(
-            key: const Key('fabrik_snackbar_dismissible'),
+            key: _dismissibleKey,
             direction: widget.config.dismissDirection.isHorizontal
                 ? DismissDirection.horizontal
                 : widget.config.position.isTop
@@ -140,17 +121,46 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                       ? widget.config.borderRadius
                       : BorderRadius.zero,
                 ),
-                child: FabrikSnackbarRow(config: widget.config),
+                child: GestureDetector(
+                  onTap: widget.config.onTap,
+                  child: FabrikSnackbarRow(config: widget.config),
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+
+    // Wrap with a full-screen barrier when blocking background interaction.
+    if (widget.config.blockBackgroundInteraction) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {},
+              child: widget.config.barrierBlur > 0 ||
+                      widget.config.barrierColor != null
+                  ? FabrikSnackbarBackgroundBlur(
+                      blur: widget.config.barrierBlur,
+                      color: widget.config.barrierColor,
+                    )
+                  : const SizedBox.expand(),
+            ),
+          ),
+          positionedSnackbar,
+        ],
+      );
+    }
+
+    return positionedSnackbar;
   }
 }
 
-/// Optional background blur used when blocking interactions.
+/// Full-screen backdrop rendered behind the snackbar when
+/// [FabrikSnackbarConfig.blockBackgroundInteraction] is enabled.
+/// Applies an optional blur and/or tint color to the entire screen area.
 class FabrikSnackbarBackgroundBlur extends StatelessWidget {
   const FabrikSnackbarBackgroundBlur({
     super.key,
@@ -167,23 +177,6 @@ class FabrikSnackbarBackgroundBlur extends StatelessWidget {
       filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
       child: Container(color: color ?? Colors.black.withAlpha(80)),
     );
-  }
-}
-
-/// Makes the entire snackbar content tappable.
-class FabrikSnackbarContent extends StatelessWidget {
-  const FabrikSnackbarContent({
-    super.key,
-    required this.child,
-    required this.onTap,
-  });
-
-  final Widget child;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(onTap: onTap, child: child);
   }
 }
 

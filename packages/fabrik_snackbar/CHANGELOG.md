@@ -34,3 +34,11 @@
 ## 0.1.6
 
 - Improved documentation
+
+## 0.1.7
+
+- **Fix:** `title` and `message` are now fully optional — pass any combination of `title`, `richTitle`, `message`, or `richMessage`; at least one must be provided
+- **Fix:** `onTap` callback was never invoked due to `GestureDetector` being built but not used as the container's child
+- **Fix:** `blockBackgroundInteraction` barrier now covers the full screen instead of being clipped inside the snackbar bounds
+- **Fix:** `Dismissible` now uses a `UniqueKey` per instance, preventing key conflicts when multiple snackbars are shown simultaneously
+- Added constructor-level assertions to `FabrikSnackbarConfig` for `title`/`richTitle` and `message`/`richMessage` mutual exclusivity
