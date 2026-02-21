@@ -1,66 +1,22 @@
 # fabrik_layout
 
-A lightweight, opinionated layout and responsiveness foundation for Flutter applications.
+A lightweight, opinionated layout and responsiveness foundation for Flutter.
 
-`fabrik_layout` provides a simple and predictable way to understand **what kind of screen your app is running on** (mobile, tablet, desktop) and optionally apply **safe, global text scaling**, without introducing layout widgets, UI abstractions, or performance pitfalls.
-
-This package focuses on layout context, not UI composition.
-
----
-
-## Learn more
-
-Detailed documentation, guides, and design rationale are available at  
-**<https://fabriktool.com>**
+[![pub.dev](https://img.shields.io/pub/v/fabrik_layout.svg)](https://pub.dev/packages/fabrik_layout)
+[![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
+[![platform](https://img.shields.io/badge/platform-flutter-02569B.svg?logo=flutter)](https://flutter.dev)
 
 ---
 
-## Overview
+## What's included
 
-The goal of `fabrik_layout` is to make responsive decisions **explicit and centralized**.
-
-It encourages:
-
-- Clear device categorization (mobile, tablet, desktop)
-- Layout decisions based on constraints, not platform checks
-- Optional, controlled text scaling
-- Zero global state and no widget-level calculations
-
-The package is intentionally small and framework-aligned.
-
----
-
-## What this package provides
-
-### Layout context
-
-A single widget, `FabrikLayout`, computes layout information once and exposes it via `BuildContext`.
-
-```dart
-if (context.layout.isTablet) {
-  // Tablet-specific UI
-}
-```
-
-### Device classification
-
-Responsive behavior is derived from width-based breakpoints:
-
-- Mobile
-- Tablet
-- Desktop
-
-Defaults are provided and can be overridden if needed.
-
-### Optional text scaling
-
-`fabrik_layout` can optionally apply conservative, device-aware text scaling using Flutter’s `TextScaler` API.
-
-Scaling is:
-
-- Opt-in
-- Applied via `MediaQuery`
-- Fully compatible with accessibility settings
+| API | What it does |
+| --- | --- |
+| **`FabrikLayout`** | Root widget — classifies device, provides layout context |
+| **`context.layout`** | Ergonomic access to layout snapshot anywhere in the tree |
+| **`FabrikLayoutData`** | Immutable snapshot: type, orientation, screen size, text scaler |
+| **`FabrikBreakpoints`** | Customizable width thresholds for device classification |
+| **`FabrikTextScaleConfig`** | Optional per-device text scale floors |
 
 ---
 
@@ -68,50 +24,104 @@ Scaling is:
 
 ```yaml
 dependencies:
-  fabrik_layout: ^1.0.0
+  fabrik_layout: ^1.1.0
+```
+
+```sh
+flutter pub get
 ```
 
 ---
 
-## Basic usage
+## Quick start
 
-### Wrap your app once
+### 1. Wrap your app once
 
-`FabrikLayout` must be placed inside `MaterialApp.builder` or `CupertinoApp.builder`.
+Place `FabrikLayout` inside `MaterialApp.builder`:
 
 ```dart
 MaterialApp(
   builder: (context, child) {
-    return FabrikLayout(
-      enableTextScaling: true,
-      child: child!,
-    );
+    return FabrikLayout(child: child!);
   },
   home: const HomePage(),
+)
+```
+
+### 2. Use layout context anywhere
+
+```dart
+// Device classification
+if (context.layout.isMobile) return const MobileView();
+if (context.layout.isTablet) return const TabletView();
+return const DesktopView();
+
+// Orientation
+if (context.layout.isLandscape) {
+  // side-by-side layout
+}
+
+// Responsive values — mobile required, tablet/desktop fall back gracefully
+final padding = context.layout.value<double>(
+  mobile: 8,
+  tablet: 16,
+  desktop: 24,
 );
 ```
 
 ---
 
-### Consume layout information
+## Breakpoints
+
+Default thresholds (logical pixels):
+
+| Category | Width |
+| --- | --- |
+| Mobile | < 600 |
+| Tablet | 600 – 1023 |
+| Desktop | ≥ 1024 |
+
+Override them if needed:
 
 ```dart
-if (context.layout.isMobile) {
-  return const MobileView();
-}
-
-if (context.layout.isTablet) {
-  return const TabletView();
-}
-
-return const DesktopView();
+FabrikLayout(
+  breakpoints: const FabrikBreakpoints(mobile: 480, tablet: 768),
+  child: child!,
+)
 ```
 
 ---
 
-### Use with theming
+## Text scaling
 
-`fabrik_layout` works independently, but pairs naturally with `fabrik_theme`.
+Optional, opt-in. Applies a per-device minimum scale floor via `MediaQuery` — the system's accessibility scale is never reduced, only raised.
+
+```dart
+FabrikLayout(
+  enableTextScaling: true,
+  child: child!,
+)
+```
+
+Override the defaults (mobile 1.0×, tablet 1.05×, desktop 1.1×):
+
+```dart
+FabrikLayout(
+  enableTextScaling: true,
+  textScaleConfig: const FabrikTextScaleConfig(
+    mobile: 1.0,
+    tablet: 1.08,
+    desktop: 1.15,
+  ),
+  child: child!,
+)
+```
+
+---
+
+## Use with theming
+
+`fabrik_layout` pairs naturally with `fabrik_theme`:
 
 ```dart
 Text(
@@ -119,29 +129,23 @@ Text(
   style: context.layout.isMobile
       ? context.typography.titleMedium
       : context.typography.titleLarge,
-);
+)
 ```
 
-Layout controls structure.  
-Theme controls appearance.
+Layout controls structure. Theme controls appearance.
 
 ---
 
-## Text scaling
+## Documentation
 
-When enabled, text scaling is applied globally via `MediaQuery`.
-
-```dart
-FabrikLayout(
-  enableTextScaling: true,
-  child: child,
-);
-```
-
-All `Text` widgets automatically respect scaling.  
-No theme mutation or manual font size adjustments are required.
+Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
 
 ---
+
+## Contributing
+
+Found a bug or have a suggestion?
+Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
 
 ## Maintainers
 

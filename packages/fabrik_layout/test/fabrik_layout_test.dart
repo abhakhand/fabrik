@@ -174,6 +174,82 @@ void main() {
       expect(find.text('FabrikLayoutType.desktop'), findsOneWidget);
     });
 
+    testWidgets('exposes portrait orientation', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              size: const Size(400, 800),
+            ),
+            child: FabrikLayout(
+              child: Builder(
+                builder: (context) {
+                  final layout = context.layout;
+                  return Text(layout.isPortrait ? 'portrait' : 'landscape');
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.binding.setSurfaceSize(const Size(400, 800));
+      await tester.pump();
+
+      expect(find.text('portrait'), findsOneWidget);
+    });
+
+    testWidgets('exposes landscape orientation', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              size: const Size(800, 400),
+            ),
+            child: FabrikLayout(
+              child: Builder(
+                builder: (context) {
+                  final layout = context.layout;
+                  return Text(layout.isPortrait ? 'portrait' : 'landscape');
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.binding.setSurfaceSize(const Size(800, 400));
+      await tester.pump();
+
+      expect(find.text('landscape'), findsOneWidget);
+    });
+
+    testWidgets('uses custom text scale config', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => FabrikLayout(
+            enableTextScaling: true,
+            textScaleConfig: const FabrikTextScaleConfig(
+              mobile: 1.0,
+              tablet: 1.0,
+              desktop: 1.2,
+            ),
+            child: Builder(
+              builder: (context) {
+                final textScaler = MediaQuery.of(context).textScaler;
+                return Text('Scale: ${textScaler.scale(1.0)}');
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.binding.setSurfaceSize(const Size(1920, 1080));
+      await tester.pump();
+
+      expect(find.text('Scale: 1.2'), findsOneWidget);
+    });
+
     testWidgets('checks exact boundary conditions', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

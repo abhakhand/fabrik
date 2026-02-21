@@ -16,6 +16,27 @@ void main() {
       expect(data.textScaler, const TextScaler.linear(1.0));
     });
 
+    test('defaults orientation to portrait', () {
+      const data = FabrikLayoutData(
+        type: FabrikLayoutType.mobile,
+        screenSize: Size(375, 667),
+        textScaler: TextScaler.linear(1.0),
+      );
+
+      expect(data.orientation, Orientation.portrait);
+    });
+
+    test('stores explicit orientation', () {
+      const data = FabrikLayoutData(
+        type: FabrikLayoutType.tablet,
+        screenSize: Size(1024, 768),
+        textScaler: TextScaler.linear(1.0),
+        orientation: Orientation.landscape,
+      );
+
+      expect(data.orientation, Orientation.landscape);
+    });
+
     group('convenience getters', () {
       test('isMobile returns true for mobile type', () {
         const data = FabrikLayoutData(
@@ -51,6 +72,30 @@ void main() {
         expect(data.isMobile, false);
         expect(data.isTablet, false);
         expect(data.isDesktop, true);
+      });
+
+      test('isPortrait returns true for portrait orientation', () {
+        const data = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+
+        expect(data.isPortrait, true);
+        expect(data.isLandscape, false);
+      });
+
+      test('isLandscape returns true for landscape orientation', () {
+        const data = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(667, 375),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.landscape,
+        );
+
+        expect(data.isPortrait, false);
+        expect(data.isLandscape, true);
       });
     });
 
@@ -148,6 +193,98 @@ void main() {
 
         expect(stringResult, 'medium');
         expect(doubleResult, 16.0);
+      });
+    });
+
+    group('equality', () {
+      test('equal when all fields match', () {
+        const a = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+        const b = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
+      });
+
+      test('not equal when type differs', () {
+        const a = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+        );
+        const b = FabrikLayoutData(
+          type: FabrikLayoutType.tablet,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+        );
+
+        expect(a, isNot(equals(b)));
+      });
+
+      test('not equal when orientation differs', () {
+        const a = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+        const b = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.landscape,
+        );
+
+        expect(a, isNot(equals(b)));
+      });
+    });
+
+    group('copyWith', () {
+      test('returns identical data when no fields provided', () {
+        const data = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+
+        expect(data.copyWith(), equals(data));
+      });
+
+      test('replaces type', () {
+        const data = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+        );
+
+        final updated = data.copyWith(type: FabrikLayoutType.tablet);
+
+        expect(updated.type, FabrikLayoutType.tablet);
+        expect(updated.screenSize, data.screenSize);
+      });
+
+      test('replaces orientation', () {
+        const data = FabrikLayoutData(
+          type: FabrikLayoutType.mobile,
+          screenSize: Size(375, 667),
+          textScaler: TextScaler.linear(1.0),
+          orientation: Orientation.portrait,
+        );
+
+        final updated = data.copyWith(orientation: Orientation.landscape);
+
+        expect(updated.orientation, Orientation.landscape);
+        expect(updated.type, data.type);
       });
     });
   });

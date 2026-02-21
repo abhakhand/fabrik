@@ -27,10 +27,9 @@ void main() {
       );
     });
 
-    testWidgets('throws assertion error when FabrikLayout is not found', (
+    testWidgets('throws StateError when FabrikLayout is not found', (
       tester,
     ) async {
-      // In debug mode, accessing layout without FabrikLayout should fail
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -43,8 +42,8 @@ void main() {
 
       expect(() {
         final context = tester.element(find.text('Test'));
-        context.layout; // This should throw assertion in debug mode
-      }, throwsAssertionError);
+        context.layout; // Throws StateError in both debug and release
+      }, throwsStateError);
     });
 
     testWidgets('layout data updates when constraints change', (tester) async {
