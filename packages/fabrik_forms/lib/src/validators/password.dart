@@ -13,6 +13,7 @@ import 'package:fabrik_forms/src/validators/base.dart';
 class PasswordValidator extends FabrikValidator<String> {
   /// Creates a [PasswordValidator] with optional complexity rules.
   const PasswordValidator({
+    this.isRequired = true,
     this.requiredMessage = 'Password is required',
     this.minLength = 8,
     this.minLengthMessage = 'Password must be 8 characters or more',
@@ -28,7 +29,10 @@ class PasswordValidator extends FabrikValidator<String> {
   // Configurable constraints
   // ===========================================================================
 
-  /// Message shown when password is empty.
+  /// Whether to require the field to be non-empty. Defaults to true.
+  final bool isRequired;
+
+  /// Message shown when password is empty and [isRequired] is true.
   final String requiredMessage;
 
   /// Minimum number of characters required.
@@ -61,7 +65,13 @@ class PasswordValidator extends FabrikValidator<String> {
 
   static final _capitalLetterRegex = RegExp(r'[A-Z]');
   static final _digitRegex = RegExp(r'[0-9]');
-  static final _specialCharacterRegex = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+
+  /// Matches any common special character used in passwords.
+  ///
+  /// Covers: `! @ # $ % ^ & * ( ) - _ + = [ ] { } | \ ; : ' " , . < > ? / ~ `
+  static final _specialCharacterRegex = RegExp(
+    r"""[!@#$%^&*()\-_+=\[\]{}|\\;:'",.<>?/~`]""",
+  );
 
   // ===========================================================================
   // Validation logic
@@ -70,7 +80,7 @@ class PasswordValidator extends FabrikValidator<String> {
   @override
   String? call(String value) {
     final trimmed = value.trim();
-    if (trimmed.isEmpty) return requiredMessage;
+    if (trimmed.isEmpty) return isRequired ? requiredMessage : null;
 
     if (requireUppercase && !_capitalLetterRegex.hasMatch(trimmed)) {
       return uppercaseMessage;

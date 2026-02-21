@@ -69,4 +69,14 @@ class FabrikForm<T> {
       field.markTouched();
     }
   }
+
+  /// Resets all fields to their initial values and clears all interaction state.
+  ///
+  /// After calling [reset], [isDirty] and [isTouched] will both return `false`
+  /// across the entire form.
+  void reset() {
+    for (final field in _fields.values) {
+      field.reset();
+    }
+  }
 }

@@ -3,4 +3,7 @@ export 'email.dart';
 export 'max_length.dart';
 export 'min_length.dart';
 export 'password.dart';
+export 'phone.dart';
+export 'range.dart';
 export 'required.dart';
+export 'url.dart';

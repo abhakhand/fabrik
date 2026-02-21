@@ -33,7 +33,7 @@ class EmailValidator extends FabrikValidator<String> {
   @override
   String? call(String value) {
     final trimmed = value.trim();
-    if (isRequired && trimmed.isEmpty) return requiredMessage;
+    if (trimmed.isEmpty) return isRequired ? requiredMessage : null;
     return _regex.hasMatch(trimmed) ? null : invalidMessage;
   }
 }

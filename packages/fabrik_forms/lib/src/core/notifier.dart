@@ -29,6 +29,14 @@ class FabrikFormNotifier<T> extends ValueNotifier<FabrikForm<T>> {
     notifyListeners();
   }
 
+  /// Resets all fields to their initial values and notifies listeners.
+  ///
+  /// Clears all dirty and touched state across the form.
+  void reset() {
+    value.reset();
+    notifyListeners();
+  }
+
   // ===========================================================================
   // Field access
   // ===========================================================================

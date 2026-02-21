@@ -73,6 +73,16 @@ class FabrikField<T> {
     _error = _runValidators();
   }
 
+  /// Resets the field to its initial value and clears all interaction state.
+  ///
+  /// After calling [reset], [isDirty] and [isTouched] will both return `false`,
+  /// and validation will re-run against the original value.
+  void reset() {
+    value = _initialValue;
+    _touched = false;
+    _error = _runValidators();
+  }
+
   // ===========================================================================
   // Internal validation
   // ===========================================================================
