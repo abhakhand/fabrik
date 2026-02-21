@@ -59,10 +59,12 @@ extension DateTimeX on DateTime {
     } else if (difference.inDays < 30) {
       return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
     } else if (difference.inDays < 365) {
-      final months = (difference.inDays / 30).floor();
+      // Use 30.44 (average days per month) for more accurate month rounding
+      final months = (difference.inDays / 30.44).floor().clamp(1, 11);
       return '$months month${months == 1 ? '' : 's'} ago';
     } else {
-      final years = (difference.inDays / 365).floor();
+      // Use 365.25 to account for leap years
+      final years = (difference.inDays / 365.25).floor();
       return '$years year${years == 1 ? '' : 's'} ago';
     }
   }
@@ -114,4 +116,44 @@ extension DateTimeX on DateTime {
 
   /// e.g. "2023-05-15T23:59"
   String get isoDateTime => DateFormat("yyyy-MM-dd'T'HH:mm").format(this);
+
+  /// Returns `true` if this DateTime falls between [start] and [end] (inclusive).
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2024, 6, 15);
+  /// date.isBetween(DateTime(2024, 1, 1), DateTime(2024, 12, 31)) // true
+  /// ```
+  bool isBetween(DateTime start, DateTime end) {
+    return !isBefore(start) && !isAfter(end);
+  }
+
+  /// Returns a new DateTime set to midnight (00:00:00.000) on the same day.
+  ///
+  /// Example:
+  /// ```dart
+  /// DateTime(2024, 6, 15, 14, 30).startOfDay // 2024-06-15 00:00:00.000
+  /// ```
+  DateTime get startOfDay => DateTime(year, month, day);
+
+  /// Returns a new DateTime set to 23:59:59.999 on the same day.
+  ///
+  /// Example:
+  /// ```dart
+  /// DateTime(2024, 6, 15, 14, 30).endOfDay // 2024-06-15 23:59:59.999
+  /// ```
+  DateTime get endOfDay => DateTime(year, month, day, 23, 59, 59, 999);
+
+  /// Returns a new DateTime set to midnight on the most recent Monday.
+  ///
+  /// If this date is already a Monday, returns midnight of that day.
+  ///
+  /// Example:
+  /// ```dart
+  /// DateTime(2024, 6, 19).startOfWeek // 2024-06-17 (Monday)
+  /// ```
+  DateTime get startOfWeek {
+    final daysFromMonday = weekday - DateTime.monday;
+    return DateTime(year, month, day - daysFromMonday);
+  }
 }

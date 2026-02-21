@@ -38,7 +38,7 @@ class FabrikCasing {
       }
     }
 
-    return words;
+    return words.where((s) => s.isNotEmpty).toList();
   }
 
   /// Converts to Title Case (e.g., "Hello World")

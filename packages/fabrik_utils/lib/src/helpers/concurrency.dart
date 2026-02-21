@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 /// Throttling status
 enum ThrottleStatus {
   /// Ready to accept new events
@@ -120,6 +118,7 @@ final class Throttle<T> extends Stream<ThrottleStatus>
   }
 }
 
+/// Debounce status
 enum DebounceStatus {
   /// Ready to queue a new action
   idle,
@@ -142,25 +141,42 @@ enum DebounceStatus {
 /// Debounce utility that executes a function only after a pause
 /// in rapid repeated calls.
 ///
+/// Optionally accepts a [maxWait] duration to force execution after a maximum
+/// wait time, regardless of how often debounce is called.
+///
 /// Example:
 /// ```dart
 /// final debouncer = Debounce<void>(duration: Duration(milliseconds: 300));
 ///
-/// debouncer(() {
+/// debouncer.debounce(() {
 ///   print('Called only after user stops typing for 300ms');
 /// });
+///
+/// // Cancel a pending action without closing the stream:
+/// debouncer.cancel();
 /// ```
 final class Debounce<T> extends Stream<DebounceStatus>
     implements Sink<T Function()> {
-  Debounce({Duration duration = const Duration(milliseconds: 300)})
-    : assert(!duration.isNegative, 'Duration must be non-negative'),
-      _duration = duration {
+  Debounce({
+    Duration duration = const Duration(milliseconds: 300),
+    Duration? maxWait,
+  }) : assert(!duration.isNegative, 'Duration must be non-negative'),
+       assert(
+         maxWait == null || !maxWait.isNegative,
+         'maxWait must be non-negative',
+       ),
+       _duration = duration,
+       _maxWait = maxWait {
     _stateController.add(DebounceStatus.idle);
   }
 
-  late final Duration _duration;
+  final Duration _duration;
+  final Duration? _maxWait;
   Timer? _timer;
-  VoidCallback? _pendingAction;
+  Timer? _maxWaitTimer;
+
+  /// The latest function queued for deferred execution.
+  T Function()? _pendingFunc;
 
   final StreamController<DebounceStatus> _stateController =
       StreamController<DebounceStatus>.broadcast(sync: true);
@@ -171,18 +187,40 @@ final class Debounce<T> extends Stream<DebounceStatus>
   bool get isWaiting => status == DebounceStatus.waiting;
   bool get isIdle => status == DebounceStatus.idle;
 
-  /// Calls the latest [func] only after [duration] of no further calls.
+  void _flush() {
+    final fn = _pendingFunc;
+    _timer?.cancel();
+    _maxWaitTimer?.cancel();
+    _timer = null;
+    _maxWaitTimer = null;
+    _pendingFunc = null;
+    if (!_stateController.isClosed) {
+      _stateController.add(DebounceStatus.idle);
+    }
+    fn?.call();
+  }
+
+  /// Queues [func] to be called after [duration] of inactivity.
+  ///
+  /// Each call resets the debounce timer. If [maxWait] is set, the function
+  /// will be called regardless once [maxWait] has elapsed since the first
+  /// queued call in the current burst.
+  ///
+  /// Always returns `null` — debounced execution is deferred and the result
+  /// cannot be returned synchronously.
   T? debounce(T Function() func) {
     if (_stateController.isClosed) return null;
 
-    _pendingAction = () {
-      _stateController.add(DebounceStatus.idle);
-      func();
-    };
+    _pendingFunc = func;
 
     _timer?.cancel();
     _stateController.add(DebounceStatus.waiting);
-    _timer = Timer(_duration, _pendingAction!);
+    _timer = Timer(_duration, _flush);
+
+    // Start the maxWait timer only once per burst (don't reset it on each call)
+    if (_maxWait != null && _maxWaitTimer?.isActive != true) {
+      _maxWaitTimer = Timer(_maxWait, _flush);
+    }
 
     return null;
   }
@@ -204,11 +242,29 @@ final class Debounce<T> extends Stream<DebounceStatus>
   @override
   T? add(T Function() data) => debounce(data);
 
-  /// Cancels any pending execution and resets the state.
+  /// Cancels any pending execution and resets to idle.
+  ///
+  /// Unlike [close], the stream remains open and can accept new calls
+  /// after cancellation.
+  void cancel() {
+    _timer?.cancel();
+    _maxWaitTimer?.cancel();
+    _timer = null;
+    _maxWaitTimer = null;
+    _pendingFunc = null;
+    if (!_stateController.isClosed) {
+      _stateController.add(DebounceStatus.idle);
+    }
+  }
+
+  /// Cancels any pending execution and closes the stream.
   @override
   void close() {
     _timer?.cancel();
-    _pendingAction = null;
+    _maxWaitTimer?.cancel();
+    _timer = null;
+    _maxWaitTimer = null;
+    _pendingFunc = null;
     _stateController.close();
   }
 }
