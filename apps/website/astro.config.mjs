@@ -27,7 +27,7 @@ export default defineConfig({
       title: "Fabrik",
       tagline: "The clean Flutter toolkit.",
       description:
-        "Fabrik is a Flutter toolkit of six independent packages for theming, responsive layout, form validation, snackbars, and typed error handling.",
+        "Fabrik is a Flutter toolkit of independent packages for theming, responsive layout, form validation, snackbars, and typed error handling.",
       // `favicon` is resolved against `public/`, not `src/`. Pointing it at a
       // source path works in dev — where Astro can still serve out of `src/` —
       // but emits a dead `/./src/assets/…` URL in the production build.
@@ -68,7 +68,7 @@ export default defineConfig({
             applicationCategory: "DeveloperApplication",
             operatingSystem: "Android, iOS, Web, macOS, Windows, Linux",
             description:
-              "A Flutter toolkit of six independent packages for theming, responsive layout, form validation, snackbars, utilities, and typed error handling.",
+              "A Flutter toolkit of independent packages for theming, responsive layout, form validation, snackbars, utilities, and typed error handling.",
             url: "https://www.fabriktool.com",
             author: {
               "@type": "Person",
