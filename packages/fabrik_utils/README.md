@@ -47,6 +47,11 @@ flutter pub get
 'Hello World'.kebabCase      // "hello-world"
 'Hello World'.constantCase   // "HELLO_WORLD"
 
+// Acronyms stay intact
+'XMLHttpRequest'.snakeCase   // "xml_http_request"
+'APIKey'.snakeCase           // "api_key"
+'parseJSON'.camelCase        // "parseJson"
+
 // Null safety
 String? value = null;
 value.isNullOrBlank          // true
@@ -57,7 +62,9 @@ value.isNullOrBlank          // true
 ```dart
 DateTime.now().isToday       // true
 DateTime.now().isWeekend     // false (on a weekday)
-someDate.timeAgo             // "3 hours ago" / "2 days ago" / "1 month ago"
+// Relative time, in both directions
+pastDate.timeAgo             // "3 hours ago" / "yesterday" / "1 month ago"
+futureDate.timeAgo           // "in 3 hours" / "tomorrow" / "in 2 days"
 
 // Formatters
 date.isoDate                 // "2024-06-15"
@@ -81,6 +88,9 @@ date.isBetween(start, end)   // true if start <= date <= end
 formatDuration(Duration(seconds: 3665))          // "01:01:05"
 formatDuration(Duration(minutes: 4, seconds: 5)) // "04:05"
 formatDuration(Duration(seconds: 90), alwaysShowHours: true) // "00:01:30"
+
+// Negative durations render with a sign, for countdowns that overshoot zero
+formatDuration(Duration(seconds: -65))           // "-01:05"
 
 final parts = splitDuration(3665);
 parts.hours    // "01"

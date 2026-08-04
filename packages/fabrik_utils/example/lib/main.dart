@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 final controller = ScrollController(initialScrollOffset: 1000);
-                print(isApproachingScrollEnd(controller));
+                debugPrint('${isApproachingScrollEnd(controller)}');
               },
               child: const Text('Check Scroll End'),
             ),
@@ -102,7 +102,7 @@ class _ThrottleExampleState extends State<ThrottleExample> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        throttle.add(() => print('Throttled tap at ${DateTime.now()}'));
+        throttle.add(() => debugPrint('Throttled tap at ${DateTime.now()}'));
       },
       child: const Text('Throttled Tap'),
     );
@@ -123,7 +123,7 @@ class _DebounceExampleState extends State<DebounceExample> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        debounce.add(() => print('Debounced tap at ${DateTime.now()}'));
+        debounce.add(() => debugPrint('Debounced tap at ${DateTime.now()}'));
       },
       child: const Text('Debounced Tap'),
     );

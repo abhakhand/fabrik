@@ -9,28 +9,51 @@ class FabrikCasing {
   }
 
   final _upperCasePattern = RegExp(r'[A-Z]');
+  final _lowerCasePattern = RegExp(r'[a-z]');
   final _delimiters = {' ', '.', '/', '_', '\\', '-'};
 
   late final List<String> _segments;
 
   /// Splits the input string into word segments based on delimiters and casing.
+  ///
+  /// Runs of consecutive capitals are kept together as a single acronym, so
+  /// `XMLHttpRequest` splits into `XML`, `Http`, `Request` rather than one word
+  /// per capital letter. A trailing capital that begins a new word is handed
+  /// off correctly: `IOString` splits into `IO`, `String`.
   List<String> _extractWords(String input) {
     final buffer = StringBuffer();
     final words = <String>[];
     final isAllCaps = input.toUpperCase() == input;
 
+    bool isUpper(String? c) => c != null && _upperCasePattern.hasMatch(c);
+    bool isLower(String? c) => c != null && _lowerCasePattern.hasMatch(c);
+
     for (var i = 0; i < input.length; i++) {
       final char = input[i];
       final nextChar = i + 1 < input.length ? input[i + 1] : null;
+      final charAfterNext = i + 2 < input.length ? input[i + 2] : null;
 
       if (_delimiters.contains(char)) continue;
 
       buffer.write(char);
 
+      // A word ends when the next character starts a new one. With acronym
+      // grouping that happens in two cases:
+      //
+      //   lower -> upper        "helloWorld" => hello | World
+      //   upper -> upper, where the character after that is a lowercase
+      //   letter, so the next capital opens a capitalised word
+      //                         "XMLHttp"    => XML | Http
+      //
+      // The second case requires an actual lowercase letter: in "iOS device"
+      // the run "OS" is followed by a delimiter, so it stays one word.
+      final startsNewWord =
+          isUpper(nextChar) &&
+          !isAllCaps &&
+          (!isUpper(char) || isLower(charAfterNext));
+
       final isWordEnd =
-          nextChar == null ||
-          (_upperCasePattern.hasMatch(nextChar) && !isAllCaps) ||
-          _delimiters.contains(nextChar);
+          nextChar == null || startsNewWord || _delimiters.contains(nextChar);
 
       if (isWordEnd) {
         words.add(buffer.toString());
