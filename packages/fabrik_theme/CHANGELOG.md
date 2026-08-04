@@ -3,6 +3,42 @@
 All notable changes to this package are documented in this file.
 The format is based on Keep a Changelog, and this project adheres to semantic versioning.
 
+## 1.1.0
+
+A purely additive release. Existing `AppColors` call sites keep compiling
+unchanged, since the new roles have defaults.
+
+### New
+
+- **New:** `AppColors.darkDefaults()` — the dark counterpart to `AppColors.defaults()`. Passing a light palette to `FabrikTheme.create(brightness: Brightness.dark, ...)` correctly darkened Material's own `ColorScheme` but left the semantic colors light, so `context.colors.surface` stayed white in dark mode and apps rendered black text on a white background with no warning. There is now a dark palette to pair with the light one:
+
+  ```dart
+  MaterialApp(
+    theme: FabrikTheme.create(
+      brightness: Brightness.light,
+      colors: AppColors.defaults(),
+    ),
+    darkTheme: FabrikTheme.create(
+      brightness: Brightness.dark,
+      colors: AppColors.darkDefaults(),
+    ),
+  );
+  ```
+
+- **New:** `AppColors.error` and `onError`. Every app shows validation failures, and until now the semantic palette had no color for them — `ColorScheme.error` existed for Material's own widgets, but `context.colors` offered nothing, so error text fell back to `Colors.red` and escaped the design system. Both roles default to the new `ColorTokens.error` / `onError`, so existing constructor calls are unaffected.
+
+- **New:** Dark color tokens on `ColorTokens` — `primaryDark`, `onPrimaryDark`, `accentDark`, `onAccentDark`, `surfaceDark`, `onSurfaceDark`, `textPrimaryDark`, `textSecondaryDark`, `textTertiaryDark`, `errorDark`, `onErrorDark`.
+
+### Changed
+
+- **Changed:** `FabrikTheme.create` now feeds `colors.error` and `colors.onError` into the generated `ColorScheme`, so Material widgets and your own error styling use the same color. Previously the scheme's error color was derived from the seed and could differ from anything in your palette.
+
+### Tests
+
+- Test suite grown from 72 to 91 tests, covering the dark palette, light/dark contrast in both directions, the error role, and its participation in `copyWith`, `lerp`, and equality.
+
+---
+
 ## 1.0.2
 
 - **Fix:** `context.colors` and `context.typography` now throw a `StateError` in both debug and release mode when the extension is missing — previously the `assert` was silently stripped in release builds, leaving a force-unwrap `!` that could crash without any helpful message

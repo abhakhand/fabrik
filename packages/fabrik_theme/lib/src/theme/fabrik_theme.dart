@@ -45,6 +45,8 @@ class FabrikTheme {
         onSecondary: colors.onAccent,
         surface: colors.surface,
         onSurface: colors.onSurface,
+        error: colors.error,
+        onError: colors.onError,
       ),
       textTheme: TextTheme(
         displayLarge: resolvedTypography.displayLarge,

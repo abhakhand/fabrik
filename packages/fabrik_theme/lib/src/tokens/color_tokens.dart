@@ -37,4 +37,47 @@ abstract final class ColorTokens {
 
   /// Tertiary text color used for low-emphasis or helper content.
   static const textTertiary = Color(0xFF79747E);
+
+  /// Color used to signal errors, validation failures, and destructive actions.
+  static const error = Color(0xFFB3261E);
+
+  /// The color used for text and icons displayed on error backgrounds.
+  static const onError = Color(0xFFFFFFFF);
+
+  // ---------------------------------------------------------------------------
+  // Dark palette
+  // ---------------------------------------------------------------------------
+
+  /// The primary brand color used on dark surfaces.
+  static const primaryDark = Color(0xFFD0BCFF);
+
+  /// The color used for text and icons displayed on [primaryDark].
+  static const onPrimaryDark = Color(0xFF381E72);
+
+  /// A supporting accent color used on dark surfaces.
+  static const accentDark = Color(0xFFCCC2DC);
+
+  /// The color used for text and icons displayed on [accentDark].
+  static const onAccentDark = Color(0xFF332D41);
+
+  /// Background color used for the main application surface in dark mode.
+  static const surfaceDark = Color(0xFF141218);
+
+  /// Color used for text and icons displayed on [surfaceDark].
+  static const onSurfaceDark = Color(0xFFE6E0E9);
+
+  /// Primary text color used for high-emphasis content in dark mode.
+  static const textPrimaryDark = Color(0xFFE6E0E9);
+
+  /// Secondary text color used for supporting content in dark mode.
+  static const textSecondaryDark = Color(0xFFCAC4D0);
+
+  /// Tertiary text color used for low-emphasis content in dark mode.
+  static const textTertiaryDark = Color(0xFF938F99);
+
+  /// Error color used on dark surfaces.
+  static const errorDark = Color(0xFFF2B8B5);
+
+  /// The color used for text and icons displayed on [errorDark].
+  static const onErrorDark = Color(0xFF601410);
 }

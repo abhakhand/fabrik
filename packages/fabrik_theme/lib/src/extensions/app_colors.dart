@@ -39,6 +39,15 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Color used for text and icons displayed on surface backgrounds.
   final Color onSurface;
 
+  /// Color used to signal errors, validation failures, and destructive actions.
+  ///
+  /// Use this for error text, invalid input borders, and destructive buttons so
+  /// failure states stay inside the design system.
+  final Color error;
+
+  /// Color used for text and icons displayed on [error] backgrounds.
+  final Color onError;
+
   const AppColors({
     required this.primary,
     required this.onPrimary,
@@ -49,13 +58,30 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.textPrimary,
     required this.textSecondary,
     required this.textTertiary,
+    this.error = ColorTokens.error,
+    this.onError = ColorTokens.onError,
   });
 
-  /// Creates a default [AppColors] instance using [ColorTokens].
+  /// Creates a light [AppColors] instance using [ColorTokens].
   ///
   /// This factory exists for fallback and demonstration purposes.
   /// Production applications are expected to supply their own
   /// color definitions.
+  ///
+  /// Pair it with [AppColors.darkDefaults] for the dark theme:
+  ///
+  /// ```dart
+  /// MaterialApp(
+  ///   theme: FabrikTheme.create(
+  ///     brightness: Brightness.light,
+  ///     colors: AppColors.defaults(),
+  ///   ),
+  ///   darkTheme: FabrikTheme.create(
+  ///     brightness: Brightness.dark,
+  ///     colors: AppColors.darkDefaults(),
+  ///   ),
+  /// );
+  /// ```
   factory AppColors.defaults() {
     return const AppColors(
       primary: ColorTokens.primary,
@@ -67,6 +93,30 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: ColorTokens.textPrimary,
       textSecondary: ColorTokens.textSecondary,
       textTertiary: ColorTokens.textTertiary,
+      error: ColorTokens.error,
+      onError: ColorTokens.onError,
+    );
+  }
+
+  /// Creates a dark [AppColors] instance using the dark [ColorTokens].
+  ///
+  /// The dark counterpart to [AppColors.defaults]. Passing a light palette to
+  /// `FabrikTheme.create(brightness: Brightness.dark, ...)` darkens Material's
+  /// own `ColorScheme` but leaves the semantic colors light, so
+  /// `context.colors.surface` would stay white in dark mode.
+  factory AppColors.darkDefaults() {
+    return const AppColors(
+      primary: ColorTokens.primaryDark,
+      onPrimary: ColorTokens.onPrimaryDark,
+      accent: ColorTokens.accentDark,
+      onAccent: ColorTokens.onAccentDark,
+      surface: ColorTokens.surfaceDark,
+      onSurface: ColorTokens.onSurfaceDark,
+      textPrimary: ColorTokens.textPrimaryDark,
+      textSecondary: ColorTokens.textSecondaryDark,
+      textTertiary: ColorTokens.textTertiaryDark,
+      error: ColorTokens.errorDark,
+      onError: ColorTokens.onErrorDark,
     );
   }
 
@@ -81,6 +131,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textPrimary,
     Color? textSecondary,
     Color? textTertiary,
+    Color? error,
+    Color? onError,
   }) {
     return AppColors(
       primary: primary ?? this.primary,
@@ -92,6 +144,8 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textTertiary: textTertiary ?? this.textTertiary,
+      error: error ?? this.error,
+      onError: onError ?? this.onError,
     );
   }
 
@@ -111,6 +165,8 @@ class AppColors extends ThemeExtension<AppColors> {
           Color.lerp(textSecondary, other.textSecondary, t) ?? textSecondary,
       textTertiary:
           Color.lerp(textTertiary, other.textTertiary, t) ?? textTertiary,
+      error: Color.lerp(error, other.error, t) ?? error,
+      onError: Color.lerp(onError, other.onError, t) ?? onError,
     );
   }
 
@@ -126,7 +182,9 @@ class AppColors extends ThemeExtension<AppColors> {
         other.onSurface == onSurface &&
         other.textPrimary == textPrimary &&
         other.textSecondary == textSecondary &&
-        other.textTertiary == textTertiary;
+        other.textTertiary == textTertiary &&
+        other.error == error &&
+        other.onError == onError;
   }
 
   @override
@@ -140,5 +198,7 @@ class AppColors extends ThemeExtension<AppColors> {
     textPrimary,
     textSecondary,
     textTertiary,
+    error,
+    onError,
   );
 }

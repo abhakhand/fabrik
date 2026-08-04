@@ -24,7 +24,7 @@ A lightweight, opinionated theming foundation for Flutter — semantic colors, t
 
 ```yaml
 dependencies:
-  fabrik_theme: ^1.0.2
+  fabrik_theme: ^1.1.0
 ```
 
 ```sh
@@ -36,6 +36,16 @@ flutter pub get
 ## Quick Start
 
 ### 1. Define your colors
+
+To try the package out, start with the built-in palettes and skip this step
+entirely:
+
+```dart
+AppColors.defaults()      // light
+AppColors.darkDefaults()  // dark
+```
+
+For a real app, define your own semantic roles:
 
 ```dart
 class AppThemeColors {
@@ -49,6 +59,8 @@ class AppThemeColors {
     textPrimary: Color(0xFF111111),
     textSecondary: Color(0xFF444444),
     textTertiary: Color(0xFF777777),
+    error: Color(0xFFB3261E),
+    onError: Color(0xFFFFFFFF),
   );
 
   static const dark = AppColors(
@@ -61,6 +73,8 @@ class AppThemeColors {
     textPrimary: Color(0xFFFFFFFF),
     textSecondary: Color(0xFFCCCCCC),
     textTertiary: Color(0xFF999999),
+    error: Color(0xFFF2B8B5),
+    onError: Color(0xFF601410),
   );
 }
 ```
@@ -94,7 +108,20 @@ Container(color: context.colors.surface)
 Text('Welcome', style: context.typography.headlineMedium)
 Text('Subtitle', style: context.typography.bodyMediumSecondary)
 Text('Action', style: context.typography.labelLarge)
+
+// Failure states have a semantic color too
+Text(
+  'Something went wrong',
+  style: context.typography.bodyMedium.copyWith(
+    color: context.colors.error,
+  ),
+)
 ```
+
+`error` and `onError` are optional in the constructor and fall back to
+`ColorTokens.error` / `onError`, so existing palettes keep working. They are
+also fed into Material's `ColorScheme`, so framework widgets and your own error
+styling stay in sync.
 
 ---
 

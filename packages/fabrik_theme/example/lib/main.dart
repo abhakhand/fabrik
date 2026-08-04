@@ -80,6 +80,15 @@ class HomePage extends StatelessWidget {
               'This text uses semantic typography and colors.',
               style: context.typography.bodyMediumSecondary,
             ),
+            const SizedBox(height: 12),
+            // Failure states have a semantic color too, so they stay inside
+            // the design system instead of reaching for Colors.red.
+            Text(
+              'Something went wrong.',
+              style: context.typography.bodyMedium.copyWith(
+                color: context.colors.error,
+              ),
+            ),
           ],
         ),
       ),
