@@ -26,6 +26,13 @@ class _FabrikToastWidgetState extends State<FabrikToastWidget>
   late final Animation<double> _fadeAnimation;
   Timer? _dismissTimer;
 
+  /// Guards against overlapping dismissals.
+  bool _isDismissing = false;
+
+  /// Guards [FabrikToastWidget.onDismissed] against being invoked twice, since
+  /// it removes the overlay entry.
+  bool _hasNotifiedDismissal = false;
+
   @override
   void initState() {
     super.initState();
@@ -48,13 +55,24 @@ class _FabrikToastWidgetState extends State<FabrikToastWidget>
   }
 
   void _dismiss() {
-    _controller.reverse().then((_) => widget.onDismissed());
+    if (_isDismissing) return;
+    _isDismissing = true;
+
+    _dismissTimer?.cancel();
+    _dismissTimer = null;
+
+    _controller.reverse().then((_) {
+      if (_hasNotifiedDismissal) return;
+      _hasNotifiedDismissal = true;
+      widget.onDismissed();
+    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _dismissTimer?.cancel();
+    _dismissTimer = null;
+    _controller.dispose();
     super.dispose();
   }
 

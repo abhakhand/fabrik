@@ -30,9 +30,15 @@ class FabrikToast {
     double iconSize = 24.0,
     VoidCallback? onTap,
   }) async {
-    final overlay = Overlay.of(context, rootOverlay: true);
-    if (!overlay.mounted) {
-      debugPrint('No overlay found for FabrikToast.');
+    // `Overlay.of` throws when no Overlay is present, so `maybeOf` is what
+    // actually lets this degrade gracefully.
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null || !overlay.mounted) {
+      debugPrint(
+        'FabrikToast: no Overlay found in the given context. '
+        'Make sure the context is below a MaterialApp, CupertinoApp, '
+        'or an explicit Overlay widget.',
+      );
       return;
     }
 

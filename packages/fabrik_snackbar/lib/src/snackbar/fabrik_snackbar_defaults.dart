@@ -71,4 +71,21 @@ class FabrikSnackbarDefaults {
 
   /// Default text color used for title and message.
   static const Color defaultTextColor = Colors.white;
+
+  /// Default text style applied to a plain-[String] title.
+  ///
+  /// Used when [FabrikSnackbarConfig.titleStyle] is not provided.
+  static const TextStyle defaultTitleStyle = TextStyle(
+    fontWeight: defaultTitleFontWeight,
+    color: defaultTextColor,
+    fontSize: defaultTitleFontSize,
+  );
+
+  /// Default text style applied to a plain-[String] message.
+  ///
+  /// Used when [FabrikSnackbarConfig.messageStyle] is not provided.
+  static const TextStyle defaultMessageStyle = TextStyle(
+    color: defaultTextColor,
+    fontSize: defaultMessageFontSize,
+  );
 }

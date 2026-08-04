@@ -45,6 +45,8 @@ class FabrikSnackbar {
     String? message,
     InlineSpan? richTitle,
     InlineSpan? richMessage,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -68,6 +70,8 @@ class FabrikSnackbar {
         message: message,
         richTitle: richTitle,
         richMessage: richMessage,
+        titleStyle: titleStyle,
+        messageStyle: messageStyle,
         icon: const Icon(
           Icons.check_circle_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -103,6 +107,8 @@ class FabrikSnackbar {
     String? message,
     InlineSpan? richTitle,
     InlineSpan? richMessage,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -126,6 +132,8 @@ class FabrikSnackbar {
         message: message,
         richTitle: richTitle,
         richMessage: richMessage,
+        titleStyle: titleStyle,
+        messageStyle: messageStyle,
         icon: const Icon(
           Icons.error_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -161,6 +169,8 @@ class FabrikSnackbar {
     String? message,
     InlineSpan? richTitle,
     InlineSpan? richMessage,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -184,6 +194,8 @@ class FabrikSnackbar {
         message: message,
         richTitle: richTitle,
         richMessage: richMessage,
+        titleStyle: titleStyle,
+        messageStyle: messageStyle,
         icon: const Icon(
           Icons.info_outline_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -219,6 +231,8 @@ class FabrikSnackbar {
     String? message,
     InlineSpan? richTitle,
     InlineSpan? richMessage,
+    TextStyle? titleStyle,
+    TextStyle? messageStyle,
     int? durationInSeconds,
     FabrikSnackbarPosition? position,
     FabrikSnackbarDismissDirection? dismissDirection,
@@ -242,6 +256,8 @@ class FabrikSnackbar {
         message: message,
         richTitle: richTitle,
         richMessage: richMessage,
+        titleStyle: titleStyle,
+        messageStyle: messageStyle,
         icon: const Icon(
           Icons.warning_amber_rounded,
           size: FabrikSnackbarDefaults.defaultIconSize,
@@ -283,10 +299,16 @@ class FabrikSnackbar {
     BuildContext context, {
     required FabrikSnackbarConfig config,
   }) async {
-    final overlay = Overlay.of(context, rootOverlay: true);
+    // `Overlay.of` throws when no Overlay is present, so `maybeOf` is what
+    // actually lets this degrade gracefully.
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
 
-    if (!overlay.mounted) {
-      debugPrint('No overlay found in context');
+    if (overlay == null || !overlay.mounted) {
+      debugPrint(
+        'FabrikSnackbar: no Overlay found in the given context. '
+        'Make sure the context is below a MaterialApp, CupertinoApp, '
+        'or an explicit Overlay widget.',
+      );
       return;
     }
 

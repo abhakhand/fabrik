@@ -28,6 +28,8 @@ class FabrikSnackbarConfig {
     this.message,
     this.titleText,
     this.messageText,
+    this.titleStyle,
+    this.messageStyle,
     this.richTitle,
     this.richMessage,
     this.icon,
@@ -72,6 +74,18 @@ class FabrikSnackbarConfig {
   /// Custom [Widget] rendered as the message.
   /// Takes priority over [message] but is itself overridden by [richMessage].
   final Widget? messageText;
+
+  /// Text style applied to a plain-[String] [title].
+  ///
+  /// Defaults to [FabrikSnackbarDefaults.defaultTitleStyle] when omitted. Has
+  /// no effect on [titleText] or [richTitle], which carry their own styling.
+  final TextStyle? titleStyle;
+
+  /// Text style applied to a plain-[String] [message].
+  ///
+  /// Defaults to [FabrikSnackbarDefaults.defaultMessageStyle] when omitted. Has
+  /// no effect on [messageText] or [richMessage], which carry their own styling.
+  final TextStyle? messageStyle;
 
   /// Rich text content for title. Takes precedence over [title] and [titleText] if provided.
   final InlineSpan? richTitle;

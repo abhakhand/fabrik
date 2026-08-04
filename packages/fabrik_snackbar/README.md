@@ -27,7 +27,7 @@ A beautifully crafted Snackbar & Toast package for Flutter — zero boilerplate,
 
 ```yaml
 dependencies:
-  fabrik_snackbar: ^0.1.7
+  fabrik_snackbar: ^0.1.8
 ```
 
 ```sh
@@ -83,6 +83,24 @@ FabrikSnackbar.custom(
   ),
 );
 ```
+
+### Styling the text
+
+Plain-string `title` and `message` can be styled directly, without swapping
+them for custom widgets:
+
+```dart
+FabrikSnackbar.success(
+  context,
+  title: 'Saved',
+  message: 'Your changes are live.',
+  titleStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  messageStyle: const TextStyle(color: Colors.white70),
+);
+```
+
+Omit them and you get `FabrikSnackbarDefaults.defaultTitleStyle` and
+`defaultMessageStyle`.
 
 Toast is just as flexible:
 

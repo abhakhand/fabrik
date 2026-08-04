@@ -32,6 +32,14 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
   late final Key _dismissibleKey;
   Timer? _dismissTimer;
 
+  /// Guards against a second dismissal starting once one is underway, which
+  /// happens when the auto-dismiss timer fires just as the user swipes.
+  bool _isDismissing = false;
+
+  /// Guards [FabrikSnackbarWidget.onDismissed] against being invoked twice,
+  /// since it removes the overlay entry.
+  bool _hasNotifiedDismissal = false;
+
   /// Determines the maxWidth based on config or screen width.
   double _resolveMaxWidth(BuildContext context) {
     return widget.config.maxWidth ??
@@ -69,17 +77,49 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
     _dismissTimer = Timer(widget.config.duration, _dismiss);
   }
 
-  /// Dismisses the snackbar with animation.
+  /// Dismisses the snackbar with a slide-out animation.
+  ///
+  /// Used by the auto-dismiss timer, where the snackbar is still on screen and
+  /// should animate away.
   void _dismiss() {
-    _controller.reverse().then((_) {
-      widget.onDismissed();
-    });
+    if (_isDismissing) return;
+    _isDismissing = true;
+
+    _dismissTimer?.cancel();
+    _dismissTimer = null;
+
+    _controller.reverse().then((_) => _notifyDismissed());
+  }
+
+  /// Completes dismissal immediately, without a slide-out animation.
+  ///
+  /// Used by the swipe gesture: [Dismissible] has already removed the snackbar
+  /// from the tree by the time its `onDismissed` fires, so running the reverse
+  /// animation would just tick an invisible widget for its full duration while
+  /// the overlay entry stayed mounted.
+  void _dismissImmediately() {
+    if (_isDismissing) return;
+    _isDismissing = true;
+
+    _dismissTimer?.cancel();
+    _dismissTimer = null;
+
+    _notifyDismissed();
+  }
+
+  /// Hands control back to [FabrikSnackbar], which removes the overlay entry.
+  void _notifyDismissed() {
+    if (_hasNotifiedDismissal) return;
+    _hasNotifiedDismissal = true;
+
+    widget.onDismissed();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _dismissTimer?.cancel();
+    _dismissTimer = null;
+    _controller.dispose();
     super.dispose();
   }
 
@@ -101,7 +141,7 @@ class _FabrikSnackbarWidgetState extends State<FabrikSnackbarWidget>
                 : widget.config.position.isTop
                 ? DismissDirection.up
                 : DismissDirection.down,
-            onDismissed: (_) => _dismiss(),
+            onDismissed: (_) => _dismissImmediately(),
             child: Material(
               color: Colors.transparent,
               child: Container(
@@ -214,11 +254,9 @@ class FabrikSnackbarRow extends StatelessWidget {
                 else if (config.title != null)
                   Text(
                     config.title!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style:
+                        config.titleStyle ??
+                        FabrikSnackbarDefaults.defaultTitleStyle,
                   ),
                 if (config.richMessage != null)
                   RichText(text: config.richMessage!)
@@ -227,7 +265,9 @@ class FabrikSnackbarRow extends StatelessWidget {
                 else if (config.message != null)
                   Text(
                     config.message!,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style:
+                        config.messageStyle ??
+                        FabrikSnackbarDefaults.defaultMessageStyle,
                   ),
               ],
             ),
