@@ -1,8 +1,17 @@
 /// Defines breakpoint thresholds used to resolve layout categories.
 ///
-/// Values represent logical pixel widths. The [mobile] and [tablet]
-/// thresholds drive layout classification — [desktop] is reserved for
-/// future use and does not currently affect classification logic.
+/// Values are logical pixel widths, and each names the **upper bound** of the
+/// category below it. With the defaults:
+///
+/// | Category                          | Width         |
+/// | --------------------------------- | ------------- |
+/// | `FabrikLayoutType.mobile`         | `< 600`       |
+/// | `FabrikLayoutType.tablet`         | `600 – 1023`  |
+/// | `FabrikLayoutType.desktop`        | `1024 – 1439` |
+/// | `FabrikLayoutType.largeDesktop`   | `>= 1440`     |
+///
+/// So `FabrikBreakpoints(mobile: 480, tablet: 768)` means "mobile is anything
+/// under 480" and "tablet runs from 480 up to 767".
 ///
 /// ```dart
 /// FabrikLayout(
@@ -11,22 +20,25 @@
 /// )
 /// ```
 class FabrikBreakpoints {
-  /// Width threshold below which the layout is classified as mobile.
+  /// Upper bound of the mobile category: widths below this are mobile.
   /// Defaults to 600.
   final double mobile;
 
-  /// Width threshold at or above which the layout is classified as tablet,
-  /// and below which it is desktop. Defaults to 1024.
+  /// Upper bound of the tablet category: widths from [mobile] up to this are
+  /// tablet. Defaults to 1024.
   final double tablet;
 
-  /// Reserved breakpoint value. Defaults to 1440.
+  /// Upper bound of the desktop category: widths from [tablet] up to this are
+  /// desktop, and anything at or above it is
+  /// `FabrikLayoutType.largeDesktop`. Defaults to 1440.
   final double desktop;
 
   const FabrikBreakpoints({
     this.mobile = 600,
     this.tablet = 1024,
     this.desktop = 1440,
-  }) : assert(mobile < tablet, 'mobile breakpoint must be less than tablet');
+  }) : assert(mobile < tablet, 'mobile breakpoint must be less than tablet'),
+       assert(tablet < desktop, 'tablet breakpoint must be less than desktop');
 
   @override
   bool operator ==(Object other) {

@@ -29,7 +29,19 @@ class FabrikLayoutData {
   bool get isTablet => type == FabrikLayoutType.tablet;
 
   /// Returns `true` when the layout is classified as desktop.
+  ///
+  /// This is the narrow desktop band only. Use [isDesktopOrWider] when you want
+  /// "desktop and above", which is usually what layout code means.
   bool get isDesktop => type == FabrikLayoutType.desktop;
+
+  /// Returns `true` when the layout is classified as large desktop.
+  bool get isLargeDesktop => type == FabrikLayoutType.largeDesktop;
+
+  /// Returns `true` for both [FabrikLayoutType.desktop] and
+  /// [FabrikLayoutType.largeDesktop].
+  bool get isDesktopOrWider =>
+      type == FabrikLayoutType.desktop ||
+      type == FabrikLayoutType.largeDesktop;
 
   /// Returns `true` when the device is in portrait orientation.
   bool get isPortrait => orientation == Orientation.portrait;
@@ -39,8 +51,9 @@ class FabrikLayoutData {
 
   /// Returns a value based on the current layout type.
   ///
-  /// Only [mobile] is required. [tablet] and [desktop] fall back to the
-  /// next smaller value when not provided:
+  /// Only [mobile] is required. Wider categories fall back to the next smaller
+  /// value when not provided, so most callers can ignore [largeDesktop]
+  /// entirely and it will reuse the [desktop] value:
   ///
   /// ```dart
   /// final padding = context.layout.value<double>(
@@ -48,9 +61,19 @@ class FabrikLayoutData {
   ///   tablet: 16,
   ///   desktop: 24,
   /// );
+  ///
+  /// // Opt in to the widest band only when it needs its own value:
+  /// final columns = context.layout.value<int>(
+  ///   mobile: 1,
+  ///   tablet: 2,
+  ///   desktop: 3,
+  ///   largeDesktop: 4,
+  /// );
   /// ```
-  T value<T>({required T mobile, T? tablet, T? desktop}) {
+  T value<T>({required T mobile, T? tablet, T? desktop, T? largeDesktop}) {
     switch (type) {
+      case FabrikLayoutType.largeDesktop:
+        return largeDesktop ?? desktop ?? tablet ?? mobile;
       case FabrikLayoutType.desktop:
         return desktop ?? tablet ?? mobile;
       case FabrikLayoutType.tablet:

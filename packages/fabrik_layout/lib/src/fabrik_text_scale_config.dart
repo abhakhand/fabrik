@@ -31,13 +31,27 @@ class FabrikTextScaleConfig {
   /// Minimum scale factor applied on desktop-sized layouts. Defaults to 1.1.
   final double desktop;
 
+  /// Minimum scale factor applied on large-desktop layouts.
+  ///
+  /// Defaults to `null`, which reuses [desktop] — wide windows rarely need a
+  /// different floor, so opting in is explicit.
+  final double? largeDesktop;
+
   const FabrikTextScaleConfig({
     this.mobile = 1.0,
     this.tablet = 1.05,
     this.desktop = 1.1,
-  })  : assert(mobile > 0, 'mobile scale factor must be positive'),
-        assert(tablet > 0, 'tablet scale factor must be positive'),
-        assert(desktop > 0, 'desktop scale factor must be positive');
+    this.largeDesktop,
+  }) : assert(mobile > 0, 'mobile scale factor must be positive'),
+       assert(tablet > 0, 'tablet scale factor must be positive'),
+       assert(desktop > 0, 'desktop scale factor must be positive'),
+       assert(
+         largeDesktop == null || largeDesktop > 0,
+         'largeDesktop scale factor must be positive',
+       );
+
+  /// The scale floor for large-desktop layouts, falling back to [desktop].
+  double get effectiveLargeDesktop => largeDesktop ?? desktop;
 
   @override
   bool operator ==(Object other) {
@@ -45,9 +59,10 @@ class FabrikTextScaleConfig {
     return other is FabrikTextScaleConfig &&
         other.mobile == mobile &&
         other.tablet == tablet &&
-        other.desktop == desktop;
+        other.desktop == desktop &&
+        other.largeDesktop == largeDesktop;
   }
 
   @override
-  int get hashCode => Object.hash(mobile, tablet, desktop);
+  int get hashCode => Object.hash(mobile, tablet, desktop, largeDesktop);
 }

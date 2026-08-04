@@ -17,6 +17,7 @@ TextScaler resolveTextScaler({
     FabrikLayoutType.mobile => config.mobile,
     FabrikLayoutType.tablet => config.tablet,
     FabrikLayoutType.desktop => config.desktop,
+    FabrikLayoutType.largeDesktop => config.effectiveLargeDesktop,
   };
 
   return systemScaler.clamp(minScaleFactor: factor);

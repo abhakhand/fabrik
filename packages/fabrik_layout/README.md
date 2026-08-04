@@ -24,7 +24,7 @@ A lightweight, opinionated layout and responsiveness foundation for Flutter.
 
 ```yaml
 dependencies:
-  fabrik_layout: ^1.1.0
+  fabrik_layout: ^1.2.0
 ```
 
 ```sh
@@ -79,7 +79,28 @@ Default thresholds (logical pixels):
 | --- | --- |
 | Mobile | < 600 |
 | Tablet | 600 – 1023 |
-| Desktop | ≥ 1024 |
+| Desktop | 1024 – 1439 |
+| Large desktop | ≥ 1440 |
+
+Each breakpoint value names the **upper bound** of the category below it, so
+`FabrikBreakpoints(mobile: 480, tablet: 768)` means "mobile is under 480" and
+"tablet runs from 480 to 767".
+
+Most apps only care about "desktop and above" — use `isDesktopOrWider` for that,
+and treat `largeDesktop` as an opt-in refinement:
+
+```dart
+if (context.layout.isDesktopOrWider) {
+  // desktop and large desktop
+}
+
+final columns = context.layout.value<int>(
+  mobile: 1,
+  tablet: 2,
+  desktop: 3,
+  // largeDesktop omitted -> reuses the desktop value
+);
+```
 
 Override them if needed:
 
@@ -103,7 +124,7 @@ FabrikLayout(
 )
 ```
 
-Override the defaults (mobile 1.0×, tablet 1.05×, desktop 1.1×):
+Override the defaults (mobile 1.0×, tablet 1.05×, desktop 1.1×; large desktop reuses the desktop floor unless set):
 
 ```dart
 FabrikLayout(

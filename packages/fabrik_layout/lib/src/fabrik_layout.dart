@@ -58,7 +58,15 @@ class FabrikLayout extends StatelessWidget {
       builder: (context, constraints) {
         final media = MediaQuery.of(context);
 
-        final type = _resolveLayoutType(constraints.maxWidth);
+        // Under an unbounded-width ancestor — a horizontal ListView or Row —
+        // `constraints.maxWidth` is infinite, which would otherwise classify
+        // every device as the widest category. Fall back to the window width
+        // so a phone is still a phone.
+        final width = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : media.size.width;
+
+        final type = _resolveLayoutType(width);
 
         final textScaler = enableTextScaling
             ? resolveTextScaler(
@@ -89,6 +97,7 @@ class FabrikLayout extends StatelessWidget {
   FabrikLayoutType _resolveLayoutType(double width) {
     if (width < breakpoints.mobile) return FabrikLayoutType.mobile;
     if (width < breakpoints.tablet) return FabrikLayoutType.tablet;
-    return FabrikLayoutType.desktop;
+    if (width < breakpoints.desktop) return FabrikLayoutType.desktop;
+    return FabrikLayoutType.largeDesktop;
   }
 }

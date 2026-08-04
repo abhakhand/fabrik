@@ -58,7 +58,7 @@ void main() {
         ),
       );
 
-      await tester.binding.setSurfaceSize(const Size(1440, 900));
+      await tester.binding.setSurfaceSize(const Size(1200, 900));
       await tester.pump();
 
       expect(find.text('FabrikLayoutType.desktop'), findsOneWidget);
@@ -169,7 +169,7 @@ void main() {
       await tester.pump();
       expect(find.text('FabrikLayoutType.mobile'), findsOneWidget);
 
-      await tester.binding.setSurfaceSize(const Size(1440, 900));
+      await tester.binding.setSurfaceSize(const Size(1200, 900));
       await tester.pump();
       expect(find.text('FabrikLayoutType.desktop'), findsOneWidget);
     });

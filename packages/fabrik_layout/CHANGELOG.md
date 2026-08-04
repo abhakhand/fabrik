@@ -6,6 +6,48 @@ The format is based on Keep a Changelog, and this project adheres to semantic ve
 
 ---
 
+## 1.2.0
+
+### Fixes
+
+- **Fix:** Layout is no longer misclassified under an unbounded-width ancestor. Inside a horizontal `ListView` or an unconstrained `Row`, `constraints.maxWidth` is infinite, and since `Infinity < mobile` is false every device fell through to the widest category — a 375 px phone reported `isDesktop == true` while `screenSize` correctly reported 375. `FabrikLayout` now falls back to the `MediaQuery` width whenever the incoming width is unbounded, so `type` and `screenSize` can no longer contradict each other.
+
+- **Fix:** `FabrikBreakpoints.desktop` now affects classification. It was documented as "reserved for future use" and had no effect at all — setting it to `1`, `1440` or `9999` produced identical results — while still appearing in the public constructor as though it meant something.
+
+### Breaking
+
+- **Changed:** `FabrikLayoutType` gains a fourth value, `largeDesktop`, for widths at or above `FabrikBreakpoints.desktop` (1440 by default). Widths from `tablet` up to `desktop` remain `desktop`.
+
+  This breaks exhaustive `switch` statements over `FabrikLayoutType`; the analyzer will point at each one. Code that only uses `isMobile` / `isTablet` / `value<T>()` is unaffected.
+
+  Note that `isDesktop` is now the narrow 1024–1439 band only. Use the new `isDesktopOrWider` where you previously meant "desktop and above":
+
+  ```dart
+  // before — true for everything >= 1024
+  if (context.layout.isDesktop) { ... }
+
+  // after — same meaning
+  if (context.layout.isDesktopOrWider) { ... }
+  ```
+
+- **Changed:** `FabrikBreakpoints` now asserts `tablet < desktop`, alongside the existing `mobile < tablet` check.
+
+### New
+
+- **New:** `FabrikLayoutData.isLargeDesktop` and `isDesktopOrWider`.
+- **New:** `FabrikLayoutData.value<T>()` accepts an optional `largeDesktop` argument. Omitting it falls back to `desktop`, then `tablet`, then `mobile`, so existing call sites keep working unchanged.
+- **New:** `FabrikTextScaleConfig.largeDesktop`, defaulting to `null` so it reuses the `desktop` floor. `effectiveLargeDesktop` resolves the value actually applied.
+
+### Docs
+
+- `FabrikBreakpoints` now documents that each value is the **upper bound** of the category below it, since the field names read like lower bounds.
+
+### Tests
+
+- Test suite grown from 58 to 80 tests, covering the unbounded-width fallback, the four-band classification, custom desktop thresholds, and the `value<T>` fallback chain.
+
+---
+
 ## 1.1.0
 
 - **Added:** `FabrikLayoutData.orientation` — exposes the device orientation derived from `MediaQuery`; access via `context.layout.isPortrait` and `context.layout.isLandscape`
