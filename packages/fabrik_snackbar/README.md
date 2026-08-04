@@ -1,6 +1,15 @@
 # fabrik_snackbar
 
-A beautifully crafted Snackbar & Toast package for Flutter — zero boilerplate, easy to customize, works everywhere.
+`ScaffoldMessenger` requires a `Scaffold`, shows one snackbar at a time, and
+gives you limited control over placement and animation.
+
+`fabrik_snackbar` renders into the root `Overlay` instead — no `Scaffold`
+requirement, snackbars that survive navigation, and top-or-bottom placement.
+
+```dart
+FabrikSnackbar.success(context, title: 'Saved');
+FabrikToast.show(context, message: 'Copied to clipboard');
+```
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_snackbar.svg)](https://pub.dev/packages/fabrik_snackbar)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -118,16 +127,34 @@ FabrikToast.show(
 
 ## Documentation
 
-Full API reference, advanced usage, and guides are available at
-**[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_snackbar` reference](https://www.fabriktool.com/packages/fabrik_snackbar/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_snackbar` is part of [Fabrik](https://github.com/abhakhand/fabrik), a
+Flutter toolkit whose packages are independent — use this one on its own, or
+reach for others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_theme`](https://pub.dev/packages/fabrik_theme) | Semantic colors and typography |
+| [`fabrik_result`](https://pub.dev/packages/fabrik_result) | Typed failures worth surfacing to the user |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)

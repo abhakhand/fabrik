@@ -1,6 +1,16 @@
 # fabrik_theme
 
-A lightweight, opinionated theming foundation for Flutter — semantic colors, typography, and design tokens with zero layout or UI concerns.
+Flutter's `ThemeData` covers Material's own widgets, but says nothing about
+*your* app's roles — the color of a helper label, the style of an emphasised
+value in a list row.
+
+`fabrik_theme` adds a semantic layer on top: define colors and text styles once,
+by meaning, and read them anywhere through `context`.
+
+```dart
+Text('Payment failed', style: TextStyle(color: context.colors.error))
+Text('Last updated', style: context.typography.bodySmallSecondary)
+```
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg)](https://pub.dev/packages/fabrik_theme)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -162,15 +172,34 @@ context.typography.bodyLargeEmphasis    // bold primary
 
 ## Documentation
 
-Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_theme` reference](https://www.fabriktool.com/packages/fabrik_theme/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_theme` is part of [Fabrik](https://github.com/abhakhand/fabrik), a Flutter
+toolkit whose packages are independent — use this one on its own, or reach for
+others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_layout`](https://pub.dev/packages/fabrik_layout) | Responsive breakpoints and adaptive values |
+| [`fabrik_snackbar`](https://pub.dev/packages/fabrik_snackbar) | Snackbars and toasts with no `Scaffold` requirement |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)

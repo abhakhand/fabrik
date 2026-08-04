@@ -1,6 +1,16 @@
 # fabrik_utils
 
-A lightweight, real-world-first utility toolkit for Flutter apps.
+Every app ends up with a `utils.dart` holding the same handful of helpers:
+something that turns a `DateTime` into "2 hours ago", something that converts a
+string to `snake_case`, a debouncer for the search field.
+
+`fabrik_utils` is that file, written once and tested properly.
+
+```dart
+'XMLHttpRequest'.snakeCase          // 'xml_http_request'
+postedAt.timeAgo                    // '2 hours ago'
+formatDuration(elapsed)             // '01:23:45'
+```
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_utils.svg)](https://pub.dev/packages/fabrik_utils)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -26,7 +36,7 @@ A lightweight, real-world-first utility toolkit for Flutter apps.
 
 ```yaml
 dependencies:
-  fabrik_utils: ^0.1.0
+  fabrik_utils: ^0.2.0
 ```
 
 ```sh
@@ -157,15 +167,34 @@ isApproachingScrollEnd(controller, scrollOffsetThreshold: 0.9)
 
 ## Documentation
 
-Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_utils` reference](https://www.fabriktool.com/packages/fabrik_utils/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_utils` is part of [Fabrik](https://github.com/abhakhand/fabrik), a Flutter
+toolkit whose packages are independent — use this one on its own, or reach for
+others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_layout`](https://pub.dev/packages/fabrik_layout) | Responsive breakpoints and adaptive values |
+| [`fabrik_result`](https://pub.dev/packages/fabrik_result) | Typed failures without exceptions |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)

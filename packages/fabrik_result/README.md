@@ -1,6 +1,15 @@
 # fabrik_result
 
-Lightweight, explicit result types for Dart and Flutter — model success, failure, and absence of values without exceptions or nulls.
+A `Future<User>` tells you nothing about what can go wrong. The caller finds out
+at runtime, or reads the implementation, or wraps everything in `try`/`catch`
+and hopes.
+
+```dart
+Future<Either<Failure, User>> getUser(String id);
+```
+
+Now the signature *is* the documentation, and the compiler makes sure the
+failure case is handled.
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_result.svg)](https://pub.dev/packages/fabrik_result)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -22,7 +31,7 @@ Lightweight, explicit result types for Dart and Flutter — model success, failu
 
 ```yaml
 dependencies:
-  fabrik_result: ^1.0.1
+  fabrik_result: ^1.1.0
 ```
 
 ```sh
@@ -163,15 +172,34 @@ final user = result.rightOrNull;
 
 ## Documentation
 
-Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_result` reference](https://www.fabriktool.com/packages/fabrik_result/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_result` is part of [Fabrik](https://github.com/abhakhand/fabrik), a Flutter
+toolkit whose packages are independent — use this one on its own, or reach for
+others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_forms`](https://pub.dev/packages/fabrik_forms) | Testable form state and validation |
+| [`fabrik_utils`](https://pub.dev/packages/fabrik_utils) | Everyday extensions and helpers |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)

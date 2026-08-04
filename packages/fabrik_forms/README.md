@@ -1,6 +1,19 @@
 # fabrik_forms
 
-A clean, UI-agnostic form state and validation system for Flutter.
+Flutter's `Form` and `TextFormField` couple validation to widgets: to test
+whether a sign-up form accepts an input, you have to build one.
+
+`fabrik_forms` keeps form state outside the widget tree, so form logic is
+testable on its own.
+
+```dart
+final form = FabrikForm({
+  'email': FabrikField<String>(value: '', validators: [const EmailValidator()]),
+});
+
+form.update<String>('email', 'not-an-email');
+form.isValid;  // false — no widgets involved
+```
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_forms.svg)](https://pub.dev/packages/fabrik_forms)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -33,7 +46,7 @@ A clean, UI-agnostic form state and validation system for Flutter.
 
 ```yaml
 dependencies:
-  fabrik_forms: ^0.1.0
+  fabrik_forms: ^0.2.0
 ```
 
 ```sh
@@ -273,15 +286,34 @@ Column(
 
 ## Documentation
 
-Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_forms` reference](https://www.fabriktool.com/packages/fabrik_forms/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_forms` is part of [Fabrik](https://github.com/abhakhand/fabrik), a Flutter
+toolkit whose packages are independent — use this one on its own, or reach for
+others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_theme`](https://pub.dev/packages/fabrik_theme) | Semantic colors for error and helper text |
+| [`fabrik_result`](https://pub.dev/packages/fabrik_result) | Typed failures for your submit handler |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)

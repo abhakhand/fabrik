@@ -1,6 +1,16 @@
 # fabrik_layout
 
-A lightweight, opinionated layout and responsiveness foundation for Flutter.
+Responsive Flutter code tends to accumulate `MediaQuery.of(context).size.width >
+600` checks, each with its own slightly different threshold.
+
+`fabrik_layout` resolves the width once, classifies it, and exposes the result
+anywhere below.
+
+```dart
+if (context.layout.isMobile) { ... }
+
+final columns = context.layout.value<int>(mobile: 1, tablet: 2, desktop: 3);
+```
 
 [![pub.dev](https://img.shields.io/pub/v/fabrik_layout.svg)](https://pub.dev/packages/fabrik_layout)
 [![license](https://img.shields.io/github/license/abhakhand/fabrik)](https://github.com/abhakhand/fabrik/blob/main/LICENSE)
@@ -159,15 +169,34 @@ Layout controls structure. Theme controls appearance.
 
 ## Documentation
 
-Full API reference and guides at **[fabriktool.com](https://www.fabriktool.com)**
+Full API reference, guides, and the reasoning behind the design at
+**[fabriktool.com](https://www.fabriktool.com)**.
+
+- [Choosing a package](https://www.fabriktool.com/choosing-a-package/) — which package solves which problem
+- [Core concepts](https://www.fabriktool.com/core-concepts/) — the patterns shared across the toolkit
+- [`fabrik_layout` reference](https://www.fabriktool.com/packages/fabrik_layout/)
+
+---
+
+## Part of Fabrik
+
+`fabrik_layout` is part of [Fabrik](https://github.com/abhakhand/fabrik), a Flutter
+toolkit whose packages are independent — use this one on its own, or reach for
+others as you need them.
+
+| Package | Solves |
+| --- | --- |
+| [`fabrik_theme`](https://pub.dev/packages/fabrik_theme) | Semantic colors and typography |
+| [`fabrik_utils`](https://pub.dev/packages/fabrik_utils) | Everyday extensions and helpers |
 
 ---
 
 ## Contributing
 
-Found a bug or have a suggestion?
-Open an issue or pull request on [GitHub](https://github.com/abhakhand/fabrik).
+Issues and pull requests are welcome on
+[GitHub](https://github.com/abhakhand/fabrik). Changes are documented in
+[CHANGELOG.md](CHANGELOG.md), with a migration note for anything breaking.
 
-## Maintainers
+## License
 
-- [Ashish Bhakhand](https://github.com/abhakhand)
+[MIT](https://github.com/abhakhand/fabrik/blob/main/LICENSE) © [Ashish Bhakhand](https://github.com/abhakhand)
