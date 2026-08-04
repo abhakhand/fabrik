@@ -1,4 +1,7 @@
-include: package:flutter_lints/flutter.yaml
+include: package:lints/recommended.yaml
 
+# fabrik_result is pure Dart and has no Flutter dependency, so it uses the
+# `lints` package rather than `flutter_lints`.
+#
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

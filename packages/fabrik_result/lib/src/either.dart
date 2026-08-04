@@ -24,6 +24,53 @@
 sealed class Either<L, R> {
   const Either();
 
+  /// Runs [body] and wraps the outcome in an [Either].
+  ///
+  /// Returns [Right] with the result if [body] completes normally, or [Left]
+  /// with `onError(error, stackTrace)` if it throws. This is the standard way
+  /// to bring exception-throwing code into an [Either] world.
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = Either.tryCatch(
+  ///   () => jsonDecode(raw) as Map<String, dynamic>,
+  ///   (error, stackTrace) => ParseFailure('$error'),
+  /// );
+  /// ```
+  static Either<L, R> tryCatch<L, R>(
+    R Function() body,
+    L Function(Object error, StackTrace stackTrace) onError,
+  ) {
+    try {
+      return Right(body());
+    } catch (error, stackTrace) {
+      return Left(onError(error, stackTrace));
+    }
+  }
+
+  /// Asynchronous counterpart to [tryCatch].
+  ///
+  /// Awaits [body] and returns [Right] with its result, or [Left] with
+  /// `onError(error, stackTrace)` if it throws or its future rejects.
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = await Either.tryCatchAsync(
+  ///   () => api.fetchUser(id),
+  ///   (error, stackTrace) => UserFailure('$error'),
+  /// );
+  /// ```
+  static Future<Either<L, R>> tryCatchAsync<L, R>(
+    Future<R> Function() body,
+    L Function(Object error, StackTrace stackTrace) onError,
+  ) async {
+    try {
+      return Right(await body());
+    } catch (error, stackTrace) {
+      return Left(onError(error, stackTrace));
+    }
+  }
+
   /// Applies one of two functions depending on the contained value.
   ///
   /// - [onLeft] is called if this is a [Left]
@@ -35,6 +82,90 @@ sealed class Either<L, R> {
 
   /// Returns `true` if this instance represents a [Right] value.
   bool get isRight => this is Right<L, R>;
+
+  /// Transforms the success value, leaving a [Left] untouched.
+  ///
+  /// Example:
+  /// ```dart
+  /// final doubled = result.map((count) => count * 2);
+  /// ```
+  Either<L, T> map<T>(T Function(R right) transform) {
+    return switch (this) {
+      Left(value: final l) => Left<L, T>(l),
+      Right(value: final r) => Right<L, T>(transform(r)),
+    };
+  }
+
+  /// Transforms the failure value, leaving a [Right] untouched.
+  ///
+  /// Useful for converting a low-level error into a domain failure.
+  ///
+  /// Example:
+  /// ```dart
+  /// final mapped = result.mapLeft((e) => UserFailure(e.message));
+  /// ```
+  Either<T, R> mapLeft<T>(T Function(L left) transform) {
+    return switch (this) {
+      Left(value: final l) => Left<T, R>(transform(l)),
+      Right(value: final r) => Right<T, R>(r),
+    };
+  }
+
+  /// Chains another [Either]-returning operation onto a success value.
+  ///
+  /// If this is a [Left], [transform] is not called and the failure is
+  /// propagated unchanged. This is how several fallible steps compose without
+  /// nesting [fold] calls.
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = findUser(id).flatMap((user) => loadProfile(user));
+  /// ```
+  Either<L, T> flatMap<T>(Either<L, T> Function(R right) transform) {
+    return switch (this) {
+      Left(value: final l) => Left<L, T>(l),
+      Right(value: final r) => transform(r),
+    };
+  }
+
+  /// Asynchronous counterpart to [flatMap].
+  ///
+  /// Example:
+  /// ```dart
+  /// final result = await findUser(id).flatMapAsync((u) => api.load(u));
+  /// ```
+  Future<Either<L, T>> flatMapAsync<T>(
+    Future<Either<L, T>> Function(R right) transform,
+  ) async {
+    return switch (this) {
+      Left(value: final l) => Left<L, T>(l),
+      Right(value: final r) => await transform(r),
+    };
+  }
+
+  /// Returns the success value, or the result of [orElse] if this is a [Left].
+  ///
+  /// Example:
+  /// ```dart
+  /// final count = result.getOrElse((failure) => 0);
+  /// ```
+  R getOrElse(R Function(L left) orElse) {
+    return switch (this) {
+      Left(value: final l) => orElse(l),
+      Right(value: final r) => r,
+    };
+  }
+
+  /// Swaps the sides of this [Either].
+  ///
+  /// A [Left] becomes a [Right] and vice versa. Occasionally useful when an
+  /// API's success/failure convention is inverted from yours.
+  Either<R, L> swap() {
+    return switch (this) {
+      Left(value: final l) => Right<R, L>(l),
+      Right(value: final r) => Left<R, L>(r),
+    };
+  }
 }
 
 /// Represents the left side of [Either].

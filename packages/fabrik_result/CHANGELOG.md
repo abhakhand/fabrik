@@ -6,6 +6,34 @@ The format is based on **Keep a Changelog**, and this project adheres to **seman
 
 ---
 
+## 1.1.0
+
+A purely additive release. Nothing was removed or renamed, so upgrading from
+1.0.x requires no code changes.
+
+### Either
+
+- **New:** `map` — transform the success value, leaving a `Left` untouched
+- **New:** `mapLeft` — transform the failure value, leaving a `Right` untouched
+- **New:** `flatMap` / `flatMapAsync` — chain fallible operations without nesting `fold` calls
+- **New:** `getOrElse` — read the success value with a fallback for the failure case
+- **New:** `swap` — exchange the `Left` and `Right` sides
+- **New:** `Either.tryCatch` / `Either.tryCatchAsync` — run throwing code and capture the exception as a `Left`, replacing hand-written try/catch at API and parsing boundaries
+
+### Option
+
+- **New:** `Option.fromNullable` / `toNullable` — bridge between `Option` and Dart's nullable types, useful when reading JSON and other loosely typed data
+- **New:** `map`, `flatMap`, `getOrElse`, `where` — the same ergonomics as `Either`
+- **New:** `toEither` — convert a missing value into a typed failure
+
+### Tooling
+
+- Switched dev dependencies from `flutter_test` to `package:test` and from `flutter_lints` to `lints` — the package is pure Dart and can now be developed and tested with the Dart SDK alone, no Flutter install required
+- Tests now import the public `package:fabrik_result/fabrik_result.dart` rather than reaching into `src/`
+- Test suite grown from 24 to 80 tests
+
+---
+
 ## 1.0.1
 
 - **Fix:** Added `==` and `hashCode` to `Left`, `Right`, `Some`, and `None` — value equality was broken (`right(42) == right(42)` previously returned `false`)

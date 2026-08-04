@@ -1,5 +1,5 @@
-import 'package:fabrik_result/src/either.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:fabrik_result/fabrik_result.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('Either', () {

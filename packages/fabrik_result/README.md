@@ -44,6 +44,16 @@ result.fold(
 );
 ```
 
+Because `Either` is a `sealed` class, you can also pattern match on it and the
+compiler will tell you if you miss a case — no `default` branch needed:
+
+```dart
+final message = switch (result) {
+  Left(value: final failure) => 'Failed: ${failure.message}',
+  Right(value: final user) => 'Welcome, ${user.name}',
+};
+```
+
 Return values using the helper functions:
 
 ```dart
@@ -57,6 +67,36 @@ Future<Either<Failure, User>> getUser(String id) async {
 }
 ```
 
+### Capture exceptions at the boundary
+
+`tryCatch` and `tryCatchAsync` replace that hand-written try/catch:
+
+```dart
+Future<Either<Failure, User>> getUser(String id) {
+  return Either.tryCatchAsync(
+    () => api.fetchUser(id),
+    (error, stackTrace) => Failure('$error'),
+  );
+}
+```
+
+### Transform and chain
+
+Use `map` to change the success value and `flatMap` to run another fallible
+step. A `Left` short-circuits the whole chain, so failures propagate untouched:
+
+```dart
+final result = await getUser(id)
+    .then((r) => r.map((user) => user.profile))
+    .then((r) => r.flatMap(validateProfile));
+
+// Read it back with a fallback:
+final name = result.getOrElse((failure) => 'Anonymous');
+```
+
+Available on `Either`: `map`, `mapLeft`, `flatMap`, `flatMapAsync`,
+`getOrElse`, `swap`.
+
 ### Option — model absence without null
 
 ```dart
@@ -67,6 +107,29 @@ cached.fold(
   (user) => showDashboard(user),
 );
 ```
+
+`Option` interoperates with Dart's nullable types in both directions, which
+makes it useful for loosely typed data such as JSON:
+
+```dart
+final name = Option.fromNullable(json['name'] as String?)
+    .where((n) => n.isNotEmpty)
+    .map((n) => n.trim())
+    .getOrElse(() => 'Anonymous');
+
+// And back to a nullable when an API expects one:
+final String? raw = cached.map((u) => u.email).toNullable();
+```
+
+Turn a missing value into a typed failure with `toEither`:
+
+```dart
+Either<Failure, User> result =
+    cached.toEither(() => Failure('no cached user'));
+```
+
+Available on `Option`: `map`, `flatMap`, `getOrElse`, `where`, `toNullable`,
+`toEither`, plus the static `Option.fromNullable`.
 
 ### Unit — type-safe void
 

@@ -1,3 +1,8 @@
+// ignore_for_file: avoid_print
+//
+// This example is plain Dart with no Flutter dependency, so debugPrint is
+// unavailable; print is the right call here.
+
 import 'package:fabrik_result/fabrik_result.dart';
 
 void main() {
