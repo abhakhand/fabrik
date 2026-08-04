@@ -9,7 +9,7 @@ class FabrikField<T> {
   FabrikField({required this.value, List<FabrikValidator<T>>? validators})
     : _initialValue = value,
       _validators = validators ?? [] {
-    _error = _runValidators();
+    _errors = _runValidators();
   }
 
   // ===========================================================================
@@ -29,8 +29,10 @@ class FabrikField<T> {
   // Internal state
   // ===========================================================================
 
-  /// The most recent validation error (null if valid).
-  String? _error;
+  /// Every validation error for the current value, in validator order.
+  ///
+  /// Empty when the field is valid.
+  List<String> _errors = const [];
 
   /// Whether the field has been interacted with (changed via [update] or [markTouched]).
   bool _touched = false;
@@ -39,11 +41,24 @@ class FabrikField<T> {
   // Public accessors
   // ===========================================================================
 
-  /// The most recent validation error (regardless of touch).
-  String? get error => _error;
+  /// The first validation error (regardless of touch), or `null` if valid.
+  ///
+  /// Use [errors] when you want to show every failing rule at once.
+  String? get error => _errors.isEmpty ? null : _errors.first;
+
+  /// All validation errors for the current value, in validator order.
+  ///
+  /// Empty when the field is valid. Useful for rules that are naturally
+  /// reported together, such as password complexity requirements.
+  ///
+  /// Example:
+  /// ```dart
+  /// for (final message in field.errors) Text(message),
+  /// ```
+  List<String> get errors => List.unmodifiable(_errors);
 
   /// Whether the current value passes all validators.
-  bool get isValid => _error == null;
+  bool get isValid => _errors.isEmpty;
 
   /// Whether the user has interacted with the field.
   bool get isTouched => _touched;
@@ -54,6 +69,11 @@ class FabrikField<T> {
   /// The validation error to show in UI (only visible after user interaction).
   String? get visibleError => isTouched ? error : null;
 
+  /// All validation errors to show in UI (only visible after user interaction).
+  ///
+  /// Empty until the field has been touched, mirroring [visibleError].
+  List<String> get visibleErrors => isTouched ? errors : const [];
+
   // ===========================================================================
   // State mutation
   // ===========================================================================
@@ -62,7 +82,7 @@ class FabrikField<T> {
   void update(T newValue) {
     value = newValue;
     _touched = true;
-    _error = _runValidators();
+    _errors = _runValidators();
   }
 
   /// Marks the field as touched without changing the value.
@@ -70,7 +90,7 @@ class FabrikField<T> {
   /// Useful when the form is submitted and you want to show all field errors.
   void markTouched() {
     _touched = true;
-    _error = _runValidators();
+    _errors = _runValidators();
   }
 
   /// Resets the field to its initial value and clears all interaction state.
@@ -80,19 +100,20 @@ class FabrikField<T> {
   void reset() {
     value = _initialValue;
     _touched = false;
-    _error = _runValidators();
+    _errors = _runValidators();
   }
 
   // ===========================================================================
   // Internal validation
   // ===========================================================================
 
-  /// Runs all validators and returns the first error encountered.
-  String? _runValidators() {
+  /// Runs every validator and collects all errors, in validator order.
+  List<String> _runValidators() {
+    final collected = <String>[];
     for (final validator in _validators) {
       final result = validator(value);
-      if (result != null) return result;
+      if (result != null) collected.add(result);
     }
-    return null;
+    return collected;
   }
 }

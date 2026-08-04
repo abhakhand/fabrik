@@ -4,12 +4,19 @@ import 'package:fabrik_forms/src/validators/base.dart';
 ///
 /// Works with any [num] subtype (int, double). Both bounds are inclusive.
 ///
-/// Example:
+/// The type parameter follows the field it validates, so it attaches to a
+/// `FabrikField<int>` and a `FabrikField<double>` alike:
+///
 /// ```dart
-/// RangeValidator(min: 1, max: 100)  // value must be between 1 and 100
-/// RangeValidator(min: 0, max: 1)    // value must be between 0 and 1 (e.g. a ratio)
+/// RangeValidator(min: 1, max: 100)   // value must be between 1 and 100
+/// RangeValidator(min: 0, max: 1)     // e.g. a ratio
+///
+/// FabrikField<int>(
+///   value: 0,
+///   validators: [RangeValidator(min: 18, max: 120)],
+/// );
 /// ```
-class RangeValidator extends FabrikValidator<num> {
+class RangeValidator<T extends num> extends FabrikValidator<T> {
   /// Creates a [RangeValidator] with inclusive [min] and [max] bounds.
   ///
   /// - [minMessage]: overrides the default "Must be at least [min]" error.
@@ -38,7 +45,7 @@ class RangeValidator extends FabrikValidator<num> {
   final String? maxMessage;
 
   @override
-  String? call(num value) {
+  String? call(T value) {
     if (value < min) return minMessage ?? 'Must be at least $min';
     if (value > max) return maxMessage ?? 'Must be at most $max';
     return null;

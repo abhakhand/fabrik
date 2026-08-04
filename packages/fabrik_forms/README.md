@@ -13,9 +13,9 @@ A clean, UI-agnostic form state and validation system for Flutter.
 | API | What it does |
 | --- | --- |
 | **`FabrikField<T>`** | Holds a value, validators, and metadata (`isTouched`, `isDirty`, `error`, `visibleError`) |
-| **`FabrikForm<T>`** | Named field container with `isValid`, `isDirty`, `values`, `errors`, `markAllTouched`, `reset` |
-| **`FabrikFormNotifier<T>`** | `ValueNotifier` wrapper for reactive form state |
-| **`FabrikFormBuilder<T>`** | Declarative widget builder that rebuilds on form updates |
+| **`FabrikForm`** | Named field container with `isValid`, `isDirty`, `values`, `errors`, `markAllTouched`, `reset` |
+| **`FabrikFormNotifier`** | `ValueNotifier` wrapper for reactive form state |
+| **`FabrikFormBuilder`** | Declarative widget builder that rebuilds on form updates |
 | **`RequiredValidator`** | Ensures the field is not empty |
 | **`EmailValidator`** | Validates email format, optional or required |
 | **`MinLengthValidator`** | Enforces a minimum character count |
@@ -24,6 +24,8 @@ A clean, UI-agnostic form state and validation system for Flutter.
 | **`UrlValidator`** | Validates HTTP/HTTPS URLs, optional HTTPS-only mode |
 | **`PhoneValidator`** | Validates local and international phone number formats |
 | **`RangeValidator`** | Validates that a numeric value falls within an inclusive range |
+| **`FieldsMatchValidator`** | Form-level rule requiring two fields to be equal (password confirmation) |
+| **`FabrikFormRule`** | Form-level rule built from a plain function |
 
 ---
 
@@ -44,14 +46,17 @@ flutter pub get
 
 ### Setting up a form
 
+Each field declares its own type, so one form can mix `String`, `int` and
+`bool` values:
+
 ```dart
-final formNotifier = FabrikFormNotifier<String>(
+final formNotifier = FabrikFormNotifier(
   FabrikForm({
-    'email': FabrikField(
+    'email': FabrikField<String>(
       value: '',
       validators: [const EmailValidator()],
     ),
-    'password': FabrikField(
+    'password': FabrikField<String>(
       value: '',
       validators: [
         const PasswordValidator(
@@ -60,14 +65,26 @@ final formNotifier = FabrikFormNotifier<String>(
         ),
       ],
     ),
+    'age': FabrikField<int>(
+      value: 18,
+      validators: [const RangeValidator(min: 18, max: 120)],
+    ),
+    'subscribed': FabrikField<bool>(value: false),
   }),
 );
+```
+
+Read fields back at their own type with `get<T>`:
+
+```dart
+final String email = formNotifier.get<String>('email').value;
+final int age = formNotifier.get<int>('age').value;
 ```
 
 ### Building the UI
 
 ```dart
-FabrikFormBuilder<String>(
+FabrikFormBuilder(
   formNotifier: formNotifier,
   builder: (context, form, get) {
     final emailField = get<String>('email');
@@ -189,6 +206,44 @@ class UsernameValidator extends FabrikValidator<String> {
 }
 ```
 
+### Cross-field validation
+
+Some rules span more than one field — password confirmation being the obvious
+one. Those live at the form level:
+
+```dart
+FabrikForm(
+  {
+    'password': FabrikField<String>(value: ''),
+    'confirmPassword': FabrikField<String>(value: ''),
+  },
+  validators: [
+    const FieldsMatchValidator(
+      field: 'password',
+      matchField: 'confirmPassword',
+      message: 'Passwords do not match',
+    ),
+  ],
+);
+```
+
+The result surfaces on the form rather than on a single field:
+
+```dart
+form.formError;   // 'Passwords do not match'
+form.isValid;     // false — form-level rules count toward validity
+```
+
+For one-off rules, `FabrikFormRule` wraps a plain function:
+
+```dart
+FabrikFormRule(
+  (values) => (values['end'] as int) > (values['start'] as int)
+      ? null
+      : 'End must be after start',
+);
+```
+
 ---
 
 ## Field metadata
@@ -196,11 +251,23 @@ class UsernameValidator extends FabrikValidator<String> {
 | Property | Type | Description |
 | --- | --- | --- |
 | `value` | `T` | Current field value |
-| `error` | `String?` | Validation error (always set, regardless of touch) |
-| `visibleError` | `String?` | Error only exposed after the field is touched |
+| `error` | `String?` | First validation error (always set, regardless of touch) |
+| `errors` | `List<String>` | Every failing rule, in validator order |
+| `visibleError` | `String?` | First error, only exposed after the field is touched |
+| `visibleErrors` | `List<String>` | Every error, only exposed after the field is touched |
 | `isValid` | `bool` | No active errors |
 | `isTouched` | `bool` | User has interacted with the field |
 | `isDirty` | `bool` | Value differs from the original |
+
+Use `errors` when several rules should be shown at once:
+
+```dart
+Column(
+  children: [
+    for (final message in passwordField.visibleErrors) Text(message),
+  ],
+);
+```
 
 ---
 

@@ -1,5 +1,6 @@
 export 'base.dart';
 export 'email.dart';
+export 'form_validator.dart';
 export 'max_length.dart';
 export 'min_length.dart';
 export 'password.dart';

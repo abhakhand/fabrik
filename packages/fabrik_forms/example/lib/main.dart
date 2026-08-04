@@ -39,26 +39,46 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
-  late final FabrikFormNotifier<String> formNotifier;
+  late final FabrikFormNotifier formNotifier;
 
   @override
   void initState() {
     super.initState();
 
-    formNotifier = FabrikFormNotifier<String>(
-      FabrikForm({
-        'email': FabrikField<String>(value: '', validators: [EmailValidator()]),
-        'password': FabrikField<String>(
-          value: '',
-          validators: [
-            PasswordValidator(
-              requireDigit: true,
-              requireUppercase: true,
-              requireSpecialChar: true,
-            ),
-          ],
-        ),
-      }),
+    formNotifier = FabrikFormNotifier(
+      FabrikForm(
+        {
+          // Fields keep their own types, so one form can mix String, int
+          // and bool values.
+          'email': FabrikField<String>(
+            value: '',
+            validators: [EmailValidator()],
+          ),
+          'password': FabrikField<String>(
+            value: '',
+            validators: [
+              PasswordValidator(
+                requireDigit: true,
+                requireUppercase: true,
+                requireSpecialChar: true,
+              ),
+            ],
+          ),
+          'confirmPassword': FabrikField<String>(value: ''),
+          'age': FabrikField<int>(
+            value: 18,
+            validators: [RangeValidator(min: 18, max: 120)],
+          ),
+        },
+        // Rules spanning more than one field live at the form level.
+        validators: [
+          FieldsMatchValidator(
+            field: 'password',
+            matchField: 'confirmPassword',
+            message: 'Passwords do not match',
+          ),
+        ],
+      ),
     );
   }
 
@@ -72,23 +92,25 @@ class _SignInFormState extends State<SignInForm> {
     final email = form.get<String>('email').value;
     final password = form.get<String>('password').value;
 
-    print('Logging in with email: $email & password: $password');
+    debugPrint('Logging in with email: $email & password: $password');
 
     if (form.isValid) {
-      print('✅ Form is valid, proceeding with login...');
+      debugPrint('✅ Form is valid, proceeding with login...');
       // perform login
     } else {
-      print('❌ Form is invalid, showing errors...');
+      debugPrint('❌ Form is invalid, showing errors...');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FabrikFormBuilder<String>(
+    return FabrikFormBuilder(
       formNotifier: formNotifier,
       builder: (context, form, get) {
         final emailField = get<String>('email');
         final passwordField = get<String>('password');
+        final confirmField = get<String>('confirmPassword');
+        final ageField = get<int>('age');
 
         return Padding(
           padding: const EdgeInsets.all(16),
@@ -112,6 +134,31 @@ class _SignInFormState extends State<SignInForm> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   errorText: passwordField.visibleError,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                initialValue: confirmField.value,
+                onChanged: (val) =>
+                    formNotifier.update<String>('confirmPassword', val),
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Confirm password',
+                  // Cross-field errors belong to the form, not to one field.
+                  errorText: confirmField.isTouched ? form.formError : null,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                initialValue: '${ageField.value}',
+                keyboardType: TextInputType.number,
+                onChanged: (val) =>
+                    formNotifier.update<int>('age', int.tryParse(val) ?? 0),
+                decoration: InputDecoration(
+                  labelText: 'Age',
+                  errorText: ageField.visibleError,
                 ),
               ),
               const SizedBox(height: 24),

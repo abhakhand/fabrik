@@ -7,16 +7,16 @@ void main() {
   // ===========================================================================
 
   group('FabrikForm', () {
-    FabrikForm<String> makeForm({
+    FabrikForm makeForm({
       String email = '',
       String name = 'Alice',
     }) {
       return FabrikForm({
-        'email': FabrikField(
+        'email': FabrikField<String>(
           value: email,
           validators: [const EmailValidator()],
         ),
-        'name': FabrikField(
+        'name': FabrikField<String>(
           value: name,
           validators: [const RequiredValidator()],
         ),
@@ -150,17 +150,17 @@ void main() {
   // ===========================================================================
 
   group('FabrikFormNotifier', () {
-    FabrikFormNotifier<String> makeNotifier({
+    FabrikFormNotifier makeNotifier({
       String email = '',
       String name = 'Alice',
     }) {
       return FabrikFormNotifier(
         FabrikForm({
-          'email': FabrikField(
+          'email': FabrikField<String>(
             value: email,
             validators: [const EmailValidator()],
           ),
-          'name': FabrikField(
+          'name': FabrikField<String>(
             value: name,
             validators: [const RequiredValidator()],
           ),

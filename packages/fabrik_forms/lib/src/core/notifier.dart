@@ -5,7 +5,19 @@ import 'package:fabrik_forms/src/core/core.dart';
 ///
 /// This allows widgets to listen and rebuild on form updates,
 /// making it easy to integrate with Flutter's UI tree.
-class FabrikFormNotifier<T> extends ValueNotifier<FabrikForm<T>> {
+///
+/// Example:
+/// ```dart
+/// final notifier = FabrikFormNotifier(
+///   FabrikForm({
+///     'email': FabrikField<String>(value: '', validators: [EmailValidator()]),
+///     'age': FabrikField<int>(value: 0),
+///   }),
+/// );
+///
+/// notifier.update<String>('email', 'user@example.com');
+/// ```
+class FabrikFormNotifier extends ValueNotifier<FabrikForm> {
   /// Creates a new [FabrikFormNotifier] with the given form.
   FabrikFormNotifier(super.form);
 
@@ -16,8 +28,8 @@ class FabrikFormNotifier<T> extends ValueNotifier<FabrikForm<T>> {
   /// Updates the value of a specific field and notifies listeners.
   ///
   /// Also marks the field as touched and triggers revalidation.
-  void update<T2>(String key, T2 newValue) {
-    value.update<T2>(key, newValue);
+  void update<T>(String key, T newValue) {
+    value.update<T>(key, newValue);
     notifyListeners();
   }
 
@@ -42,13 +54,19 @@ class FabrikFormNotifier<T> extends ValueNotifier<FabrikForm<T>> {
   // ===========================================================================
 
   /// Retrieves a typed [FabrikField] from the underlying form.
-  FabrikField<T2> get<T2>(String key) => value.get<T2>(key);
+  FabrikField<T> get<T>(String key) => value.get<T>(key);
+
+  /// Whether a field with [key] exists in the underlying form.
+  bool contains(String key) => value.contains(key);
+
+  /// The field keys in the underlying form, in insertion order.
+  Iterable<String> get keys => value.keys;
 
   // ===========================================================================
   // Computed form state
   // ===========================================================================
 
-  /// Whether all fields are currently valid.
+  /// Whether all fields and all form-level validators currently pass.
   bool get isValid => value.isValid;
 
   /// Whether any field has been changed from its initial value.
@@ -60,6 +78,15 @@ class FabrikFormNotifier<T> extends ValueNotifier<FabrikForm<T>> {
   /// Returns the current field values.
   Map<String, dynamic> get values => value.values;
 
-  /// Returns the current validation errors.
+  /// Returns the first validation error for each field.
   Map<String, String?> get errors => value.errors;
+
+  /// Returns every validation error for each field.
+  Map<String, List<String>> get allErrors => value.allErrors;
+
+  /// The first form-level error, or `null` when the form-level rules pass.
+  String? get formError => value.formError;
+
+  /// Every form-level error, in validator order.
+  List<String> get formErrors => value.formErrors;
 }

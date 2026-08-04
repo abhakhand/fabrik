@@ -82,6 +82,12 @@ class PasswordValidator extends FabrikValidator<String> {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return isRequired ? requiredMessage : null;
 
+    // Length is the most basic rule, so it is reported before the
+    // character-class requirements.
+    if (trimmed.length < minLength) {
+      return minLengthMessage;
+    }
+
     if (requireUppercase && !_capitalLetterRegex.hasMatch(trimmed)) {
       return uppercaseMessage;
     }
@@ -92,10 +98,6 @@ class PasswordValidator extends FabrikValidator<String> {
 
     if (requireSpecialChar && !_specialCharacterRegex.hasMatch(trimmed)) {
       return specialCharMessage;
-    }
-
-    if (trimmed.length < minLength) {
-      return minLengthMessage;
     }
 
     return null;
