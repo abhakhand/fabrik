@@ -1,30 +1,94 @@
 ---
 title: Introduction
-description: An overview of the Fabrik Flutter toolkit.
+description: What Fabrik is, what it is not, and how to start using it.
 ---
 
-Fabrik is a modular Flutter toolkit designed to help you build scalable, maintainable apps with less boilerplate and more consistency.
+Every Flutter app needs some version of the same things: a theming system,
+responsive layout, form validation, a snackbar, a way to return errors, and a
+handful of string and date helpers.
 
-It's a growing set of production-ready packages — built for developers who care about clean architecture, great developer experience, and code that holds up as apps grow.
+Most teams rebuild these each time, slightly differently. Fabrik is that layer,
+written once and tested properly — six focused packages you can adopt one at a
+time.
 
-## Packages
+## Install what you need
 
-| Package | What it does |
-| --- | --- |
-| **fabrik_theme** | Design tokens, typography scale, color system, and `MaterialApp` theming |
-| **fabrik_layout** | Responsive layout context with breakpoints, orientation, and device-aware text scaling |
-| **fabrik_snackbar** | Production-ready snackbars and toasts with success, error, info, and warning variants |
-| **fabrik_forms** | UI-agnostic form state, field validation, and a reactive `ValueNotifier`-based API |
-| **fabrik_utils** | DateTime/String extensions, duration helpers, `Debounce`, `Throttle`, and scroll utilities |
-| **fabrik_result** | Lightweight `Either<L, R>` and `Unit` types for functional error handling |
+There is no meta-package and no required setup. Add the package that solves
+your problem:
 
-## Why Fabrik?
+```yaml
+dependencies:
+  fabrik_theme: ^1.1.0
+  fabrik_layout: ^1.2.0
+```
 
-Every Flutter app needs some version of the same things: a theming system, responsive layout, form validation, a snackbar, a way to handle errors, some string and date helpers. Fabrik packages these up into a coherent, well-tested toolkit so you don't have to evaluate and wire things together from scratch each time.
+Nothing here depends on anything else, so adopting one package does not commit
+you to the rest. [Choosing a package](/choosing-a-package/) maps problems to
+packages.
 
-**Goals:**
+## A quick taste
 
-- Ship the things almost every app needs, done well and consistently
-- Provide minimal, focused packages with no unnecessary dependencies
-- Make codebases more maintainable for teams and solo devs
-- Bake in best practices for testability and clean architecture
+Theme your app once:
+
+```dart
+MaterialApp(
+  theme: FabrikTheme.create(
+    brightness: Brightness.light,
+    colors: AppColors.defaults(),
+  ),
+  darkTheme: FabrikTheme.create(
+    brightness: Brightness.dark,
+    colors: AppColors.darkDefaults(),
+  ),
+);
+```
+
+Then read semantic values anywhere:
+
+```dart
+Text('Payment failed', style: TextStyle(color: context.colors.error))
+
+final columns = context.layout.value<int>(mobile: 1, tablet: 2, desktop: 3);
+```
+
+## Design principles
+
+**Semantic over literal.** `context.colors.error` says why a color was chosen;
+`Colors.red` only says what it is. Names that carry meaning survive redesigns.
+
+**Independent packages.** Splitting the toolkit means you never ship code you
+do not use. A package that only needs `Either` should not pull in a theming
+system.
+
+**Fail loudly, with a fix.** Where a mistake cannot be caught by the type
+system, it becomes an error that names the solution — an unknown form field
+lists the valid keys, a missing theme extension names the factory to call.
+
+**Testable without widgets.** Form state, validation and results are plain
+Dart objects. You should be able to test business rules without a
+`WidgetTester`.
+
+**Defaults that work, everything replaceable.** Get something on screen first,
+learn the full API when you need it.
+
+[Core concepts](/core-concepts/) covers the patterns that recur across
+packages.
+
+## What Fabrik is not
+
+- **Not a state management solution.** `fabrik_forms` handles form state only.
+- **Not a widget library.** No buttons, cards, or dialogs — Fabrik gives you
+  the tokens, the widgets stay yours.
+- **Not a functional programming framework.** `fabrik_result` ships the parts
+  people use and stops short of typeclasses.
+
+## Status
+
+`fabrik_theme`, `fabrik_layout` and `fabrik_result` are at `1.x` and follow
+semantic versioning. `fabrik_forms`, `fabrik_utils` and `fabrik_snackbar` are
+pre-`1.0` and may still change; each change ships with a migration note in the
+package changelog.
+
+Fabrik is developed in the open at
+[github.com/abhakhand/fabrik](https://github.com/abhakhand/fabrik). Issues and
+pull requests are welcome.

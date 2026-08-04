@@ -31,8 +31,12 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: "Fabrik",
-          items: [{ label: "Introduction", slug: "introduction" }],
+          label: "Getting started",
+          items: [
+            { label: "Introduction", slug: "introduction" },
+            { label: "Choosing a package", slug: "choosing-a-package" },
+            { label: "Core concepts", slug: "core-concepts" },
+          ],
         },
         {
           label: "Packages",

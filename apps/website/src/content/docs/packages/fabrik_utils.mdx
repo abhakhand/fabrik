@@ -1,164 +1,257 @@
 ---
 title: fabrik_utils
-description: A lightweight utility package with real-world-first helpers and extensions for Flutter apps.
+description: String casing, date formatting, duration helpers, debounce and throttle for Flutter.
 ---
 
-> [![pub.dev](https://img.shields.io/pub/v/fabrik_utils.svg?label=pub)](https://pub.dev/packages/fabrik_utils)
+[![pub.dev](https://img.shields.io/pub/v/fabrik_utils.svg?label=pub)](https://pub.dev/packages/fabrik_utils)
 
-**fabrik_utils** is a lightweight, real-world-first utility package for Flutter apps. It includes the essential extensions and helpers that show up in almost every production app — crafted to improve developer experience and save time.
+Every app ends up with a `utils.dart` holding the same handful of helpers:
+something that turns a `DateTime` into "2 hours ago", something that converts
+a string to `snake_case`, a debouncer for the search field.
+
+`fabrik_utils` is that file, written once and tested properly.
+
+```dart
+'XMLHttpRequest'.snakeCase          // 'xml_http_request'
+postedAt.timeAgo                    // '2 hours ago'
+formatDuration(elapsed)             // '01:23:45'
+```
 
 ## Installation
 
-Add the package to your `pubspec.yaml`:
-
 ```yaml
 dependencies:
-  fabrik_utils: ^0.1.0
+  fabrik_utils: ^0.2.0
 ```
-
-Then run:
-
-```bash
-flutter pub get
-```
-
-Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_utils/fabrik_utils.dart';
 ```
 
----
+## String casing
 
-## String Extensions
-
-10 case conversions and null-safe helpers:
+Ten casing styles, all built on the same word-splitting logic. It understands
+delimiters, camelCase boundaries, and acronyms:
 
 ```dart
-'hello world'.titleCase      // "Hello World"
-'helloWorld'.snakeCase       // "hello_world"
-'user_name'.camelCase        // "userName"
-'http_request'.pascalCase    // "HttpRequest"
-'Hello World'.kebabCase      // "hello-world"
-'Hello World'.constantCase   // "HELLO_WORLD"
-
-'hello'.capitalizeFirst      // "Hello"
-
-String? value = null;
-value.isNullOrBlank          // true
-'   '.isNullOrBlank          // true
+'hello world'.titleCase       // 'Hello World'
+'helloWorld'.snakeCase        // 'hello_world'
+'user_name'.camelCase         // 'userName'
+'http_request'.pascalCase     // 'HttpRequest'
+'Hello World'.kebabCase       // 'hello-world'
+'Hello World'.constantCase    // 'HELLO_WORLD'
+'hello world'.dottedCase      // 'hello.world'
+'hello world'.pathCase        // 'hello/world'
+'hello WORLD'.sentenceCase    // 'Hello world'
+'hello world'.headerCase      // 'Hello-World'
 ```
 
----
-
-## DateTime Extensions
-
-Checkers, formatters, date math, and relative time:
+Runs of consecutive capitals are kept together, so acronyms survive:
 
 ```dart
-// Checkers
-DateTime.now().isToday       // true
-DateTime.now().isWeekend     // false (on a weekday)
-someDate.isYesterday
-someDate.isTomorrow
-
-// Relative time
-someDate.timeAgo             // "3 hours ago" / "2 days ago" / "1 month ago"
-
-// Formatters
-date.isoDate                 // "2024-06-15"
-date.dayMonthYear            // "15 Jun 2024"
-date.fullWithWeekday         // "Saturday, June 15, 2024"
-date.time12Hour              // "2:30 PM"
-date.hourMinute24h           // "14:30"
-
-// Date math
-date.startOfDay              // 2024-06-15 00:00:00.000
-date.endOfDay                // 2024-06-15 23:59:59.999
-date.startOfWeek             // midnight of the most recent Monday
-
-// Range check
-date.isBetween(start, end)   // true if start <= date <= end
+'XMLHttpRequest'.snakeCase    // 'xml_http_request'
+'APIKey'.snakeCase            // 'api_key'
+'parseJSON'.camelCase         // 'parseJson'
 ```
 
----
-
-## Duration Helpers
+There is also a null-safe blank check:
 
 ```dart
-formatDuration(Duration(seconds: 3665))           // "01:01:05"
-formatDuration(Duration(minutes: 4, seconds: 5))  // "04:05"
-formatDuration(Duration(seconds: 90), alwaysShowHours: true) // "00:01:30"
-
-final parts = splitDuration(3665);
-parts.hours    // "01"
-parts.minutes  // "01"
-parts.seconds  // "05"
+String? input;
+input.isNullOrBlank;          // true — null, empty, or whitespace only
+'   '.isNullOrBlank;          // true
 ```
 
----
+## Dates and times
 
-## Throttle
+### Relative time
 
-Executes a function at most once per duration:
+`timeAgo` reads in both directions, so it works for timestamps and for
+scheduled events:
 
 ```dart
-final throttle = Throttle<void>(duration: const Duration(seconds: 1));
-
-throttle.throttle(() {
-  print('Runs at most once per second');
-});
-
-// Stream-based status
-throttle.listen((status) {
-  print(status); // ThrottleStatus.idle or ThrottleStatus.busy
-});
-
-throttle.close();
+postedAt.timeAgo              // '5 mins ago' · 'yesterday' · '2 months ago'
+dueAt.timeAgo                 // 'in 5 mins' · 'tomorrow' · 'in 3 days'
 ```
 
----
+### Formatting
 
-## Debounce
-
-Delays execution until a pause in activity:
+Named getters over `intl`, so you do not memorise format strings:
 
 ```dart
-final debounce = Debounce<void>(duration: const Duration(milliseconds: 300));
+date.isoDate                  // '2026-06-15'
+date.dayMonthYear             // '15 Jun 2026'
+date.fullWithWeekday          // 'Monday, June 15, 2026'
+date.shortDateTime            // 'Jun 15, 2026 11:40 PM'
+date.time12Hour               // '11:40 PM'
+date.hourMinute24h            // '23:40'
+date.weekdayName              // 'Monday'
+date.monthShort               // 'Jun'
+```
 
-// Fires after 300ms of inactivity
-debounce.debounce(() => search(query));
+### Checks and math
 
-// With maxWait — fires after at most 1 second regardless of call frequency
-final debounce = Debounce<void>(
+```dart
+date.isToday
+date.isTomorrow
+date.isYesterday
+date.isWeekend
+date.isBetween(start, end)    // inclusive
+
+date.startOfDay               // 00:00:00.000
+date.endOfDay                 // 23:59:59.999
+date.startOfWeek              // midnight on the most recent Monday
+```
+
+## Durations
+
+```dart
+formatDuration(const Duration(seconds: 3665))   // '01:01:05'
+formatDuration(const Duration(minutes: 4))      // '04:00'
+formatDuration(const Duration(seconds: -65))    // '-01:05'
+```
+
+Hours appear only when non-zero, unless you force them:
+
+```dart
+formatDuration(const Duration(seconds: 90), alwaysShowHours: true);  // '00:01:30'
+```
+
+For custom timer UIs where each unit is its own widget, `splitDuration`
+returns the padded components:
+
+```dart
+final (:hours, :minutes, :seconds) = splitDuration(3665);
+// '01', '01', '05'
+```
+
+:::note
+Negative values are handled deliberately, since countdown timers overshoot
+zero. `formatDuration` prefixes a minus sign; `splitDuration` splits by
+magnitude and carries the sign on `hours`.
+:::
+
+## Debounce and throttle
+
+The two are easy to confuse:
+
+| | Fires | Use for |
+| --- | --- | --- |
+| **Debounce** | After input *stops* for a given duration | Search-as-you-type, autosave |
+| **Throttle** | At most once per duration, immediately | Button taps, scroll handlers |
+
+### Debounce
+
+```dart
+final debounce = Debounce(duration: const Duration(milliseconds: 300));
+
+void onSearchChanged(String query) {
+  debounce.add(() => performSearch(query));
+}
+
+@override
+void dispose() {
+  debounce.close();
+  super.dispose();
+}
+```
+
+Use `maxWait` when continuous input should not defer execution forever:
+
+```dart
+Debounce(
   duration: const Duration(milliseconds: 300),
-  maxWait: const Duration(seconds: 1),
+  maxWait: const Duration(seconds: 2),   // runs at least every 2s while typing
 );
-
-// Cancel a pending call without closing the stream
-debounce.cancel();
-
-// Stream-based status
-debounce.listen((status) {
-  print(status); // DebounceStatus.idle or DebounceStatus.waiting
-});
-
-debounce.close();
 ```
 
----
+`cancel()` drops a pending call without closing the debouncer, which is useful
+when a screen is popped mid-edit.
 
-## Scroll Helpers
-
-Detect when a list is approaching the bottom — useful for pagination:
+### Throttle
 
 ```dart
-scrollController.addListener(() {
-  if (isApproachingScrollEnd(scrollController)) {
+final throttle = Throttle(duration: const Duration(seconds: 1));
+
+ElevatedButton(
+  onPressed: () => throttle.add(submitOrder),   // ignores rapid double taps
+  child: const Text('Place order'),
+);
+```
+
+Both expose their state as a stream, so you can drive UI from it:
+
+```dart
+throttle.listen((status) {
+  setState(() => _buttonEnabled = status.isIdle);
+});
+```
+
+:::caution
+Both hold timers and a stream. Call `close()` in `dispose()` to avoid leaking
+them.
+:::
+
+## Infinite scroll
+
+```dart
+final controller = ScrollController();
+
+controller.addListener(() {
+  if (isApproachingScrollEnd(controller) && !isLoading) {
     loadNextPage();
   }
 });
-
-// Custom threshold — trigger at 90% instead of the default 70%
-isApproachingScrollEnd(controller, scrollOffsetThreshold: 0.9)
 ```
+
+The default threshold triggers at 70% of the scroll extent; pass
+`scrollOffsetThreshold` to change it. It returns `false` when the controller
+has no clients, so it is safe to call before the first layout.
+
+## API reference
+
+### `StringX` on `String`
+
+| Member | Example |
+| --- | --- |
+| `titleCase` | `Hello World` |
+| `headerCase` | `Hello-World` |
+| `pascalCase` | `HelloWorld` |
+| `camelCase` | `helloWorld` |
+| `snakeCase` | `hello_world` |
+| `constantCase` | `HELLO_WORLD` |
+| `kebabCase` | `hello-world` |
+| `dottedCase` | `hello.world` |
+| `pathCase` | `hello/world` |
+| `sentenceCase` | `Hello world` |
+| `capitalizeFirst` | `Hello world` |
+
+`NullableStringX` on `String?` adds `isNullOrBlank`.
+
+### `DateTimeX` on `DateTime`
+
+| Group | Members |
+| --- | --- |
+| Checks | `isToday`, `isTomorrow`, `isYesterday`, `isWeekday`, `isWeekend`, `isBetween` |
+| Math | `startOfDay`, `endOfDay`, `startOfWeek` |
+| Relative | `timeAgo` |
+| Formatters | `isoDate`, `isoDateTime`, `dayMonthYear`, `shortMonthDay`, `monthDay`, `fullWithWeekday`, `fullWithWeekdayShort`, `fullDateTime`, `shortDateTime`, `time12Hour`, `hourMinute12h`, `hourMinute24h`, `weekdayName`, `weekdayShort`, `monthFull`, `monthShort` |
+
+### Helpers
+
+| Function | Returns |
+| --- | --- |
+| `formatDuration(duration, {alwaysShowHours})` | `String` |
+| `splitDuration(totalSeconds)` | `({String hours, String minutes, String seconds})` |
+| `isApproachingScrollEnd(controller, {scrollOffsetThreshold})` | `bool` |
+
+### `Debounce<T>` and `Throttle<T>`
+
+| Member | Description |
+| --- | --- |
+| `add(fn)` | Queue (debounce) or attempt (throttle) a call |
+| `debounce(fn)` / `throttle(fn)` | Named equivalents of `add` |
+| `cancel()` | *(Debounce)* Drop the pending call, stay open |
+| `close()` | Cancel timers and close the stream |
+| `isIdle` / `isWaiting` / `isBusy` | Current state |
+| `listen(onData)` | Subscribe to status changes |

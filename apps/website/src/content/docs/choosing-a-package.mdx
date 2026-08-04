@@ -1,0 +1,77 @@
+---
+title: Choosing a package
+description: Which Fabrik package solves your problem, and which ones you can ignore.
+---
+
+Fabrik is six independent packages. There is no meta-package to install and no
+required setup — take the one that solves the problem in front of you and
+ignore the rest.
+
+## Start from the problem
+
+| If you are… | Use | Why |
+| --- | --- | --- |
+| Wiring up colors and text styles for a new app | [`fabrik_theme`](/packages/fabrik_theme/) | Semantic color and typography roles instead of scattered `Color(0xFF…)` literals |
+| Building one UI that works on phone, tablet and desktop | [`fabrik_layout`](/packages/fabrik_layout/) | Width-based breakpoints and a `value()` helper for per-device values |
+| Handling text input, validation and submit state | [`fabrik_forms`](/packages/fabrik_forms/) | Form state that lives outside your widgets, so it can be unit tested |
+| Showing feedback after an action succeeds or fails | [`fabrik_snackbar`](/packages/fabrik_snackbar/) | Overlay-based snackbars and toasts with no `Scaffold` requirement |
+| Returning failures from a repository without throwing | [`fabrik_result`](/packages/fabrik_result/) | `Either` and `Option`, pure Dart, no Flutter dependency |
+| Re-writing `timeAgo`, `debounce` or `snakeCase` again | [`fabrik_utils`](/packages/fabrik_utils/) | The helpers most apps end up hand-rolling |
+
+## How much you need
+
+Nothing here depends on anything else, so the packages can be adopted one at a
+time and dropped just as easily.
+
+<div class="not-content">
+
+```
+fabrik_result   pure Dart, no dependencies    →  usable in any Dart project
+fabrik_utils    Flutter + intl
+fabrik_theme    Flutter
+fabrik_layout   Flutter
+fabrik_forms    Flutter
+fabrik_snackbar Flutter
+```
+
+</div>
+
+The one relationship worth knowing: `fabrik_theme` decides how things look and
+`fabrik_layout` decides how they are arranged. They complement each other but
+neither imports the other, so using one does not commit you to the other.
+
+```dart
+Text(
+  'Dashboard',
+  style: context.layout.isMobile
+      ? context.typography.titleMedium   // fabrik_theme
+      : context.typography.titleLarge,   // sized by fabrik_layout's category
+)
+```
+
+## What Fabrik is not
+
+Being honest about the boundaries saves you evaluating it for the wrong job:
+
+- **Not a state management solution.** `fabrik_forms` manages form state only.
+  Bring Bloc, Riverpod, or `setState` for everything else.
+- **Not a widget library.** There are no buttons, cards, or dialogs. Fabrik
+  gives you the design tokens; the widgets stay yours.
+- **Not a functional programming framework.** `fabrik_result` ships `Either`,
+  `Option` and `Unit` — the parts people actually use — and deliberately stops
+  short of typeclasses and monad transformers.
+
+## Stability
+
+| Package | Version | API stability |
+| --- | --- | --- |
+| `fabrik_theme` | 1.1.0 | Stable |
+| `fabrik_layout` | 1.2.0 | Stable |
+| `fabrik_result` | 1.1.0 | Stable |
+| `fabrik_forms` | 0.2.0 | Evolving — breaking changes possible before 1.0 |
+| `fabrik_utils` | 0.2.0 | Evolving — breaking changes possible before 1.0 |
+| `fabrik_snackbar` | 0.1.8 | Evolving — breaking changes possible before 1.0 |
+
+Packages at `1.x` follow semantic versioning. Packages below `1.0` may change
+their APIs in a minor release; each change is documented in that package's
+changelog with a migration note.

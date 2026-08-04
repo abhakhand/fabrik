@@ -1,150 +1,251 @@
 ---
 title: fabrik_theme
-description: A scalable design system with typography, colors, spacing, and theming for Flutter apps.
+description: A design-token theming system for Flutter, built on semantic color and typography roles.
 ---
 
-> [![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg?label=pub)](https://pub.dev/packages/fabrik_theme)
+[![pub.dev](https://img.shields.io/pub/v/fabrik_theme.svg?label=pub)](https://pub.dev/packages/fabrik_theme)
 
-**fabrik_theme** provides a consistent design system — typography, color tokens, spacing, border radii, and `MaterialApp` theming — so you maintain visual consistency across your entire Flutter app without reinventing the wheel.
+Flutter's `ThemeData` gives you `colorScheme.primary` and `textTheme.bodyLarge`.
+That covers Material's own widgets, but says nothing about *your* app's roles —
+the color of a helper label, the style of an emphasised value in a list row.
+
+`fabrik_theme` adds a semantic layer on top: you define colors and text styles
+once, by meaning, and read them anywhere through `context`.
+
+```dart
+Text('Payment failed', style: TextStyle(color: context.colors.error))
+Text('Last updated', style: context.typography.bodySmallSecondary)
+```
 
 ## Installation
 
-Add the package to your `pubspec.yaml`:
-
 ```yaml
 dependencies:
-  fabrik_theme: ^1.0.2
+  fabrik_theme: ^1.1.0
 ```
-
-Then run:
-
-```bash
-flutter pub get
-```
-
-Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_theme/fabrik_theme.dart';
 ```
 
----
+## Quick start
 
-## Getting Started
-
-Apply the Fabrik theme in `MaterialApp`:
+Build both themes from the bundled palettes and you have a working light/dark
+app in one step:
 
 ```dart
 MaterialApp(
-  themeMode: ThemeMode.system,
-  theme: FabrikThemeBuilder.light(),
-  darkTheme: FabrikThemeBuilder.dark(),
-  home: const HomePage(),
-);
-```
-
-Both `light()` and `dark()` accept optional `fontFamily` and `colors` parameters:
-
-```dart
-final colors = FabrikColors.custom(
-  lightPrimary: Colors.indigo,
-  darkPrimary: Colors.indigoAccent,
-);
-
-MaterialApp(
-  themeMode: ThemeMode.system,
-  theme: FabrikThemeBuilder.light(fontFamily: 'Inter', colors: colors),
-  darkTheme: FabrikThemeBuilder.dark(fontFamily: 'Inter', colors: colors),
-  home: const HomePage(),
-);
-```
-
----
-
-## Accessing the Theme
-
-Use `FabrikTheme.of(context)` anywhere in the widget tree:
-
-```dart
-final theme = FabrikTheme.of(context);
-
-Text(
-  'Hello, Fabrik',
-  style: theme.typography.bodyLarge.copyWith(
-    color: theme.colors.primary,
+  theme: FabrikTheme.create(
+    brightness: Brightness.light,
+    colors: AppColors.defaults(),
   ),
-),
+  darkTheme: FabrikTheme.create(
+    brightness: Brightness.dark,
+    colors: AppColors.darkDefaults(),
+  ),
+  home: const HomePage(),
+);
 ```
 
----
+Then read colors and typography anywhere below:
 
-## Typography
+```dart
+Container(
+  color: context.colors.surface,
+  child: Text('Welcome', style: context.typography.headlineMedium),
+);
+```
 
-`FabrikTheme.of(context).typography` exposes the full type scale:
+Typography is generated from your colors automatically — you only supply an
+`AppTypography` if you want to override it.
 
-| Token | Usage |
+:::note
+`AppColors.defaults()` exists to get you moving. Production apps are expected
+to define their own palette, which is the next section.
+:::
+
+## Guides
+
+### Define your own palette
+
+`AppColors` is a contract of semantic roles. Define one palette per brightness:
+
+```dart
+class AppPalette {
+  static const light = AppColors(
+    primary: Color(0xFF6C5CE7),
+    onPrimary: Color(0xFFFFFFFF),
+    accent: Color(0xFF00CEC9),
+    onAccent: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF111111),
+    textPrimary: Color(0xFF111111),
+    textSecondary: Color(0xFF444444),
+    textTertiary: Color(0xFF777777),
+    error: Color(0xFFB3261E),
+    onError: Color(0xFFFFFFFF),
+  );
+
+  static const dark = AppColors(
+    primary: Color(0xFFB4A7FF),
+    onPrimary: Color(0xFF1A1A2E),
+    accent: Color(0xFF55EFC4),
+    onAccent: Color(0xFF003D33),
+    surface: Color(0xFF121212),
+    onSurface: Color(0xFFFFFFFF),
+    textPrimary: Color(0xFFFFFFFF),
+    textSecondary: Color(0xFFCCCCCC),
+    textTertiary: Color(0xFF999999),
+    error: Color(0xFFF2B8B5),
+    onError: Color(0xFF601410),
+  );
+}
+```
+
+The `on*` roles are the foreground used *on top of* their counterpart. If
+`primary` is your button fill, `onPrimary` is the label on that button.
+
+### Get dark mode right
+
+A dark theme needs a dark palette. Passing a light palette with
+`Brightness.dark` darkens Material's own `ColorScheme`, but your semantic
+colors stay light — and the result is black text on a white surface with no
+error to tell you why.
+
+```dart
+// Wrong: dark brightness, light palette
+FabrikTheme.create(
+  brightness: Brightness.dark,
+  colors: AppPalette.light,   // context.colors.surface is still white
+);
+
+// Right
+FabrikTheme.create(
+  brightness: Brightness.dark,
+  colors: AppPalette.dark,
+);
+```
+
+:::tip
+A quick sanity check: in your dark palette, `surface` should be dark and
+`textPrimary` light. If both are light, the palette is a light one.
+:::
+
+### Style failure states
+
+`error` and `onError` are part of the palette, so failures stay inside the
+design system instead of reaching for `Colors.red`:
+
+```dart
+Text(
+  'Card was declined',
+  style: context.typography.bodyMedium.copyWith(
+    color: context.colors.error,
+  ),
+);
+```
+
+These roles are also fed into Material's `ColorScheme`, so `TextField` error
+borders and your own error text use the same color.
+
+Both are optional in the constructor and fall back to `ColorTokens.error` and
+`ColorTokens.onError`, so palettes written before this release keep working.
+
+### Apply a custom font
+
+Pass `fontFamily` and it is applied across every generated text style:
+
+```dart
+FabrikTheme.create(
+  brightness: Brightness.light,
+  colors: AppPalette.light,
+  fontFamily: 'Inter',
+);
+```
+
+If you pass your own `AppTypography`, `fontFamily` is ignored — your styles are
+used exactly as written.
+
+### Choose the right text style
+
+`AppTypography` exposes semantic variants rather than one style per size. The
+naming follows a consistent pattern:
+
+| Suffix | Meaning | Example |
+| --- | --- | --- |
+| *(none)* | Default text color | `bodyLarge` |
+| `Primary` | Brand-colored, for accents | `headlineLargePrimary` |
+| `Secondary` | Lower emphasis | `bodyMediumSecondary` |
+| `Tertiary` | Lowest emphasis, helper text | `bodySmallTertiary` |
+| `Emphasis` | Same color, heavier weight | `bodyLargeEmphasis` |
+
+```dart
+Text('Order #1042', style: context.typography.titleMedium)
+Text('Delivered', style: context.typography.bodyMediumSecondary)
+Text('48.00', style: context.typography.bodyLargeEmphasis)
+```
+
+## API reference
+
+### `FabrikTheme.create`
+
+Builds a complete `ThemeData` with both extensions registered.
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `brightness` | `Brightness` | required | Light or dark |
+| `colors` | `AppColors` | required | Your semantic palette |
+| `typography` | `AppTypography?` | derived | Overrides the generated typography |
+| `fontFamily` | `String?` | `null` | Applied to generated typography only |
+
+### `AppColors`
+
+| Role | Purpose |
 | --- | --- |
-| `displayLarge` | Hero headlines |
-| `displayMedium` | Section headings |
-| `displaySmall` | Sub-headings |
-| `headlineLarge` | Page titles |
-| `headlineMedium` | Card titles |
-| `headlineSmall` | Minor headings |
-| `titleLarge` | App bar titles |
-| `titleMedium` | List item titles |
-| `titleSmall` | Supporting labels |
-| `bodyLarge` | Primary body copy |
-| `bodyMedium` | Default body text |
-| `bodySmall` | Captions, helper text |
-| `labelLarge` | Button labels |
-| `labelMedium` | Tab labels |
-| `labelSmall` | Overlines, tags |
+| `primary` / `onPrimary` | Key actions and emphasis |
+| `accent` / `onAccent` | Secondary emphasis |
+| `surface` / `onSurface` | Backgrounds and content on them |
+| `textPrimary` | High-emphasis text |
+| `textSecondary` | Supporting text |
+| `textTertiary` | Helper and placeholder text |
+| `error` / `onError` | Failures and destructive actions |
 
----
+Factories: `AppColors.defaults()` (light), `AppColors.darkDefaults()` (dark).
+Both implement `copyWith`, `lerp`, `==` and `hashCode`.
 
-## Colors
+### Design tokens
 
-`FabrikTheme.of(context).colors` gives you access to the semantic color tokens:
+Raw values used to compose semantic roles. Access them directly for layout
+work — they do not require a `BuildContext`.
 
-```dart
-theme.colors.primary     // brand primary
-theme.colors.secondary   // brand secondary
-theme.colors.background  // page background
-theme.colors.surface     // card / sheet surface
-theme.colors.error       // error state
-theme.colors.onPrimary   // text/icons on primary color
-```
-
-Use `FabrikColors.custom(...)` to override defaults for both light and dark modes.
-
----
-
-## Spacing Tokens
-
-Static design tokens for consistent padding and gaps:
+| Token class | Scale |
+| --- | --- |
+| `SpacingTokens` | `none` `xxs` `xs` `sm` `md` `lg` `xl` `xxl` `xxxl` (0–48) |
+| `RadiusTokens` | `none` `xs` `sm` `md` `lg` `xl` `full` (0–999) |
+| `ElevationTokens` | `none` `xs` `sm` `md` `lg` `xl` (0–24) |
+| `BorderTokens` | `none` `thin` `medium` `thick` (0–2) |
+| `ColorTokens` | Base palette, light and dark variants |
+| `TypographyTokens` | Font sizes, line heights, letter spacing |
 
 ```dart
-FabrikSpacing.x1   // 4px
-FabrikSpacing.x2   // 8px
-FabrikSpacing.x3   // 12px
-FabrikSpacing.x4   // 16px
-FabrikSpacing.x5   // 20px
-FabrikSpacing.x6   // 24px
-FabrikSpacing.x8   // 32px
-FabrikSpacing.x10  // 40px
-FabrikSpacing.x12  // 48px
+Padding(
+  padding: const EdgeInsets.all(SpacingTokens.lg),
+  child: Card(
+    elevation: ElevationTokens.sm,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(RadiusTokens.md),
+    ),
+    child: content,
+  ),
+);
 ```
 
----
+### Context extensions
 
-## Radius Tokens
+| Getter | Returns | Throws |
+| --- | --- | --- |
+| `context.colors` | `AppColors` | `StateError` if the theme was not built with `FabrikTheme.create` |
+| `context.typography` | `AppTypography` | `StateError`, as above |
 
-```dart
-FabrikRadius.r1    // 4px
-FabrikRadius.r2    // 8px
-FabrikRadius.r3    // 12px
-FabrikRadius.r4    // 16px
-FabrikRadius.r5    // 20px
-FabrikRadius.r6    // 24px
-FabrikRadius.full  // circular / pill
-```
+Both throw in release builds as well as debug, so a missing theme fails with a
+readable message rather than a null dereference.

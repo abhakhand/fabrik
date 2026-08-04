@@ -20,11 +20,15 @@ hero:
 
 ### Packages
 
-- **fabrik_theme** — design tokens, typography scale, colors, and `MaterialApp` theming
-- **fabrik_layout** — responsive layout context, breakpoints, and device-aware text scaling
-- **fabrik_snackbar** — production-ready snackbars and toasts with semantic variants
-- **fabrik_forms** — UI-agnostic form state, validation, and reactive `ValueNotifier` API
-- **fabrik_utils** — DateTime, String, duration, debounce, throttle, and scroll helpers
-- **fabrik_result** — lightweight `Either` and `Unit` types for functional error handling
+Six independent packages. Take the one you need — nothing depends on anything else.
 
----
+| Package | Solves |
+| --- | --- |
+| [**fabrik_theme**](/packages/fabrik_theme/) | Semantic colors and typography instead of scattered `Color(0xFF…)` literals |
+| [**fabrik_layout**](/packages/fabrik_layout/) | One UI across phone, tablet and desktop without ad-hoc width checks |
+| [**fabrik_forms**](/packages/fabrik_forms/) | Form state and validation that lives outside your widgets, so it can be tested |
+| [**fabrik_snackbar**](/packages/fabrik_snackbar/) | Snackbars and toasts with no `Scaffold` requirement |
+| [**fabrik_utils**](/packages/fabrik_utils/) | The helpers every app hand-rolls: `timeAgo`, casing, debounce, throttle |
+| [**fabrik_result**](/packages/fabrik_result/) | Failures visible in the type signature, in pure Dart |
+
+New here? Start with [Choosing a package](/choosing-a-package/).

@@ -1,83 +1,69 @@
 ---
 title: fabrik_forms
-description: A clean, UI-agnostic form state and validation system for Flutter.
+description: UI-agnostic form state, validation, and reactive rebuilds for Flutter.
 ---
 
-> [![pub.dev](https://img.shields.io/pub/v/fabrik_forms.svg?label=pub)](https://pub.dev/packages/fabrik_forms)
+[![pub.dev](https://img.shields.io/pub/v/fabrik_forms.svg?label=pub)](https://pub.dev/packages/fabrik_forms)
 
-**fabrik_forms** is a clean, testable, UI-agnostic form state management system for Flutter. It handles field values, validation, dirty/touched state, and reactive rebuilds — without coupling your logic to any specific widget.
+Flutter's `Form` and `TextFormField` couple validation to widgets: to test
+whether a sign-up form accepts an input, you have to build one.
+
+`fabrik_forms` keeps form state outside the widget tree. Fields hold values,
+validators, and interaction state; widgets subscribe to them. The result is
+form logic you can unit test without a `WidgetTester`.
+
+```dart
+final form = FabrikForm({
+  'email': FabrikField<String>(value: '', validators: [const EmailValidator()]),
+});
+
+form.update<String>('email', 'not-an-email');
+form.isValid;  // false — no widgets involved
+```
 
 ## Installation
 
-Add the package to your `pubspec.yaml`:
-
 ```yaml
 dependencies:
-  fabrik_forms: ^0.1.0
+  fabrik_forms: ^0.2.0
 ```
-
-Then run:
-
-```bash
-flutter pub get
-```
-
-Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_forms/fabrik_forms.dart';
 ```
 
----
+## Quick start
 
-## Getting Started
-
-Define your form with typed fields and validators:
+Define the form, then bind it to your UI:
 
 ```dart
-final formNotifier = FabrikFormNotifier<String>(
+final formNotifier = FabrikFormNotifier(
   FabrikForm({
-    'email': FabrikField(
+    'email': FabrikField<String>(
       value: '',
       validators: [const EmailValidator()],
     ),
-    'password': FabrikField(
+    'password': FabrikField<String>(
       value: '',
-      validators: [
-        const PasswordValidator(
-          requireDigit: true,
-          requireSpecialChar: true,
-        ),
-      ],
+      validators: [const PasswordValidator(requireDigit: true)],
     ),
   }),
 );
 ```
 
-Wrap your UI with `FabrikFormBuilder` to rebuild reactively:
-
 ```dart
-FabrikFormBuilder<String>(
+FabrikFormBuilder(
   formNotifier: formNotifier,
   builder: (context, form, get) {
     final email = get<String>('email');
-    final password = get<String>('password');
 
     return Column(
       children: [
         TextField(
-          onChanged: (val) => formNotifier.update('email', val),
+          onChanged: (value) => formNotifier.update<String>('email', value),
           decoration: InputDecoration(
             labelText: 'Email',
             errorText: email.visibleError,
-          ),
-        ),
-        TextField(
-          onChanged: (val) => formNotifier.update('password', val),
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'Password',
-            errorText: password.visibleError,
           ),
         ),
         ElevatedButton(
@@ -85,10 +71,10 @@ FabrikFormBuilder<String>(
             if (form.isValid) {
               submit(form.values);
             } else {
-              formNotifier.markAllTouched(); // reveal all errors
+              formNotifier.markAllTouched();
             }
           },
-          child: const Text('Sign In'),
+          child: const Text('Sign in'),
         ),
       ],
     );
@@ -96,98 +82,136 @@ FabrikFormBuilder<String>(
 );
 ```
 
----
+Two things are doing quiet work here:
 
-## Field Metadata
+- **`visibleError`** stays `null` until the user touches the field, so errors
+  do not appear on a form nobody has typed into yet.
+- **`markAllTouched()`** flips every field to touched at once, which is how you
+  reveal all errors when someone submits an incomplete form.
 
-Every `FabrikField` tracks:
+## Guides
 
-| Property | Type | Description |
+### Mix field types in one form
+
+Fields carry their own types, so a single form can hold strings, numbers and
+booleans. Declare the type on each field and recover it with `get<T>`:
+
+```dart
+final form = FabrikForm({
+  'email': FabrikField<String>(value: '', validators: [const EmailValidator()]),
+  'age': FabrikField<int>(
+    value: 18,
+    validators: [const RangeValidator(min: 18, max: 120)],
+  ),
+  'subscribed': FabrikField<bool>(value: false),
+});
+
+final String email = form.get<String>('email').value;
+final int age = form.get<int>('age').value;
+```
+
+:::caution
+Always write the type argument: `FabrikField<String>(value: '')`, not
+`FabrikField(value: '')`. Without it the field is a `FabrikField<dynamic>` and
+`get<String>` throws a `StateError` telling you which declaration to annotate.
+:::
+
+### Validate across fields
+
+Password confirmation cannot be expressed by a field validator, because a
+field only sees its own value. Form-level validators see everything:
+
+```dart
+FabrikForm(
+  {
+    'password': FabrikField<String>(value: ''),
+    'confirmPassword': FabrikField<String>(value: ''),
+  },
+  validators: [
+    const FieldsMatchValidator(
+      field: 'password',
+      matchField: 'confirmPassword',
+      message: 'Passwords do not match',
+    ),
+  ],
+);
+```
+
+The result belongs to the form rather than to either field:
+
+```dart
+form.formError;  // 'Passwords do not match'
+form.isValid;    // false — form-level rules count toward validity
+```
+
+For one-off rules, `FabrikFormRule` wraps a function:
+
+```dart
+FabrikFormRule(
+  (values) => (values['endDate'] as DateTime).isAfter(values['startDate'] as DateTime)
+      ? null
+      : 'End date must be after start date',
+);
+```
+
+### Show every failing rule
+
+`error` gives the first failure. When several rules should be visible at once —
+password requirements being the usual case — use `errors`:
+
+```dart
+final password = form.get<String>('password');
+
+Column(
+  children: [
+    for (final message in password.visibleErrors)
+      Text(message, style: TextStyle(color: context.colors.error)),
+  ],
+);
+```
+
+| Accessor | Returns | Respects touched |
 | --- | --- | --- |
-| `value` | `T` | Current field value |
-| `error` | `String?` | Active validation error |
-| `visibleError` | `String?` | Error shown only after the field is touched |
-| `isValid` | `bool` | No active errors |
-| `isTouched` | `bool` | User has interacted with the field |
-| `isDirty` | `bool` | Value differs from initial |
+| `error` | First failure, or `null` | no |
+| `errors` | Every failure | no |
+| `visibleError` | First failure, or `null` | yes |
+| `visibleErrors` | Every failure | yes |
 
----
+Use the `visible*` pair in UI and the plain pair in tests and submit logic.
 
-## Resetting a Form
+### Test a form without widgets
 
-Call `reset()` to restore all fields to their initial values and clear all touched/dirty state:
+Form state is a plain object, so validation logic tests directly:
+
+```dart
+test('rejects an under-age signup', () {
+  final form = FabrikForm({
+    'age': FabrikField<int>(
+      value: 18,
+      validators: [const RangeValidator(min: 18, max: 120)],
+    ),
+  });
+
+  form.update<int>('age', 15);
+
+  expect(form.isValid, isFalse);
+  expect(form.errors['age'], 'Must be at least 18');
+});
+```
+
+### Reset after submitting
 
 ```dart
 formNotifier.reset();
 ```
 
-This is useful for clearing a form after submission or on cancel.
+Every field returns to its initial value, and `isDirty` and `isTouched` go back
+to `false` across the form — so a freshly reset form does not immediately show
+errors.
 
----
+### Write a custom validator
 
-## Built-in Validators
-
-### RequiredValidator
-
-```dart
-const RequiredValidator()
-const RequiredValidator(message: 'Name is required', trim: false)
-```
-
-### MinLengthValidator / MaxLengthValidator
-
-```dart
-const MinLengthValidator(min: 6)
-const MaxLengthValidator(max: 100, message: 'Too long')
-```
-
-### EmailValidator
-
-```dart
-const EmailValidator()                          // required by default
-const EmailValidator(isRequired: false)         // optional — empty is valid
-const EmailValidator(invalidMessage: 'Bad email')
-```
-
-### PasswordValidator
-
-```dart
-const PasswordValidator()                       // requires 8+ chars, non-empty
-const PasswordValidator(isRequired: false)      // optional password
-const PasswordValidator(
-  minLength: 12,
-  requireUppercase: true,
-  requireDigit: true,
-  requireSpecialChar: true,
-)
-```
-
-### UrlValidator
-
-```dart
-const UrlValidator()                            // accepts http and https
-const UrlValidator(requireHttps: true)          // https only
-const UrlValidator(isRequired: false)           // optional — empty is valid
-```
-
-### PhoneValidator
-
-```dart
-const PhoneValidator()                          // required by default
-const PhoneValidator(isRequired: false)         // optional — empty is valid
-// Accepts: +1 234 567 8900 · (123) 456-7890 · 123-456-7890 · 1234567890
-```
-
-### RangeValidator
-
-```dart
-const RangeValidator(min: 1, max: 100)
-const RangeValidator(min: 0.0, max: 1.0, minMessage: 'Too low', maxMessage: 'Too high')
-```
-
-### Custom Validators
-
-Extend `FabrikValidator<T>` to create your own:
+Extend `FabrikValidator<T>` and return `null` when the value is acceptable:
 
 ```dart
 class UsernameValidator extends FabrikValidator<String> {
@@ -196,19 +220,75 @@ class UsernameValidator extends FabrikValidator<String> {
   @override
   String? call(String value) {
     if (value.contains(' ')) return 'No spaces allowed';
+    if (value.length < 3) return 'Too short';
     return null;
   }
 }
 ```
 
----
+Validators are `const`-constructible and stateless, so a single instance can be
+shared across every form that needs it.
 
-## Features
+## API reference
 
-- Field-level validation with reusable, composable validators
-- Form-level state: `.isValid`, `.isDirty`, `.isTouched`, `.values`, `.errors`
-- `markAllTouched()` to reveal all errors on submit
-- `reset()` to restore initial state
-- `ValueNotifier`-based reactivity with `FabrikFormNotifier`
-- Declarative UI with `FabrikFormBuilder`
-- Works independently of the widget tree — fully unit-testable
+### `FabrikField<T>`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `value` | `T` | Current value |
+| `error` / `errors` | `String?` / `List<String>` | Validation failures |
+| `visibleError` / `visibleErrors` | `String?` / `List<String>` | Failures, once touched |
+| `isValid` | `bool` | No active errors |
+| `isTouched` | `bool` | User has interacted |
+| `isDirty` | `bool` | Differs from the initial value |
+| `update(value)` | `void` | Set value, mark touched, revalidate |
+| `markTouched()` | `void` | Reveal errors without changing the value |
+| `reset()` | `void` | Restore the initial value and clear state |
+
+### `FabrikForm`
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `get<T>(key)` | `FabrikField<T>` | Typed field lookup |
+| `update<T>(key, value)` | `void` | Update one field |
+| `values` | `Map<String, dynamic>` | Every current value |
+| `errors` | `Map<String, String?>` | First error per field |
+| `allErrors` | `Map<String, List<String>>` | Every error per field |
+| `formError` / `formErrors` | `String?` / `List<String>` | Form-level failures |
+| `isValid` / `isDirty` / `isTouched` | `bool` | Aggregate state |
+| `contains(key)` / `keys` | `bool` / `Iterable<String>` | Inspect the field set |
+| `markAllTouched()` / `reset()` | `void` | Form-wide actions |
+
+An unknown key throws an `ArgumentError` that names the key and lists the
+available fields.
+
+### `FabrikFormNotifier`
+
+A `ValueNotifier<FabrikForm>` that mirrors the form API and notifies listeners
+on `update`, `markAllTouched` and `reset`. Pair it with `FabrikFormBuilder`,
+or listen to it directly.
+
+### Built-in validators
+
+| Validator | Validates | Key options |
+| --- | --- | --- |
+| `RequiredValidator` | Non-empty string | `trim`, `message` |
+| `EmailValidator` | Email format | `isRequired`, `invalidMessage` |
+| `MinLengthValidator` | Minimum length | `min`, `message` |
+| `MaxLengthValidator` | Maximum length | `max`, `message` |
+| `PasswordValidator` | Complexity rules | `minLength`, `requireUppercase`, `requireDigit`, `requireSpecialChar` |
+| `UrlValidator` | HTTP/HTTPS URLs | `requireHttps` |
+| `PhoneValidator` | Local and international formats | `isRequired` |
+| `RangeValidator` | Numeric range, inclusive | `min`, `max` |
+
+`PasswordValidator` reports length before the character-class rules, so the
+most basic failure surfaces first. `RangeValidator` is generic over `num`, so
+it attaches to `FabrikField<int>` and `FabrikField<double>` alike.
+
+### Form-level validators
+
+| Validator | Purpose |
+| --- | --- |
+| `FieldsMatchValidator` | Two fields must be equal |
+| `FabrikFormRule` | Inline rule from a function |
+| `FabrikFormValidator` | Base class for custom rules |

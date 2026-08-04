@@ -1,39 +1,39 @@
 ---
 title: fabrik_result
-description: A minimal, lightweight result-handling toolkit for Dart and Flutter apps.
+description: Either, Option and Unit for Dart — typed failures without the functional programming tax.
 ---
 
-> [![pub.dev](https://img.shields.io/pub/v/fabrik_result.svg?label=pub)](https://pub.dev/packages/fabrik_result)
+[![pub.dev](https://img.shields.io/pub/v/fabrik_result.svg?label=pub)](https://pub.dev/packages/fabrik_result)
 
-**fabrik_result** is a minimal result-handling toolkit for Dart and Flutter. It gives you a typed way to model success and failure without relying on exceptions — making your domain logic easier to read, test, and reason about.
+A `Future<User>` tells you nothing about what can go wrong. The caller finds
+out at runtime, or reads the implementation, or wraps everything in
+`try`/`catch` and hopes.
+
+```dart
+Future<Either<Failure, User>> getUser(String id);
+```
+
+Now the signature *is* the documentation, and the compiler makes sure the
+failure case is handled.
+
+`fabrik_result` is pure Dart with no dependencies — usable in a Flutter app, a
+server, or a CLI.
 
 ## Installation
 
-```bash
-dart pub add fabrik_result
-```
-
-Or add it to your `pubspec.yaml`:
-
 ```yaml
 dependencies:
-  fabrik_result: ^1.0.1
+  fabrik_result: ^1.1.0
 ```
-
-Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_result/fabrik_result.dart';
 ```
 
----
-
-## Either
-
-`Either<L, R>` is a sealed type that holds either a left value (conventionally failure) or a right value (conventionally success). It makes the possible outcomes of an operation explicit in the return type.
+## Quick start
 
 ```dart
-Either<Failure, User> result = await userRepository.getUser(id);
+final result = await getUser('42');
 
 result.fold(
   (failure) => showError(failure.message),
@@ -41,66 +41,182 @@ result.fold(
 );
 ```
 
-**Constructing values:**
+Because `Either` is a **sealed** class, you can also pattern match — and the
+compiler will tell you if you miss a case, with no `default` branch needed:
 
 ```dart
-// Success
-return Right(user);
-
-// Failure
-return Left(Failure('User not found'));
+final message = switch (result) {
+  Left(value: final failure) => 'Failed: ${failure.message}',
+  Right(value: final user) => 'Welcome, ${user.name}',
+};
 ```
 
-**Checking the side:**
+That exhaustiveness check is the main reason to prefer this over a
+hand-rolled result class.
+
+## Guides
+
+### Capture exceptions at the boundary
+
+Most code that can fail throws. `tryCatch` converts that into an `Either` in
+one step, replacing the `try`/`catch` you would otherwise write in every
+repository method:
 
 ```dart
-result.isRight  // true if success
-result.isLeft   // true if failure
-```
-
----
-
-## Unit
-
-`Unit` is a typed `void` — use it when an operation succeeds but has nothing meaningful to return.
-
-```dart
-Either<Failure, Unit> result = await settingsRepository.save(settings);
-
-result.fold(
-  (failure) => showError(failure.message),
-  (_) => showSuccess('Settings saved'),
-);
-```
-
-Instead of returning `Either<Failure, void>` (which isn't valid in Dart), return `Either<Failure, Unit>` and use `Right(unit)` as the success value.
-
----
-
-## In a Repository
-
-A typical repository method using `fabrik_result`:
-
-```dart
-Future<Either<Failure, User>> getUser(String id) async {
-  try {
-    final model = await dataSource.fetchUser(id);
-    return Right(model.toEntity());
-  } catch (e) {
-    return Left(Failure(e.toString()));
-  }
+Future<Either<Failure, User>> getUser(String id) {
+  return Either.tryCatchAsync(
+    () => api.fetchUser(id),
+    (error, stackTrace) => Failure('$error'),
+  );
 }
 ```
 
----
+There is a synchronous form for parsing and other non-async work:
 
-## Why Not Try-Catch?
+```dart
+final config = Either.tryCatch(
+  () => jsonDecode(raw) as Map<String, dynamic>,
+  (error, stackTrace) => ParseFailure('$error'),
+);
+```
 
-| | `try-catch` | `Either` |
+The `onError` callback receives the stack trace as well, so it can be logged
+before being discarded.
+
+### Transform without unwrapping
+
+`map` changes the success value and leaves a failure untouched. `flatMap`
+chains another operation that can itself fail. A `Left` short-circuits the
+whole chain:
+
+```dart
+final result = await getUser(id)
+    .then((r) => r.map((user) => user.profile))
+    .then((r) => r.flatMap(validateProfile));
+```
+
+Without these you end up writing `fold` calls that re-declare the failure
+branch just to leave it alone:
+
+```dart
+// Verbose: both branches spelled out to change one
+r.fold((f) => left<Failure, int>(f), (v) => right<Failure, int>(v * 2));
+
+// Same thing
+r.map((v) => v * 2);
+```
+
+### Read the value back
+
+```dart
+final name = result.getOrElse((failure) => 'Anonymous');
+
+result.onRight((user) => analytics.track('profile_loaded'));
+result.onLeft((failure) => logger.error(failure));
+
+final user = result.rightOrNull;  // null when it is a Left
+```
+
+### Model absence with Option
+
+`Option<T>` makes "there might be no value" explicit, and interoperates with
+Dart's nullable types in both directions:
+
+```dart
+final name = Option.fromNullable(json['name'] as String?)
+    .where((n) => n.isNotEmpty)
+    .map((n) => n.trim())
+    .getOrElse(() => 'Anonymous');
+```
+
+Turn a missing value into a typed failure with `toEither`:
+
+```dart
+Either<Failure, User> result =
+    cachedUser.toEither(() => Failure('no cached user'));
+```
+
+:::note
+Dart already has null safety, so `Option` earns its place mainly at
+boundaries — parsing loosely typed data, or chaining lookups that may each
+come up empty. For a simple nullable field, `?` and `??` are fine.
+:::
+
+### Return Unit when there is nothing to return
+
+`Either<Failure, void>` is not valid Dart. `Unit` is the stand-in:
+
+```dart
+Future<Either<Failure, Unit>> saveSettings(Settings settings) {
+  return Either.tryCatchAsync(
+    () async {
+      await storage.write(settings);
+      return unit;
+    },
+    (error, stackTrace) => Failure('$error'),
+  );
+}
+```
+
+## Comparison
+
+|  | `try`/`catch` | `fabrik_result` | `dartz` / `fpdart` |
+| --- | --- | --- | --- |
+| Failure visible in the signature | no | yes | yes |
+| Compiler-enforced handling | no | yes | partly |
+| Exhaustive `switch` | n/a | yes | no |
+| Flutter dependency | n/a | none | none |
+| API surface | n/a | small | large |
+
+`fabrik_result` ships `Either`, `Option` and `Unit` with the combinators
+people actually reach for. It deliberately stops before typeclasses, monad
+transformers and the wider functional vocabulary — if you want those,
+`fpdart` is the better fit.
+
+## API reference
+
+### `Either<L, R>`
+
+Sealed, with subtypes `Left<L, R>` and `Right<L, R>`. Build values with the
+`left()` and `right()` helpers.
+
+| Member | Returns | Description |
 | --- | --- | --- |
-| Failure is explicit in signature | No | Yes |
-| Caller must handle failure | No | Yes |
-| Testable without exceptions | Hard | Easy |
-| Composable | No | Yes |
+| `fold(onLeft, onRight)` | `T` | Collapse both sides to one value |
+| `map(fn)` | `Either<L, T>` | Transform the success value |
+| `mapLeft(fn)` | `Either<T, R>` | Transform the failure value |
+| `flatMap(fn)` | `Either<L, T>` | Chain another fallible step |
+| `flatMapAsync(fn)` | `Future<Either<L, T>>` | Asynchronous `flatMap` |
+| `getOrElse(fn)` | `R` | Success value, or a fallback |
+| `swap()` | `Either<R, L>` | Exchange the two sides |
+| `isLeft` / `isRight` | `bool` | Which side is present |
+| `leftOrNull` / `rightOrNull` | `L?` / `R?` | Nullable access |
+| `onLeft(fn)` / `onRight(fn)` | `void` | Side effects |
 
-`fabrik_result` is a lightweight alternative to packages like `dartz` — it provides only `Either` and `Unit`, nothing more.
+**Statics**
+
+| Member | Returns |
+| --- | --- |
+| `Either.tryCatch(body, onError)` | `Either<L, R>` |
+| `Either.tryCatchAsync(body, onError)` | `Future<Either<L, R>>` |
+
+### `Option<T>`
+
+Sealed, with subtypes `Some<T>` and `None<T>`. Build values with `some()` and
+`none()`.
+
+| Member | Returns | Description |
+| --- | --- | --- |
+| `Option.fromNullable(value)` | `Option<T>` | `None` when null |
+| `toNullable()` | `T?` | Back to a nullable |
+| `fold(onNone, onSome)` | `R` | Collapse both cases |
+| `map(fn)` / `flatMap(fn)` | `Option<R>` | Transform or chain |
+| `where(predicate)` | `Option<T>` | Keep the value only if it matches |
+| `getOrElse(fn)` | `T` | Value, or a fallback |
+| `toEither(onNone)` | `Either<L, T>` | Absence becomes a typed failure |
+| `isSome` / `isNone` | `bool` | Which case is present |
+
+### `Unit`
+
+A single-value type for "succeeded, nothing to return". The instance is the
+constant `unit`.

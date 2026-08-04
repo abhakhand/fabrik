@@ -1,0 +1,119 @@
+---
+title: Core concepts
+description: The handful of ideas that recur across every Fabrik package.
+---
+
+Fabrik packages are independent, but they are built on the same few ideas.
+Learning them once makes every package predictable.
+
+## Semantic names over raw values
+
+The recurring theme: name things by **what they mean**, not by what they look
+like. `context.colors.error` says why the color was chosen; `Colors.red` only
+says what it is. When the brand changes, one is a one-line edit and the other
+is a search across the codebase.
+
+```dart
+// Escapes the design system the moment it is written
+Text('Payment failed', style: TextStyle(color: Colors.red))
+
+// Stays inside it
+Text('Payment failed', style: TextStyle(color: context.colors.error))
+```
+
+The same idea drives `SpacingTokens.md` over `16`, and
+`context.layout.isMobile` over `MediaQuery.of(context).size.width < 600`.
+
+## Context extensions
+
+Anything resolved from the widget tree is read through an extension on
+`BuildContext`. There is nothing to pass down and nothing to inject.
+
+```dart
+context.colors.primary        // fabrik_theme
+context.typography.bodyLarge  // fabrik_theme
+context.layout.isMobile       // fabrik_layout
+```
+
+These are thin wrappers over `Theme.of` and `InheritedWidget` lookups. They
+introduce no extra rebuilds — and they throw a `StateError` with a fix-it
+message if the relevant ancestor is missing, rather than failing silently or
+returning a wrong default.
+
+```
+StateError: AppColors not found in ThemeData.extensions.
+Did you forget to use FabrikTheme.create?
+```
+
+## Configuration objects
+
+Anything with more than a couple of options takes a single config object
+rather than a long parameter list. Configs are `const`-constructible, so they
+can live as static values and be reused.
+
+```dart
+const errorSnackbar = FabrikSnackbarConfig(
+  title: 'Upload failed',
+  position: FabrikSnackbarPosition.top,
+  style: FabrikSnackbarStyle.grounded,
+);
+
+FabrikSnackbar.custom(context, config: errorSnackbar);
+```
+
+## Explicit failure
+
+Fabrik prefers failures you can see in a type signature over failures that
+surface at runtime.
+
+```dart
+// The signature says nothing about what can go wrong
+Future<User> getUser(String id);
+
+// The signature is the documentation
+Future<Either<Failure, User>> getUser(String id);
+```
+
+Where a mistake cannot be encoded in a type, it becomes a loud error with a
+message that names the fix — an unknown form field lists the valid keys, a
+missing theme extension names the factory to call.
+
+## Progressive disclosure
+
+Every package has a default that works, and every default can be replaced.
+You should be able to get something on screen before learning the whole API.
+
+```dart
+// Day one
+FabrikSnackbar.success(context, title: 'Saved');
+
+// Later, when the design system says otherwise
+FabrikSnackbar.custom(
+  context,
+  config: FabrikSnackbarConfig(
+    title: 'Saved',
+    backgroundGradient: brandGradient,
+    style: FabrikSnackbarStyle.grounded,
+    dismissDirection: FabrikSnackbarDismissDirection.horizontal,
+  ),
+);
+```
+
+The same pattern holds elsewhere: `AppColors.defaults()` gets you a working
+theme, `FabrikBreakpoints()` gets you sensible breakpoints, and both are one
+argument away from being fully yours.
+
+## Value semantics
+
+Every configuration and data class implements `==` and `hashCode`. Two
+instances with the same values are equal, which means they can be compared in
+tests, used as map keys, and relied on by Flutter to skip unnecessary
+rebuilds.
+
+```dart
+AppColors.defaults() == AppColors.defaults();  // true
+const FabrikBreakpoints() == const FabrikBreakpoints();  // true
+```
+
+Theme classes go further and implement `lerp`, so switching between light and
+dark animates every semantic color rather than snapping.

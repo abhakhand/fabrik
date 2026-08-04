@@ -1,115 +1,263 @@
 ---
 title: fabrik_snackbar
-description: A flexible, production-ready snackbar and toast component for Flutter.
+description: Overlay-based snackbars and toasts for Flutter, with semantic variants and full customization.
 ---
 
-> [![pub.dev](https://img.shields.io/pub/v/fabrik_snackbar.svg?label=pub)](https://pub.dev/packages/fabrik_snackbar)
+[![pub.dev](https://img.shields.io/pub/v/fabrik_snackbar.svg?label=pub)](https://pub.dev/packages/fabrik_snackbar)
 
-**fabrik_snackbar** is a customizable, production-ready solution for showing snackbars and toasts in your Flutter app. It ships with prebuilt semantic variants — success, error, info, warning — and a fully configurable custom mode.
+`ScaffoldMessenger` requires a `Scaffold`, shows one snackbar at a time, and
+gives you limited control over placement and animation.
+
+`fabrik_snackbar` renders into the root `Overlay` instead. That means no
+`Scaffold` requirement, snackbars that survive navigation, and top-or-bottom
+placement — with four semantic variants for the common cases.
+
+```dart
+FabrikSnackbar.success(context, title: 'Saved');
+FabrikToast.show(context, message: 'Copied to clipboard');
+```
 
 ## Installation
 
-Add the package to your `pubspec.yaml`:
-
 ```yaml
 dependencies:
-  fabrik_snackbar: ^0.1.7
+  fabrik_snackbar: ^0.1.8
 ```
-
-Then run:
-
-```bash
-flutter pub get
-```
-
-Import it in your Dart files:
 
 ```dart
 import 'package:fabrik_snackbar/fabrik_snackbar.dart';
 ```
 
----
+No setup, no builder, no provider — the only requirement is a context below a
+`MaterialApp` or `CupertinoApp`.
 
-## Snackbars
+## Quick start
 
-Choose from prebuilt semantic variants or create a fully custom snackbar.
+```dart
+FabrikSnackbar.success(context, title: 'Profile updated');
 
-### Success
+FabrikSnackbar.error(
+  context,
+  title: 'Upload failed',
+  message: 'Check your connection and try again.',
+);
+```
+
+Every variant takes any combination of `title` and `message` — at least one is
+required.
+
+| Variant | Color | Icon | Use for |
+| --- | --- | --- | --- |
+| `success` | Green | Check circle | An action completed |
+| `error` | Red | Error outline | An action failed |
+| `warning` | Orange | Warning triangle | Something needs attention |
+| `info` | Blue | Info outline | Passive information |
+
+## Snackbar or toast?
+
+| | Snackbar | Toast |
+| --- | --- | --- |
+| Content | Title, message, icon, action button | A single line of text |
+| Dismissal | Swipe or auto | Auto only |
+| Placement | Top or bottom | Top, center, or bottom |
+| Use for | Results that may need a response | Brief confirmations |
+
+Reach for a toast when the message is *"copied"* and a snackbar when it is
+*"couldn't save — retry?"*.
+
+## Guides
+
+### Add an action
 
 ```dart
 FabrikSnackbar.success(
   context,
-  title: 'Registration Successful',
-  message: 'You have been successfully registered.',
+  title: 'Item deleted',
+  actionButton: TextButton(
+    onPressed: restoreItem,
+    child: const Text('UNDO', style: TextStyle(color: Colors.white)),
+  ),
 );
 ```
 
-### Error
+### Style the text
+
+Plain-string content can be restyled without switching to custom widgets:
 
 ```dart
-FabrikSnackbar.error(
+FabrikSnackbar.success(
   context,
-  title: 'Something went wrong',
-  message: 'Please try again later.',
+  title: 'Saved',
+  message: 'Your changes are live.',
+  titleStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+  messageStyle: const TextStyle(color: Colors.white70),
 );
 ```
 
-### Info
+Omit them to get `FabrikSnackbarDefaults.defaultTitleStyle` and
+`defaultMessageStyle`.
 
-```dart
-FabrikSnackbar.info(
-  context,
-  title: 'Update Available',
-  message: 'A new version of the app is ready to install.',
-);
-```
+### Take full control
 
-### Warning
-
-```dart
-FabrikSnackbar.warning(
-  context,
-  title: 'Unstable Connection',
-  message: 'Your internet connection may be slow.',
-);
-```
-
-### Custom
+`FabrikSnackbar.custom` accepts a `FabrikSnackbarConfig` with every option:
 
 ```dart
 FabrikSnackbar.custom(
   context,
-  title: 'Custom Snackbar',
-  message: 'Fully styled to your design.',
-  backgroundColor: Colors.deepPurple,
-  borderRadius: BorderRadius.circular(16),
-  duration: const Duration(seconds: 3),
+  config: FabrikSnackbarConfig(
+    title: 'Order placed',
+    message: 'Arriving in 2–3 days.',
+    icon: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
+    backgroundColor: Colors.indigo,
+    position: FabrikSnackbarPosition.top,
+    duration: const Duration(seconds: 5),
+    borderRadius: BorderRadius.circular(16),
+    onTap: () => openOrder(),
+  ),
 );
 ```
 
----
+:::note
+`custom` takes a single `config:` argument, unlike the named variants which
+take options directly.
+:::
 
-## Toasts
+Because `FabrikSnackbarConfig` is `const`-constructible, reusable styles can
+live as constants:
 
-`FabrikToast` is a lightweight, floating message that appears above the UI — ideal for short, non-blocking feedback.
+```dart
+const criticalAlert = FabrikSnackbarConfig(
+  title: 'Session expired',
+  position: FabrikSnackbarPosition.top,
+  style: FabrikSnackbarStyle.grounded,
+  blockBackgroundInteraction: true,
+  barrierBlur: 4,
+);
+
+FabrikSnackbar.custom(context, config: criticalAlert);
+```
+
+### Block interaction for critical messages
+
+For something the user must acknowledge, dim and block the UI behind it:
+
+```dart
+FabrikSnackbar.custom(
+  context,
+  config: const FabrikSnackbarConfig(
+    title: 'Session expired',
+    message: 'Please sign in again.',
+    blockBackgroundInteraction: true,
+    barrierBlur: 4,
+  ),
+);
+```
+
+`blockBackgroundInteraction` absorbs taps; `barrierBlur` and `barrierColor`
+are the visual treatment. Use it sparingly — it takes over the screen.
+
+### Use rich or custom content
+
+For styled runs of text, pass an `InlineSpan`:
+
+```dart
+FabrikSnackbar.custom(
+  context,
+  config: const FabrikSnackbarConfig(
+    richTitle: TextSpan(
+      children: [
+        TextSpan(text: 'Saved to '),
+        TextSpan(text: 'Favourites',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+      ],
+    ),
+  ),
+);
+```
+
+When several content fields are set, the highest-priority one wins:
+
+```
+richTitle    >  titleText    >  title
+richMessage  >  messageText  >  message
+```
+
+`title` and `richTitle` are mutually exclusive and assert if both are passed;
+the same applies to `message` and `richMessage`.
+
+### Show a toast
 
 ```dart
 FabrikToast.show(
   context,
-  message: 'Copied to clipboard',
+  message: 'Link copied',
+  icon: Icons.link,
+  position: FabrikToastPosition.top,
+  duration: const Duration(seconds: 2),
 );
 ```
 
-Toasts use sensible defaults and disappear automatically.
+## Accessibility
 
----
+Both snackbars and toasts render inside a `Semantics` node marked as a live
+region, so screen readers announce them when they appear. The announced label
+is built from the title and message, including text extracted from rich
+content.
 
-## When to Use Which
+## API reference
 
-| Use case | Recommended |
+### Named variants
+
+`FabrikSnackbar.success` · `.error` · `.warning` · `.info`
+
+| Parameter | Type | Default |
+| --- | --- | --- |
+| `title` / `message` | `String?` | `null` — at least one required |
+| `richTitle` / `richMessage` | `InlineSpan?` | `null` |
+| `titleStyle` / `messageStyle` | `TextStyle?` | Defaults from `FabrikSnackbarDefaults` |
+| `durationInSeconds` | `int?` | `3` |
+| `position` | `FabrikSnackbarPosition?` | `bottom` |
+| `dismissDirection` | `FabrikSnackbarDismissDirection?` | `vertical` |
+| `maxWidth` | `double?` | `480` on wide screens |
+| `actionButton` | `Widget?` | `null` |
+| `safeArea` | `bool?` | `true` |
+| `barrierBlur` / `barrierColor` | `double?` / `Color?` | `0` / `null` |
+
+### `FabrikSnackbarConfig`
+
+Everything above, plus:
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `titleText` / `messageText` | `Widget?` | `null` | Custom content widgets |
+| `icon` | `Widget?` | `null` | Leading icon |
+| `backgroundColor` | `Color` | `0xFF323232` | Ignored when a gradient is set |
+| `backgroundGradient` | `Gradient?` | `null` | Overrides `backgroundColor` |
+| `style` | `FabrikSnackbarStyle` | `floating` | `floating` or `grounded` |
+| `margin` / `padding` | `EdgeInsets` | 16/8, 16/12 | Outer and inner spacing |
+| `blockBackgroundInteraction` | `bool` | `false` | Absorb taps behind the snackbar |
+| `onTap` / `onDismissed` | `VoidCallback?` | `null` | Lifecycle callbacks |
+
+### `FabrikToast.show`
+
+| Parameter | Type | Default |
+| --- | --- | --- |
+| `message` | `String` | required |
+| `position` | `FabrikToastPosition` | `bottom` |
+| `duration` | `Duration` | 2 seconds |
+| `backgroundColor` / `textColor` | `Color` | `0xFF323232` / white |
+| `borderRadius` | `BorderRadius` | Fully rounded |
+| `fontSize` | `double` | `14` |
+| `icon` / `iconColor` / `iconSize` | `IconData?` / `Color` / `double` | `null` / white / `24` |
+| `onTap` | `VoidCallback?` | `null` |
+
+### Enums
+
+| Enum | Values |
 | --- | --- |
-| Form submission result | `FabrikSnackbar.success` / `.error` |
-| Network or API errors | `FabrikSnackbar.error` |
-| Passive system notifications | `FabrikSnackbar.info` |
-| Low-priority confirmations | `FabrikToast.show` |
-| Fully branded feedback | `FabrikSnackbar.custom` |
+| `FabrikSnackbarPosition` | `top`, `bottom` |
+| `FabrikSnackbarStyle` | `floating`, `grounded` |
+| `FabrikSnackbarDismissDirection` | `vertical`, `horizontal` |
+| `FabrikToastPosition` | `top`, `center`, `bottom` |
+
+Each exposes convenience getters such as `isTop` and `isFloating`.
